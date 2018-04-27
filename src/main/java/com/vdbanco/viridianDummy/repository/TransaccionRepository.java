@@ -18,7 +18,7 @@ public interface TransaccionRepository extends JpaRepository<TransaccionModel, L
 
     //@Query(value = "select t from TransaccionModel t where t.accountNumber = ?1 and FUNCTION('MONTH',t.transaccionDate) = ?2")
     //List<TransaccionModel> findByAccountNumberAndLastMonths(String accountNumber,  Integer numberMonth);
-    
+
     @Query(value = "select t from TransaccionModel t where t.accountNumber = ?1 and FUNCTION('TRUNC',t.transaccionDate , 'MM') = FUNCTION('TRUNC',FUNCTION('ADD_MONTHS',function('SYSDATE'), ?2*(-1)) , 'MM')")
     List<TransaccionModel> findByAccountNumberAndLastMonths(String accountNumber,  int numberMonth);
 
