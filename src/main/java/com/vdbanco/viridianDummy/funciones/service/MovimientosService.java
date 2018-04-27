@@ -11,5 +11,7 @@ public interface MovimientosService {
 
     List<TransaccionModel> getLast10MovimientosByAccountNumber(String accountNumber);
 
+    List<TransaccionModel> getMovimientosByAccountNumberAndLastMonths(String accountNumber, Integer numberMonth);
+
     List<TransaccionModel> getMovimientosByAccountNumberAndFechas(String accountNumber, Timestamp fechaDesde, Timestamp fechaHasta);
 }

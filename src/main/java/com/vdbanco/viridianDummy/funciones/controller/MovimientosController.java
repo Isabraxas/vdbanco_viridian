@@ -30,6 +30,11 @@ public class MovimientosController {
         return this.movimientosService.getLast10MovimientosByAccountNumber(accountNumber);
     }
 
+    @GetMapping(value = "/{accountNumber}/movimientos/month/{numberMonth}")
+    public List<TransaccionModel> getMovimientosByAccountNumberAndLastMonths(@PathVariable String accountNumber, @PathVariable Integer numberMonth ){
+        return this.movimientosService.getMovimientosByAccountNumberAndLastMonths(accountNumber, numberMonth);
+    }
+
     @GetMapping(value = "/{accountNumber}/movimientos/desde/{fechaDesde}/hasta/{fechaHasta}")
     public List<TransaccionModel> getMovimientosByAccountNumberAndFechas(@PathVariable String accountNumber
                                                                 , @PathVariable Timestamp fechaDesde

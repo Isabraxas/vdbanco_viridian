@@ -37,6 +37,12 @@ public class MovimientosServiceImpl implements MovimientosService{
     }
 
     @Override
+    public List<TransaccionModel> getMovimientosByAccountNumberAndLastMonths(String accountNumber, Integer numberMonth) {
+        return transaccionRepository.findByAccountNumberAndLastMonths(accountNumber, numberMonth.intValue());
+    }
+
+
+    @Override
     public List<TransaccionModel> getMovimientosByAccountNumberAndFechas(String accountNumber, Timestamp fechaDesde, Timestamp fechaHasta) {
         return transaccionRepository.findByAccountNumberAndTransaccionDateBetween(accountNumber, fechaDesde, fechaHasta);
     }
