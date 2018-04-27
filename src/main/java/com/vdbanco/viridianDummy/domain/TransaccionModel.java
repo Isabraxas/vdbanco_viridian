@@ -15,7 +15,7 @@ public class TransaccionModel implements Serializable {
     @Id
     private Long transaccionId;
     private String transaccionNumber;
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    //@JsonFormat(pattern = "yyyy-MM-dd")
     private Timestamp transaccionDate;
     private Double transaccionMonto;
     private String accountNumber;

@@ -43,6 +43,17 @@ public class TransaccionServiceImpl implements TransaccionService {
     }
 
     @Override
+    public List<TransaccionModel> getByTransaccionByAccountNumber(String accountNumber) {
+        List<TransaccionModel> transaccions = this.transaccionRepository.findByAccountNumber(accountNumber);
+
+        if(transaccions.size()==0) {
+            String errorMsg = "Las transacciones con accountNumber: "+ accountNumber +" no fueron encontradas";
+            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(000L, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+        }
+        return transaccions;
+    }
+
+    @Override
     public List<TransaccionModel> save(TransaccionModel transaccion) {
         boolean existe = this.transaccionRepository.existsById(transaccion.getTransaccionId());
         if(!existe) {
