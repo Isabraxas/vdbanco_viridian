@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 @Table(name = "ACCOUNT")
 @Entity
@@ -17,10 +18,12 @@ public class AccountModel implements Serializable {
     private String accountTipo;
     private String accountNaturaleza;
     @JsonFormat(pattern="yyyy-MM-dd")
-    private String accountFechaApertura;
+    private Timestamp accountFechaApertura;
     private Double accountBalance;
     private String accountHolderNumber;
     private String productosBancariosNumber;
+
+
 
     public Long getAccountId() {
         return accountId;
@@ -54,11 +57,11 @@ public class AccountModel implements Serializable {
         this.accountNaturaleza = accountNaturaleza;
     }
 
-    public String getAccountFechaApertura() {
+    public Timestamp getAccountFechaApertura() {
         return accountFechaApertura;
     }
 
-    public void setAccountFechaApertura(String accountFechaApertura) {
+    public void setAccountFechaApertura(Timestamp accountFechaApertura) {
         this.accountFechaApertura = accountFechaApertura;
     }
 

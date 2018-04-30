@@ -2,9 +2,7 @@ package com.vdbanco.viridianDummy.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -13,6 +11,8 @@ import java.sql.Timestamp;
 public class TransaccionModel implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TRANS_SEQ")
+    @SequenceGenerator(sequenceName = "TRANSACCION_ID_SEQ", allocationSize = 1, name = "TRANS_SEQ")
     private Long transaccionId;
     private String transaccionNumber;
     //@JsonFormat(pattern = "yyyy-MM-dd")

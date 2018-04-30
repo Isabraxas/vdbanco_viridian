@@ -1,9 +1,10 @@
 package com.vdbanco.viridianDummy.funciones.inputModel;
 
-public class TransferenciasRequest {
+public class TransferenciaTerceroRequest {
 
     private String accountNumberOrigen;
     private String accountNumberDestino;
+    private String nombreDestinatario;
     private Double monto;
     private String glossa;
 
@@ -22,6 +23,14 @@ public class TransferenciasRequest {
 
     public void setAccountNumberDestino(String accountNumberDestino) {
         this.accountNumberDestino = accountNumberDestino;
+    }
+
+    public String getNombreDestinatario() {
+        return nombreDestinatario;
+    }
+
+    public void setNombreDestinatario(String nombreDestinatario) {
+        this.nombreDestinatario = nombreDestinatario;
     }
 
     public Double getMonto() {
