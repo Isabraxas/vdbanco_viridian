@@ -14,6 +14,9 @@ public interface AccountService {
 
     AccountModel getByAccountNumber(String number);
 
+
+    //AccountModel getByAccountNumberAndProductosBancarios(String number, List<String> numberProductos);
+
     AccountModel save(AccountModel account);
 
     List<AccountModel> getAccountByAccountHolder(String number);

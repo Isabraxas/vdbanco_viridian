@@ -2,8 +2,11 @@ package com.vdbanco.viridianDummy.funciones.controller;
 
 import com.vdbanco.viridianDummy.error.ErrorSaldoInsuficiente;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
+import com.vdbanco.viridianDummy.funciones.inputModel.PagoPrestamoRequest;
+import com.vdbanco.viridianDummy.funciones.inputModel.TransferenciaOtroBancoRequest;
 import com.vdbanco.viridianDummy.funciones.inputModel.TransferenciaPropiaRequest;
 import com.vdbanco.viridianDummy.funciones.inputModel.TransferenciaTerceroRequest;
+import com.vdbanco.viridianDummy.funciones.outputModel.PagoResponse;
 import com.vdbanco.viridianDummy.funciones.outputModel.TranferenciasResponse;
 import com.vdbanco.viridianDummy.funciones.service.TransferenciaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,21 @@ public class TransferenciasController {
     @PostMapping(value = "/tranferencias/terceros")
     public TranferenciasResponse createTranferenciaTerceros(@RequestBody TransferenciaTerceroRequest transferenciaTerceroRequest){
         return this.transferenciaService.createTranferenciaByCuentasTerceros(transferenciaTerceroRequest);
+    }
+
+    @PostMapping(value = "/tranferencias/otros")
+    public TranferenciasResponse createTranferenciaOtrosBancos(@RequestBody TransferenciaOtroBancoRequest transferenciaOtroBancoRequest){
+        return this.transferenciaService.createTranferenciaByCuentasOtrosBancos(transferenciaOtroBancoRequest);
+    }
+
+    @PostMapping(value = "/pagos/prestamo")
+    public PagoResponse createPagoPrestamo(@RequestBody PagoPrestamoRequest pagoPrestamoRequest){
+        return this.transferenciaService.createPagoPrestamo(pagoPrestamoRequest);
+    }
+
+    @PostMapping(value = "/pagos/tarjetaCredito")
+    public PagoResponse createPagotarjetaCredito(@RequestBody PagoPrestamoRequest pagoPrestamoRequest){
+        return this.transferenciaService.createPagoPrestamo(pagoPrestamoRequest);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

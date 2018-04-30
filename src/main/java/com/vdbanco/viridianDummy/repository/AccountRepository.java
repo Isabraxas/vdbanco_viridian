@@ -13,4 +13,6 @@ public interface AccountRepository extends JpaRepository<AccountModel,Long> {
     Page<AccountModel> findAllByOrderByAccountId(Pageable pageable);
 
     List<AccountModel> findByAccountHolderNumber(String number);
+
+    AccountModel findByAccountNumberandAndProductosBancariosNumberIn(String number, List<String> numberProductos);
 }

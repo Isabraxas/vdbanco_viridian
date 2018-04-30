@@ -43,6 +43,18 @@ public class AccountServiceImpl implements AccountService {
         return account;
     }
 
+
+    public AccountModel getByAccountNumberAndProductosBancarios(String number, List<String>numberProductos) {
+
+        AccountModel account = this.accountRepository.findByAccountNumberandAndProductosBancariosNumberIn(number, numberProductos);
+        Long id= Long.valueOf(number.substring(4));
+        if(account == null) {
+            String errorMsg = "El account con Id: "+ id +" no fue encontrado";
+            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+        }
+        return account;
+    }
+
     @Override
     public AccountModel save(AccountModel account) {
         boolean existe = this.accountRepository.existsById(account.getAccountId());
@@ -76,4 +88,5 @@ public class AccountServiceImpl implements AccountService {
     public void delete(AccountModel account) {
         this.accountRepository.deleteById(account.getAccountId());
     }
+
 }
