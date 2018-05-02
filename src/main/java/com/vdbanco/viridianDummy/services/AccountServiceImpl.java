@@ -43,14 +43,14 @@ public class AccountServiceImpl implements AccountService {
         return account;
     }
 
+    @Override
+    public AccountModel getByAccountNumberAndProductosBancarios(String number, List<String> numberProductos) {
 
-    public AccountModel getByAccountNumberAndProductosBancarios(String number, List<String>numberProductos) {
-
-        AccountModel account = this.accountRepository.findByAccountNumberandAndProductosBancariosNumberIn(number, numberProductos);
+        AccountModel account = this.accountRepository.findByAccountNumberAndProductosBancariosNumberIn(number, numberProductos);
         Long id= Long.valueOf(number.substring(4));
         if(account == null) {
-            String errorMsg = "El account con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            String errorMsg = "La cuenta con Id: "+ id +" no fue encontrada asociada a este tipo de producto bancario";
+            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(id, "001", "no se encontro en la BD esta cuenta asociada a este tipo de producto bancario", "Hemos encontrado un error intentelo mas tarde"));
         }
         return account;
     }
@@ -58,7 +58,8 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public AccountModel save(AccountModel account) {
         boolean existe = this.accountRepository.existsById(account.getAccountId());
-        if(!existe) {
+        boolean existeNumber = this.accountRepository.existsByAccountNumber(account.getAccountNumber());
+        if(!existe && !existeNumber) {
             this.accountRepository.save(account);
         }
         return this.getByAccountNumber(account.getAccountNumber());

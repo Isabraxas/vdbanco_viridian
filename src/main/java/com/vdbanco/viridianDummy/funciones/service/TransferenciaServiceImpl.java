@@ -1,30 +1,24 @@
 package com.vdbanco.viridianDummy.funciones.service;
 
-import com.vdbanco.viridianDummy.domain.AccountHolderModel;
-import com.vdbanco.viridianDummy.domain.AccountModel;
-import com.vdbanco.viridianDummy.domain.AutorizacionModel;
-import com.vdbanco.viridianDummy.domain.TransaccionModel;
+import com.vdbanco.viridianDummy.domain.*;
 import com.vdbanco.viridianDummy.error.ErrorNoEncontrado;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
-import com.vdbanco.viridianDummy.funciones.inputModel.PagoPrestamoRequest;
-import com.vdbanco.viridianDummy.funciones.inputModel.TransferenciaOtroBancoRequest;
-import com.vdbanco.viridianDummy.funciones.inputModel.TransferenciaPropiaRequest;
-import com.vdbanco.viridianDummy.funciones.inputModel.TransferenciaTerceroRequest;
+import com.vdbanco.viridianDummy.funciones.inputModel.*;
 import com.vdbanco.viridianDummy.funciones.outputModel.PagoResponse;
 import com.vdbanco.viridianDummy.funciones.outputModel.TranferenciasResponse;
 import com.vdbanco.viridianDummy.repository.AccountRepository;
 import com.vdbanco.viridianDummy.repository.AutorizacionRepository;
 import com.vdbanco.viridianDummy.repository.TransaccionRepository;
-import com.vdbanco.viridianDummy.services.AccountHolderService;
-import com.vdbanco.viridianDummy.services.AccountService;
-import com.vdbanco.viridianDummy.services.PersonaService;
+import com.vdbanco.viridianDummy.services.*;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TransferenciaServiceImpl implements TransferenciaService {
@@ -40,15 +34,19 @@ public class TransferenciaServiceImpl implements TransferenciaService {
     AccountService accountService;
     AccountHolderService accountHolderService;
     PersonaService personaService;
+    AutorizacionService autorizacionService;
+    EmpleadoService empleadoService;
 
     @Autowired
-    public TransferenciaServiceImpl(AccountRepository accountRepository, TransaccionRepository transaccionRepository, AutorizacionRepository autorizacionRepository, AccountService accountService, AccountHolderService accountHolderService, PersonaService personaService) {
+    public TransferenciaServiceImpl(AccountRepository accountRepository, TransaccionRepository transaccionRepository, AutorizacionRepository autorizacionRepository, AccountService accountService, AccountHolderService accountHolderService, PersonaService personaService, AutorizacionService autorizacionService, EmpleadoService empleadoService) {
         this.accountRepository = accountRepository;
         this.transaccionRepository = transaccionRepository;
         this.autorizacionRepository = autorizacionRepository;
         this.accountService = accountService;
         this.accountHolderService = accountHolderService;
         this.personaService = personaService;
+        this.autorizacionService = autorizacionService;
+        this.empleadoService = empleadoService;
     }
 
     @Override
@@ -176,7 +174,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
                 //Origen
                 transaccionOrigen.setAccountNumber(transferenciaTerceroRequest.getAccountNumberOrigen());
                 transaccionOrigen.setTransaccionMonto((-1) * transferenciaTerceroRequest.getMonto());
-                transaccionOrigen.setTransaccionDetalle("Tranferencia cuentas propias");
+                transaccionOrigen.setTransaccionDetalle("Tranferencia cuentas de terceros");
                 transaccionOrigen.setTransaccionGlossa(transferenciaTerceroRequest.getGlossa());
                 transaccionOrigen.setTransaccionDate(fechaTransO);
                 //Automatizar
@@ -196,7 +194,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
                 //Destino
                 transaccionDestino.setAccountNumber(transferenciaTerceroRequest.getAccountNumberDestino());
                 transaccionDestino.setTransaccionMonto(transferenciaTerceroRequest.getMonto());
-                transaccionDestino.setTransaccionDetalle("Tranferencia cuentas propias");
+                transaccionDestino.setTransaccionDetalle("Tranferencia cuentas de terceros");
                 transaccionDestino.setTransaccionGlossa(transferenciaTerceroRequest.getGlossa());
                 transaccionDestino.setTransaccionDate(fechaTransD);
                 //Automatizar
@@ -289,7 +287,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
             //Origen
             transaccionOrigen.setAccountNumber(transferenciaOtroBancoRequest.getAccountNumberOrigen());
             transaccionOrigen.setTransaccionMonto((-1) * transferenciaOtroBancoRequest.getMonto());
-            transaccionOrigen.setTransaccionDetalle("Tranferencia cuentas propias");
+            transaccionOrigen.setTransaccionDetalle("Tranferencia cuentas en otros bancos");
             transaccionOrigen.setTransaccionGlossa(transferenciaOtroBancoRequest.getGlossa());
             transaccionOrigen.setTransaccionDate(fechaTransO);
             //Automatizar
@@ -309,7 +307,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
             //Destino
             transaccionDestino.setAccountNumber(transferenciaOtroBancoRequest.getAccountNumberDestino());
             transaccionDestino.setTransaccionMonto(transferenciaOtroBancoRequest.getMonto());
-            transaccionDestino.setTransaccionDetalle("Tranferencia cuentas propias");
+            transaccionDestino.setTransaccionDetalle("Tranferencia cuentas en otros bancos");
             transaccionDestino.setTransaccionGlossa(transferenciaOtroBancoRequest.getGlossa());
             transaccionDestino.setTransaccionDate(fechaTransD);
             //Automatizar
@@ -348,11 +346,6 @@ public class TransferenciaServiceImpl implements TransferenciaService {
 
     @Override
     public PagoResponse createPagoPrestamo(PagoPrestamoRequest pagoPrestamoRequest) {
-        return null;
-    }
-/*
-    @Override
-    public PagoResponse createPagoPrestamo(PagoPrestamoRequest pagoPrestamoRequest){
         log.info("Buscando Cuentas");
         List<String> numeroProductos= Arrays.asList("B0007", "B0008");
 
@@ -377,7 +370,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
             //Origen
             transaccionOrigen.setAccountNumber(pagoPrestamoRequest.getAccountNumberOrigen());
             transaccionOrigen.setTransaccionMonto((-1)* pagoPrestamoRequest.getMonto());
-            transaccionOrigen.setTransaccionDetalle("Tranferencia cuentas propias");
+            transaccionOrigen.setTransaccionDetalle("Pago de prestamo");
             transaccionOrigen.setTransaccionGlossa(pagoPrestamoRequest.getGlossa());
             transaccionOrigen.setTransaccionDate(fechaTransO);
             //Automatizar
@@ -397,7 +390,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
             //Destino
             transaccionDestino.setAccountNumber(pagoPrestamoRequest.getAccountNumberDestino());
             transaccionDestino.setTransaccionMonto(pagoPrestamoRequest.getMonto());
-            transaccionDestino.setTransaccionDetalle("Tranferencia cuentas propias");
+            transaccionDestino.setTransaccionDetalle("Pago de prestamo");
             transaccionDestino.setTransaccionGlossa(pagoPrestamoRequest.getGlossa());
             transaccionDestino.setTransaccionDate(fechaTransD);
             //Automatizar
@@ -430,6 +423,167 @@ public class TransferenciaServiceImpl implements TransferenciaService {
             String errorMsg = "La cuenta de origen no tiene saldo suficiente para este monto: "+ pagoPrestamoRequest.getMonto() ;
             throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(accountOrigen.getAccountId(), "002", "El saldo es insuficiente para procesar la transferencia", "Hemos encontrado un error intentelo nuevamente"));
         }
+
+    }
+
+    @Override
+    public PagoResponse createPagoTarjetaCredito(PagoPrestamoRequest pagoPrestamoRequest) {
+        log.info("Buscando Cuentas");
+        List<String> numeroProductos= Arrays.asList("B0009");
+
+        AccountModel accountOrigen = this.accountService.getByAccountNumber(pagoPrestamoRequest.getAccountNumberOrigen());
+        AccountModel accountDestino = this.accountService.getByAccountNumberAndProductosBancarios(pagoPrestamoRequest.getAccountNumberDestino(), numeroProductos);
+
+        log.info("Comprobando si el saldo es suficiente");
+        if (pagoPrestamoRequest.getMonto() < accountOrigen.getAccountBalance()) {
+
+            log.info("Iniciando la Transaccion");
+            TransaccionModel transaccionOrigen = new TransaccionModel();
+            TransaccionModel transaccionDestino = new TransaccionModel();
+            Timestamp fechaTransO = new Timestamp(System.currentTimeMillis());
+            Timestamp fechaTransD = new Timestamp(System.currentTimeMillis());
+            //Para prueba
+            AutorizacionModel autorizacionTransaccion = new AutorizacionModel();
+            autorizacionTransaccion.setAutorizacionNumber("AUXXXX");
+            final String transaccionNumber= "T0003000000004";
+            //
+
+            log.info("Inicio proceso Cuenta origen");
+            //Origen
+            transaccionOrigen.setAccountNumber(pagoPrestamoRequest.getAccountNumberOrigen());
+            transaccionOrigen.setTransaccionMonto((-1)* pagoPrestamoRequest.getMonto());
+            transaccionOrigen.setTransaccionDetalle("Pago de tarjeta de credito");
+            transaccionOrigen.setTransaccionGlossa(pagoPrestamoRequest.getGlossa());
+            transaccionOrigen.setTransaccionDate(fechaTransO);
+            //Automatizar
+            transaccionOrigen.setAutorizacionNumber(autorizacionTransaccion.getAutorizacionNumber());
+            //transaccionOrigen.setTransaccionId(3000000004L);
+            transaccionOrigen.setTransaccionNumber(transaccionNumber);
+
+            log.info("Actualizacion de balance en la cuenta de origen");
+            Double balanceO = accountOrigen.getAccountBalance() - pagoPrestamoRequest.getMonto();
+            accountOrigen.setAccountBalance(balanceO);
+            this.accountRepository.save(accountOrigen);
+
+            log.info("Fin proceso cuenta origen");
+            //FOrigen
+
+            log.info("Inicio proceso Cuenta destino");
+            //Destino
+            transaccionDestino.setAccountNumber(pagoPrestamoRequest.getAccountNumberDestino());
+            transaccionDestino.setTransaccionMonto(pagoPrestamoRequest.getMonto());
+            transaccionDestino.setTransaccionDetalle("Pago de tarjeta de credito");
+            transaccionDestino.setTransaccionGlossa(pagoPrestamoRequest.getGlossa());
+            transaccionDestino.setTransaccionDate(fechaTransD);
+            //Automatizar
+            transaccionDestino.setAutorizacionNumber(autorizacionTransaccion.getAutorizacionNumber());
+            //transaccionDestino.setTransaccionId(3000000005L);
+            transaccionDestino.setTransaccionNumber(transaccionNumber);
+
+            log.info("Actualizacion de balance en la cuenta de destino");
+            Double balanceD = accountDestino.getAccountBalance() + pagoPrestamoRequest.getMonto();
+            accountDestino.setAccountBalance(balanceD);
+            this.accountRepository.save(accountDestino);
+
+            log.info("Fin proceso cuenta destino");
+            //FDestino
+
+            log.info("Guardando registro de transacciones");
+            this.transaccionRepository.save(transaccionOrigen);
+            this.transaccionRepository.save(transaccionDestino);
+            log.info("Finalizando transaccion");
+
+            PagoResponse pagoResponse = new PagoResponse();
+            pagoResponse.setFecha(fechaTransO);
+            pagoResponse.setEstado("successful");
+            pagoResponse.setDetalle(transaccionOrigen);
+
+            return pagoResponse;
+
+        }else{
+
+            String errorMsg = "La cuenta de origen no tiene saldo suficiente para este monto: "+ pagoPrestamoRequest.getMonto() ;
+            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(accountOrigen.getAccountId(), "002", "El saldo es insuficiente para procesar la transferencia", "Hemos encontrado un error intentelo nuevamente"));
+        }
+    }
+
+    @Override
+    public TranferenciasResponse createReversionTranferencia(ReversionRequest reversionRequest) {
+        List<TransaccionModel> transaccionList = transaccionRepository.findByTransaccionNumber(reversionRequest.getNumeroTransacion());
+        AutorizacionModel autorizacion = autorizacionService.getByAutorizacionNumber(reversionRequest.getNumeroAutorizacion());
+
+        //TODO crear y obtener los datos de la autorizacion referente a la reversion.
+        //TODO comprobar que la fecha entre la transacion y la autorizacion no sea mayor a un dia.
+
+        int dias=(int) ((transaccionList.get(0).getTransaccionDate().getTime() - autorizacion.getAutorizacionDateFin().getTime())/86400000);
+
+        if(dias < 1){
+
+            log.info("La diferencia de dias son menor 1");
+
+            if(autorizacion.getAutorizacionType().equals("Reversion transferencia")) {
+
+                TransaccionModel transaccionOrigen = new TransaccionModel();
+                TransaccionModel transaccionDestino = new TransaccionModel();
+                for (TransaccionModel transaccion : transaccionList) {
+                    if (transaccion.getTransaccionMonto() < 0) {
+                        transaccionOrigen = transaccion;
+                    } else {
+                        transaccionDestino = transaccion;
+                    }
+                }
+                //TODO comprobar que los datos de la autorizacion correspondan con el tipo de reversion de transaccion.
+                // en el autorizacion type se debe definir que tipode transaccion es
+
+                //TODO crear una transferencia con los montos inversos.
+
+                //Entre cuentas propias
+                TransferenciaPropiaRequest transferenciaPropiaRequest = new TransferenciaPropiaRequest();
+                transferenciaPropiaRequest.setAccountNumberOrigen(transaccionDestino.getAccountNumber());
+                transferenciaPropiaRequest.setAccountNumberDestino(transaccionOrigen.getAccountNumber());
+                transferenciaPropiaRequest.setMonto(transaccionDestino.getTransaccionMonto());
+                transferenciaPropiaRequest.setGlossa(transaccionOrigen.getTransaccionGlossa());
+
+                return this.createTranferenciaByCuentasPropias(transferenciaPropiaRequest);
+            }else {
+
+            }
+
+        }else {
+
+            return null;
+        }
+
+        return null;
+    }
+
+/*
+    public AutorizacionModel createAutorizacionReversionTransacciones(String debitoAccountNumber,
+                                                                      ){
+
+        AutorizacionModel autorizacion = new AutorizacionModel();
+        //Buscar en realidad empleado corresondiente a su cargo.
+        Optional<EmpleadoModel> empleadoA = empleadoService.getById(2L);
+        Optional<EmpleadoModel> empleadoB = empleadoService.getById(2L);
+        Optional<EmpleadoModel> empleadoC = empleadoService.getById(2L);
+
+        autorizacion.setAutorizacionId(30001L);
+        autorizacion.setAutorizacionNumber("AU00"+autorizacion.getAutorizacionId());
+        autorizacion.setEmpleadoNumber(empleadoA.get().getEmpleadoNumber());
+        autorizacion.setEmpleadoNumberAuth1(empleadoB.get().getEmpleadoNumber());
+        autorizacion.setEmpleadoNumberAuth2(empleadoC.get().getEmpleadoNumber());
+        autorizacion.setDebitoAccountHolderNumber();
+        autorizacion.setDebitoAccountNumber();
+        autorizacion.setCreditoAccountHolderNumber();
+        autorizacion.setAutorizacionType();
+        autorizacion.setAutorizacionDateInicio();
+        autorizacion.setAutorizacionDateFin();
+        autorizacion.setAutorizacionDateAuth1();
+        autorizacion.setAutorizacionDateAuth2();
+        autorizacion.setAutorizacionDetalle();
+        autorizacion.setAutorizacionGlossa();
+
+        return null;
     }
 */
 

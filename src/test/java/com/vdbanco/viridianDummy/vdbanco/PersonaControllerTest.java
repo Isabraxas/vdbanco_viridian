@@ -1,7 +1,6 @@
 package com.vdbanco.viridianDummy.vdbanco;
 
 import com.jayway.restassured.RestAssured;
-import com.vdbanco.viridianDummy.FuncionalTest;
 import com.vdbanco.viridianDummy.ViridianDummyApplication;
 import com.vdbanco.viridianDummy.domain.PersonaModel;
 import org.junit.Before;

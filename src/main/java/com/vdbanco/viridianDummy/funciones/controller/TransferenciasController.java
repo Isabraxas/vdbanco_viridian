@@ -2,10 +2,7 @@ package com.vdbanco.viridianDummy.funciones.controller;
 
 import com.vdbanco.viridianDummy.error.ErrorSaldoInsuficiente;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
-import com.vdbanco.viridianDummy.funciones.inputModel.PagoPrestamoRequest;
-import com.vdbanco.viridianDummy.funciones.inputModel.TransferenciaOtroBancoRequest;
-import com.vdbanco.viridianDummy.funciones.inputModel.TransferenciaPropiaRequest;
-import com.vdbanco.viridianDummy.funciones.inputModel.TransferenciaTerceroRequest;
+import com.vdbanco.viridianDummy.funciones.inputModel.*;
 import com.vdbanco.viridianDummy.funciones.outputModel.PagoResponse;
 import com.vdbanco.viridianDummy.funciones.outputModel.TranferenciasResponse;
 import com.vdbanco.viridianDummy.funciones.service.TransferenciaService;
@@ -47,8 +44,13 @@ public class TransferenciasController {
     }
 
     @PostMapping(value = "/pagos/tarjetaCredito")
-    public PagoResponse createPagotarjetaCredito(@RequestBody PagoPrestamoRequest pagoPrestamoRequest){
-        return this.transferenciaService.createPagoPrestamo(pagoPrestamoRequest);
+    public PagoResponse createPagoTarjetaCredito(@RequestBody PagoPrestamoRequest pagoPrestamoRequest){
+        return this.transferenciaService.createPagoTarjetaCredito(pagoPrestamoRequest);
+    }
+
+    @PostMapping(value = "/reversion/transferencia")
+    public TranferenciasResponse createReversionTranferencia(@RequestBody ReversionRequest reversionRequest){
+        return this.transferenciaService.createReversionTranferencia(reversionRequest);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

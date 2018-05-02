@@ -1,9 +1,6 @@
 package com.vdbanco.viridianDummy.funciones.service;
 
-import com.vdbanco.viridianDummy.funciones.inputModel.PagoPrestamoRequest;
-import com.vdbanco.viridianDummy.funciones.inputModel.TransferenciaOtroBancoRequest;
-import com.vdbanco.viridianDummy.funciones.inputModel.TransferenciaPropiaRequest;
-import com.vdbanco.viridianDummy.funciones.inputModel.TransferenciaTerceroRequest;
+import com.vdbanco.viridianDummy.funciones.inputModel.*;
 import com.vdbanco.viridianDummy.funciones.outputModel.PagoResponse;
 import com.vdbanco.viridianDummy.funciones.outputModel.TranferenciasResponse;
 
@@ -15,4 +12,8 @@ public interface TransferenciaService {
     TranferenciasResponse createTranferenciaByCuentasOtrosBancos(TransferenciaOtroBancoRequest transferenciaOtroBancoRequest);
 
     PagoResponse createPagoPrestamo(PagoPrestamoRequest pagoPrestamoRequest);
+
+    PagoResponse createPagoTarjetaCredito(PagoPrestamoRequest pagoPrestamoRequest);
+
+    TranferenciasResponse createReversionTranferencia(ReversionRequest reversionRequest);
 }

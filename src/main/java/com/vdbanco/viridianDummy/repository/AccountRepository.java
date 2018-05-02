@@ -14,5 +14,7 @@ public interface AccountRepository extends JpaRepository<AccountModel,Long> {
 
     List<AccountModel> findByAccountHolderNumber(String number);
 
-    AccountModel findByAccountNumberandAndProductosBancariosNumberIn(String number, List<String> numberProductos);
+    AccountModel findByAccountNumberAndProductosBancariosNumberIn(String number, List<String> numberProductos);
+
+    boolean existsByAccountNumber(String accountNumber);
 }
