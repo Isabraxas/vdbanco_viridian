@@ -1,10 +1,13 @@
 package com.vdbanco.viridianDummy.controller;
 
 import com.vdbanco.viridianDummy.domain.JuridicasModel;
+import com.vdbanco.viridianDummy.error.EntidadError;
+import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.services.JuridicasService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -49,5 +52,15 @@ public class JuridicasController {
     @DeleteMapping
     public void deleteJuridicas(@RequestBody JuridicasModel juridicas){
         this.juridicasService.delete(juridicas);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NoEncontradoRestException.class)
+    public EntidadError handleNotFound(NoEncontradoRestException exception){
+        EntidadError error = new EntidadError();
+        error.setId(exception.getErrorNoEncontrado().getId());
+        error.setEstado("error");
+        error.setError(exception.getErrorNoEncontrado());
+        return error;
     }
 }

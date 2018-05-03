@@ -11,8 +11,8 @@ import java.sql.Timestamp;
 public class AccountModel implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ACCOUNT_SEQ")
-    @SequenceGenerator(sequenceName = "ACCOUNT_ID_SEQ", allocationSize = 1, name = "ACCOUNT_SEQ")
+    //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ACCOUNT_SEQ")
+    //@SequenceGenerator(sequenceName = "ACCOUNT_ID_SEQ", allocationSize = 1, name = "ACCOUNT_SEQ")
     private Long accountId;
     private String accountNumber;
     private String accountTipo;

@@ -509,42 +509,52 @@ public class TransferenciaServiceImpl implements TransferenciaService {
 
     @Override
     public TranferenciasResponse createReversionTranferencia(ReversionRequest reversionRequest) {
+
         List<TransaccionModel> transaccionList = transaccionRepository.findByTransaccionNumber(reversionRequest.getNumeroTransacion());
         AutorizacionModel autorizacion = autorizacionService.getByAutorizacionNumber(reversionRequest.getNumeroAutorizacion());
 
         //TODO crear y obtener los datos de la autorizacion referente a la reversion.
         //TODO comprobar que la fecha entre la transacion y la autorizacion no sea mayor a un dia.
 
+
+
         int dias=(int) ((transaccionList.get(0).getTransaccionDate().getTime() - autorizacion.getAutorizacionDateFin().getTime())/86400000);
 
+        log.info("La diferencia de dias son menor 1");
         if(dias < 1){
 
-            log.info("La diferencia de dias son menor 1");
+            log.info("Comprobando el origen y el destino");
+            TransaccionModel transaccionOrigen = new TransaccionModel();
+            TransaccionModel transaccionDestino = new TransaccionModel();
+            for (TransaccionModel transaccion : transaccionList) {
+                if (transaccion.getTransaccionMonto() < 0) {
+                    transaccionOrigen = transaccion;
+                } else {
+                    transaccionDestino = transaccion;
+                }
+            }
 
             if(autorizacion.getAutorizacionType().equals("Reversion transferencia")) {
 
-                TransaccionModel transaccionOrigen = new TransaccionModel();
-                TransaccionModel transaccionDestino = new TransaccionModel();
-                for (TransaccionModel transaccion : transaccionList) {
-                    if (transaccion.getTransaccionMonto() < 0) {
-                        transaccionOrigen = transaccion;
-                    } else {
-                        transaccionDestino = transaccion;
-                    }
-                }
                 //TODO comprobar que los datos de la autorizacion correspondan con el tipo de reversion de transaccion.
-                // en el autorizacion type se debe definir que tipode transaccion es
+                // en el autorizacion type se debe definir que tipo de transaccion es
+                if(!autorizacion.getEmpleadoNumber().isEmpty()
+                        && !autorizacion.getEmpleadoNumberAuth1().isEmpty()
+                        && autorizacion.getAutorizacionDetalle().equals("Tranferencia menor igual a 500")
+                        && transaccionOrigen.getTransaccionMonto() <= 500) {
 
-                //TODO crear una transferencia con los montos inversos.
+                    log.info("Creando transferencia inversa para monto menor igual a 500");
+                    //Entre cuentas propias
+                    TransferenciaPropiaRequest transferenciaPropiaRequest = new TransferenciaPropiaRequest();
+                    transferenciaPropiaRequest.setAccountNumberOrigen(transaccionDestino.getAccountNumber());
+                    transferenciaPropiaRequest.setAccountNumberDestino(transaccionOrigen.getAccountNumber());
+                    transferenciaPropiaRequest.setMonto(transaccionDestino.getTransaccionMonto());
+                    transferenciaPropiaRequest.setGlossa("Reversion" + transaccionOrigen.getAccountNumber());
 
-                //Entre cuentas propias
-                TransferenciaPropiaRequest transferenciaPropiaRequest = new TransferenciaPropiaRequest();
-                transferenciaPropiaRequest.setAccountNumberOrigen(transaccionDestino.getAccountNumber());
-                transferenciaPropiaRequest.setAccountNumberDestino(transaccionOrigen.getAccountNumber());
-                transferenciaPropiaRequest.setMonto(transaccionDestino.getTransaccionMonto());
-                transferenciaPropiaRequest.setGlossa(transaccionOrigen.getTransaccionGlossa());
+                    log.info("Guardando transaccion revertida");
+                    return this.createTranferenciaByCuentasPropias(transferenciaPropiaRequest);
+                }
 
-                return this.createTranferenciaByCuentasPropias(transferenciaPropiaRequest);
             }else {
 
             }

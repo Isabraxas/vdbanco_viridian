@@ -79,6 +79,7 @@ public class AccountControllerTest {
         account.setAccountTipo("credito");
         account.setAccountBalance(100.00);
         account.setAccountFechaApertura(fechaApertura);
+        account.setAccountHolderNumber("H0001");
         account.setProductosBancariosNumber("B0009");
 
         AccountModel accountResponse= given()
@@ -103,6 +104,7 @@ public class AccountControllerTest {
         account.setAccountTipo("credito");
         account.setAccountBalance(120.00);
         account.setAccountFechaApertura(fechaApertura);
+        account.setAccountHolderNumber("H0002");
         account.setProductosBancariosNumber("B0009");
 
         AccountModel accountResponse= given()
