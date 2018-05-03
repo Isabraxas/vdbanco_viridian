@@ -11,6 +11,8 @@ public interface TransferenciaService {
 
     TranferenciasResponse createTranferenciaByCuentasOtrosBancos(TransferenciaOtroBancoRequest transferenciaOtroBancoRequest);
 
+    PagoResponse createPagoServicio(PagoPrestamoRequest pagoPrestamoRequest);
+
     PagoResponse createPagoPrestamo(PagoPrestamoRequest pagoPrestamoRequest);
 
     PagoResponse createPagoTarjetaCredito(PagoPrestamoRequest pagoPrestamoRequest);

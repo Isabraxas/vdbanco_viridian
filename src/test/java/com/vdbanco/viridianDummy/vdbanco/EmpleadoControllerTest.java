@@ -126,7 +126,7 @@ public class EmpleadoControllerTest {
     public void i_deleteEmpleado(){
         EmpleadoModel empleado = new EmpleadoModel();
         empleado.setEmpleadoId(3000003L);
-        empleado.setEmpleadoNumber("P0003000003");
+        empleado.setEmpleadoNumber("E0003000003");
 
              given().
                 contentType("application/json")
