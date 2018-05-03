@@ -16,9 +16,9 @@ public interface TransaccionService {
 
     List<TransaccionModel> getByTransaccionByAccountNumber(String accountNumber);
 
-    List<TransaccionModel> save(TransaccionModel transaccion);
+    TransaccionModel save(TransaccionModel transaccion);
 
-    List<TransaccionModel> update(TransaccionModel transaccion);
+    TransaccionModel update(TransaccionModel transaccion);
 
     void delete(TransaccionModel transaccion);
 }

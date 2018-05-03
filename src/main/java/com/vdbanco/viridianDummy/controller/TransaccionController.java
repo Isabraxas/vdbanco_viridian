@@ -40,12 +40,12 @@ public class TransaccionController {
     }
 
     @PostMapping
-    public List<TransaccionModel> saveTransaccion(@RequestBody TransaccionModel transaccion){
+    public TransaccionModel saveTransaccion(@RequestBody TransaccionModel transaccion){
         return this.transaccionService.save(transaccion);
     }
 
     @PutMapping
-    public List<TransaccionModel> updateTransaccion(@RequestBody TransaccionModel transaccion){
+    public TransaccionModel updateTransaccion(@RequestBody TransaccionModel transaccion){
 
         return this.transaccionService.update(transaccion);
     }

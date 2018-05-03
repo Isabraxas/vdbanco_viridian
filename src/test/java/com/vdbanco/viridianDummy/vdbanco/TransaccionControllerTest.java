@@ -1,6 +1,7 @@
 package com.vdbanco.viridianDummy.vdbanco;
 
 import com.jayway.restassured.RestAssured;
+import com.jayway.restassured.response.Response;
 import com.vdbanco.viridianDummy.ViridianDummyApplication;
 import com.vdbanco.viridianDummy.domain.TransaccionModel;
 import org.junit.Before;
@@ -88,31 +89,33 @@ public class TransaccionControllerTest {
         transaccion.setAccountNumber("1230000019");
         transaccion.setAutorizacionNumber("AU0048");
 
-        TransaccionModel[] transaccionResponse= given()
+        TransaccionModel transaccionResponse= given()
                 .contentType("application/json")
                 .body(transaccion)
                 .when().post("/transaccions")
-                .as(TransaccionModel[].class);
+                .as(TransaccionModel.class);
 
         log.info("Response: "+ transaccionResponse.toString());
 
+        assertTrue(transaccionResponse.getTransaccionNumber().equals("T0008000003"));
+        assertTrue(transaccionResponse.getTransaccionMonto().equals(0.0));
+        assertNotNull(transaccionResponse.getAccountNumber());
 
     }
 
     @Test
     public void h_putTransaccion(){
-        TransaccionModel transaccion = new TransaccionModel();
-        transaccion.setTransaccionId(8000003L);
-        transaccion.setTransaccionNumber("T0008000003");
-        transaccion.setTransaccionDate(new Timestamp(System.currentTimeMillis()));
-        transaccion.setAutorizacionNumber("AU0048");
-        transaccion.setTransaccionGlossa("transferencia a pepito");
-        transaccion.setTransaccionMonto(100.0);
 
+        TransaccionModel[] transaccion =
+                given().pathParam("number","T0008000003").
+                when().get("/transaccions/number/{number}")
+                .then().extract().body().as(TransaccionModel[].class);
+        transaccion[0].setTransaccionMonto(100.0);
+        transaccion[0].setTransaccionGlossa("nuevoMonto");
 
         TransaccionModel transaccionResponse= given()
                 .contentType("application/json")
-                .body(transaccion)
+                .body(transaccion[0])
                 .when().put("/transaccions")
                 .as(TransaccionModel.class);
 
@@ -125,13 +128,13 @@ public class TransaccionControllerTest {
 
     @Test
     public void i_deleteTransaccion(){
-        TransaccionModel transaccion = new TransaccionModel();
-        transaccion.setTransaccionId(8000003L);
-        transaccion.setTransaccionNumber("T0008000003");
+        TransaccionModel[] transaccion = given().pathParam("number","T0008000003").
+                        when().get("/transaccions/number/{number}")
+                        .then().extract().body().as(TransaccionModel[].class);
 
              given().
                 contentType("application/json")
-                .body(transaccion)
+                .body(transaccion[0])
                 .when().delete("/transaccions")
                 .then().statusCode(200);
     }

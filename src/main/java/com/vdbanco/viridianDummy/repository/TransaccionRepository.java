@@ -10,7 +10,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import java.sql.Timestamp;
 import java.util.List;
 
-public interface TransaccionRepository extends JpaRepository<TransaccionModel, Long> , PagingAndSortingRepository<TransaccionModel, Long> {
+public interface TransaccionRepository extends JpaRepository<TransaccionModel, Long> {
 
     List<TransaccionModel> findByTransaccionNumber(String number);
 

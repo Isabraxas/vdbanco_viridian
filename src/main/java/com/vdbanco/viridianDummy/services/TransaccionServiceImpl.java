@@ -14,6 +14,7 @@ import java.util.Optional;
 
 @Service
 public class TransaccionServiceImpl implements TransaccionService {
+
     private TransaccionRepository transaccionRepository;
 
     @Autowired
@@ -54,12 +55,12 @@ public class TransaccionServiceImpl implements TransaccionService {
     }
 
     @Override
-    public List<TransaccionModel> save(TransaccionModel transaccion) {
+    public TransaccionModel save(TransaccionModel transaccion) {
         boolean existe = this.transaccionRepository.existsById(transaccion.getTransaccionId());
         if(!existe) {
-            this.transaccionRepository.save(transaccion);
+            return this.transaccionRepository.save(transaccion);
         }
-        return this.getByTransaccionNumber(transaccion.getTransaccionNumber());
+        return null;
     }
 
     @Override
@@ -68,11 +69,11 @@ public class TransaccionServiceImpl implements TransaccionService {
     }
 
     @Override
-    public List<TransaccionModel> update(TransaccionModel transaccion) {
+    public TransaccionModel update(TransaccionModel transaccion) {
         boolean existe = this.transaccionRepository.existsById(transaccion.getTransaccionId());
         if(existe) {
-            this.transaccionRepository.save(transaccion);
-            return this.getByTransaccionNumber(transaccion.getTransaccionNumber());
+
+            return this.transaccionRepository.save(transaccion);
         }
         return null;
     }
