@@ -48,6 +48,11 @@ public class AccountHolderServiceImpl implements AccountHolderService {
     }
 
     @Override
+    public AccountHolderModel getAccountHolderByPersonaNumberOrTitularOrApoderado(String number) {
+        return this.accountHolderRepository.findAllByPersonaPersonaNumberOrAccountHolderTitularNumberOrAccountHolderApoderado(number, number, number);
+    }
+
+    @Override
     public AccountHolderModel save(AccountHolderModel accountHolder) {
         boolean existe = this.accountHolderRepository.existsById(accountHolder.getAccountHolderId());
         if(!existe) {

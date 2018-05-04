@@ -13,4 +13,6 @@ public interface AccountHolderRepository extends JpaRepository<AccountHolderMode
     Page<AccountHolderModel> findAllByOrderByAccountHolderId(Pageable pageable);
 
     AccountHolderModel findAllByPersonaPersonaNumber(String number);
+
+    AccountHolderModel findAllByPersonaPersonaNumberOrAccountHolderTitularNumberOrAccountHolderApoderado(String numberA, String numberB, String numberC);
 }

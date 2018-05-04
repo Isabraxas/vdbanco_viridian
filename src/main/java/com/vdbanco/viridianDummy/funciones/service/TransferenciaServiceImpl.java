@@ -55,6 +55,18 @@ public class TransferenciaServiceImpl implements TransferenciaService {
         AccountModel accountOrigen = this.accountService.getByAccountNumber(transferenciaPropiaRequest.getAccountNumberOrigen());
         AccountModel accountDestino = this.accountService.getByAccountNumber(transferenciaPropiaRequest.getAccountNumberDestino());
 
+        log.info("Comprobando propiedad de las cuentas");
+        if(accountOrigen.getAccountHolderNumber().equals(accountDestino.getAccountHolderNumber())){
+
+            log.info("Son cuentas propias");
+
+        }else{
+
+            String errorMsg = "Las cuentas no pertenecen al mismo propiertario: "+ accountOrigen.getAccountNumber() + " - "+ accountDestino.getAccountNumber();
+            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(accountOrigen.getAccountId(), "002", "Las cuentas no pertenecen al mismo propiertario: "+ accountOrigen.getAccountNumber() + " - "+ accountDestino.getAccountNumber(), "Hemos encontrado un error intentelo nuevamente"));
+
+        }
+
         log.info("Comprobando si el saldo es suficiente");
         if (transferenciaPropiaRequest.getMonto() < accountOrigen.getAccountBalance()) {
 
@@ -136,6 +148,18 @@ public class TransferenciaServiceImpl implements TransferenciaService {
         log.info("Buscando Cuentas");
         AccountModel accountOrigen = this.accountService.getByAccountNumber(transferenciaTerceroRequest.getAccountNumberOrigen());
         AccountModel accountDestino = this.accountService.getByAccountNumber(transferenciaTerceroRequest.getAccountNumberDestino());
+
+        log.info("Comprobando propiedad de las cuentas");
+        if(accountOrigen.getAccountHolderNumber().equals(accountDestino.getAccountHolderNumber())){
+
+            String errorMsg = "No son cuentas de terceros: "+ accountOrigen.getAccountNumber() + " - "+ accountDestino.getAccountNumber();
+            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(accountOrigen.getAccountId(), "002", "Las cuentas no pertenecen a terceros: "+ accountOrigen.getAccountNumber() + " - "+ accountDestino.getAccountNumber(), "Hemos encontrado un error intentelo nuevamente"));
+
+        }else{
+            log.info("No son cuentas propias");
+
+        }
+
 
         log.info("Comparando datos del destinatario");
         AccountHolderModel accountHolderDestino = this.accountHolderService.getByAccountHolderNumber(accountDestino.getAccountHolderNumber());

@@ -13,6 +13,9 @@ public interface AccountHolderService {
 
     AccountHolderModel getAccountHolderByPersonaNumber(String number);
 
+
+    AccountHolderModel getAccountHolderByPersonaNumberOrTitularOrApoderado(String number);
+
     AccountHolderModel save(AccountHolderModel accountHolder);
 
     AccountHolderModel update(AccountHolderModel accountHolder);

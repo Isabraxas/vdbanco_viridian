@@ -4,6 +4,7 @@ import com.vdbanco.viridianDummy.domain.TransaccionModel;
 
 import java.sql.Timestamp;
 
+
 public class TranferenciasResponse {
 
     private Timestamp fecha;
