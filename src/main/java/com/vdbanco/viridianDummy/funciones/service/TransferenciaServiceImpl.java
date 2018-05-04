@@ -675,8 +675,12 @@ public class TransferenciaServiceImpl implements TransferenciaService {
 
 
 /*
-    public AutorizacionModel createAutorizacionReversionTransacciones(String debitoAccountNumber,
-                                                                      ){
+    public AutorizacionModel createAutorizacionReversionTransacciones(String accountNumberOrigen, String accountNumberDestino ){
+        AccountModel accountOrigen = this.accountService.getByAccountNumber(accountNumberOrigen);
+        AccountModel accountDestino = this.accountService.getByAccountNumber(accountNumberDestino);
+
+        AccountHolderModel accountHolderDebito = this.accountHolderService.getByAccountHolderNumber(accountOrigen.getAccountHolderNumber());
+        AccountHolderModel accountHolderCredito = this.accountHolderService.getByAccountHolderNumber(accountDestino.getAccountHolderNumber());
 
         AutorizacionModel autorizacion = new AutorizacionModel();
         //Buscar en realidad empleado corresondiente a su cargo.
@@ -684,17 +688,18 @@ public class TransferenciaServiceImpl implements TransferenciaService {
         Optional<EmpleadoModel> empleadoB = empleadoService.getById(2L);
         Optional<EmpleadoModel> empleadoC = empleadoService.getById(2L);
 
+
         autorizacion.setAutorizacionId(30001L);
         autorizacion.setAutorizacionNumber("AU00"+autorizacion.getAutorizacionId());
         autorizacion.setEmpleadoNumber(empleadoA.get().getEmpleadoNumber());
         autorizacion.setEmpleadoNumberAuth1(empleadoB.get().getEmpleadoNumber());
         autorizacion.setEmpleadoNumberAuth2(empleadoC.get().getEmpleadoNumber());
-        autorizacion.setDebitoAccountHolderNumber();
-        autorizacion.setDebitoAccountNumber();
-        autorizacion.setCreditoAccountHolderNumber();
-        autorizacion.setAutorizacionType();
-        autorizacion.setAutorizacionDateInicio();
-        autorizacion.setAutorizacionDateFin();
+        autorizacion.setDebitoAccountHolderNumber(accountDestino.getAccountHolderNumber());
+        autorizacion.setDebitoAccountNumber(accountOrigen.getAccountNumber());
+        autorizacion.setCreditoAccountHolderNumber(accountOrigen.getAccountHolderNumber());
+        autorizacion.setAutorizacionType("Reversion");
+        autorizacion.setAutorizacionDateInicio(new Timestamp(System.currentTimeMillis()));
+        autorizacion.setAutorizacionDateFin(new Timestamp(System.currentTimeMillis()));
         autorizacion.setAutorizacionDateAuth1();
         autorizacion.setAutorizacionDateAuth2();
         autorizacion.setAutorizacionDetalle();
@@ -703,5 +708,6 @@ public class TransferenciaServiceImpl implements TransferenciaService {
         return null;
     }
 */
+
 
 }

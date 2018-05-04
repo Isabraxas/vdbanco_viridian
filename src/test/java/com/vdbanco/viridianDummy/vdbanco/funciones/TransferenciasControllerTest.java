@@ -4,6 +4,7 @@ import com.jayway.restassured.RestAssured;
 import com.vdbanco.viridianDummy.ViridianDummyApplication;
 import com.vdbanco.viridianDummy.error.ErrorSaldoInsuficiente;
 import com.vdbanco.viridianDummy.funciones.ProductosClienteModel;
+import com.vdbanco.viridianDummy.funciones.inputModel.TransferenciaOtroBancoRequest;
 import com.vdbanco.viridianDummy.funciones.inputModel.TransferenciaPropiaRequest;
 import com.vdbanco.viridianDummy.funciones.inputModel.TransferenciaTerceroRequest;
 import com.vdbanco.viridianDummy.funciones.outputModel.TranferenciasResponse;
@@ -62,8 +63,8 @@ public class TransferenciasControllerTest {
 
 
     @Test
-    public void postTransfereciaCuentasPropiasNotFound(){
-        //TODO consultar primero las cuentas propias de un usuario en particular y luego con esa info mandar los parametros
+    public void postTransfereciaCuentasPropiasNotWork(){
+        //DO consultar primero las cuentas propias de un usuario en particular y luego con esa info mandar los parametros
 
         TransferenciaPropiaRequest transferenciaPropiaRequest = new TransferenciaPropiaRequest();
         transferenciaPropiaRequest.setAccountNumberOrigen("1230000003");
@@ -83,7 +84,7 @@ public class TransferenciasControllerTest {
 
     @Test
     public void postTransferenciaCuentasTerceros(){
-        //TODO verificar que la s cuentas sean de terceros dentro del servicio
+        //DO verificar que la s cuentas sean de terceros dentro del servicio
 
         TransferenciaTerceroRequest transferenciaTerceroRequest = new TransferenciaTerceroRequest();
         transferenciaTerceroRequest.setAccountNumberOrigen("1230000003");
@@ -103,7 +104,7 @@ public class TransferenciasControllerTest {
 
     @Test
     public void postTransferenciaCuentasTercerosNotWork(){
-        //TODO verificar que la s cuentas sean de terceros dentro del servicio
+        //DO verificar que la s cuentas sean de terceros dentro del servicio
 
         TransferenciaTerceroRequest transferenciaTerceroRequest = new TransferenciaTerceroRequest();
         transferenciaTerceroRequest.setAccountNumberOrigen("1230000003");
@@ -125,23 +126,47 @@ public class TransferenciasControllerTest {
 
     @Test
     public void postTransferenciaCuentasOtrosBancos(){
-        //TODO verificar que la s cuentas sean de terceros dentro del servicio
+        //DO verificar que la s cuentas sean de terceros dentro del servicio
 
-        TransferenciaTerceroRequest transferenciaTerceroRequest = new TransferenciaTerceroRequest();
-        transferenciaTerceroRequest.setAccountNumberOrigen("1230000003");
-        transferenciaTerceroRequest.setAccountNumberDestino("1230000001");
-        transferenciaTerceroRequest.setNombreDestinatario("Rooney Jacobs");
-        transferenciaTerceroRequest.setMonto(10.0);
-        transferenciaTerceroRequest.setGlossa("Transferencia en test a cuentas de terceros");
+        TransferenciaOtroBancoRequest transferenciaOtroBancoRequest = new TransferenciaOtroBancoRequest();
+        transferenciaOtroBancoRequest.setAccountNumberOrigen("1230000003");
+        transferenciaOtroBancoRequest.setAccountNumberDestino("1230000008");
+        transferenciaOtroBancoRequest.setNombreDestinatario("Karyn Goodwin");
+        transferenciaOtroBancoRequest.setNumeroBancoDestino("4");
+        transferenciaOtroBancoRequest.setNombreBancoDestino("Banco Bisa");
+        transferenciaOtroBancoRequest.setMonto(10.0);
+        transferenciaOtroBancoRequest.setGlossa("Transferencia en test a cuentas para otros bancos");
 
         TranferenciasResponse tranferenciasResponse =
                 given().contentType("application/json")
-                        .body(transferenciaTerceroRequest)
+                        .body(transferenciaOtroBancoRequest)
                         .when().post("/users/tranferencias/terceros").as(TranferenciasResponse.class);
 
         assertTrue(tranferenciasResponse.getEstado().equals("successful"));
 
     }
 
+
+    @Test
+    public void postTransferenciaCuentasOtrosBancosNotWork(){
+        //TODO verificar que la s cuentas sean de otros bancos
+
+        TransferenciaOtroBancoRequest transferenciaOtroBancoRequest = new TransferenciaOtroBancoRequest();
+        transferenciaOtroBancoRequest.setAccountNumberOrigen("1230000003");
+        transferenciaOtroBancoRequest.setAccountNumberDestino("1230000008");
+        transferenciaOtroBancoRequest.setNombreDestinatario("Rooney Jacobs");
+        transferenciaOtroBancoRequest.setNumeroBancoDestino("4");
+        transferenciaOtroBancoRequest.setNombreBancoDestino("Banco Bisa");
+        transferenciaOtroBancoRequest.setMonto(10.0);
+        transferenciaOtroBancoRequest.setGlossa("Transferencia en test a cuentas para otros bancos");
+
+        ErrorSaldoInsuficiente tranferenciasResponse =
+                given().contentType("application/json")
+                        .body(transferenciaOtroBancoRequest)
+                        .when().post("/users/tranferencias/terceros").as(ErrorSaldoInsuficiente.class);
+
+        assertTrue(tranferenciasResponse.getEstado().equals("error"));
+
+    }
 
 }
