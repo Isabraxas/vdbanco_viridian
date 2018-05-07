@@ -705,6 +705,8 @@ public class TransferenciaServiceImpl implements TransferenciaService {
         // la autorizacion debe crearce aparte no se si a mano o con un metodo especifico para esta
         //comprobar que la uatorizacion type es para una reversion
         // realizar la reversion
+        //IMPORTANTE: El servicio encargado de comprobar que la reversion no se aplique mas de una vez sobre una transaccion
+        // y tambien de que no se aplique sobre una reversion.
         if (!transaccionList.isEmpty() && autorizacion != null) {
 
             int dias = (int) ((transaccionList.get(0).getTransaccionDate().getTime() - autorizacion.getAutorizacionDateFin().getTime()) / 86400000);
@@ -731,7 +733,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
                     transferenciaReversionRequest.setMonto(transaccionDestino.getTransaccionMonto());
                     transferenciaReversionRequest.setGlossa("Reversion de transaccion numero:" + reversionRequest.getNumeroTransacion());
 
-                    this.createTranferencia(transferenciaReversionRequest);
+                    return  this.createTranferencia(transferenciaReversionRequest);
                 }
             }
 

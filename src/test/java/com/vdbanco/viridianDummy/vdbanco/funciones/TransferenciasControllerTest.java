@@ -2,8 +2,10 @@ package com.vdbanco.viridianDummy.vdbanco.funciones;
 
 import com.jayway.restassured.RestAssured;
 import com.vdbanco.viridianDummy.ViridianDummyApplication;
+import com.vdbanco.viridianDummy.domain.AutorizacionModel;
 import com.vdbanco.viridianDummy.error.ErrorSaldoInsuficiente;
 import com.vdbanco.viridianDummy.funciones.ProductosClienteModel;
+import com.vdbanco.viridianDummy.funciones.inputModel.ReversionRequest;
 import com.vdbanco.viridianDummy.funciones.inputModel.TransferenciaOtroBancoRequest;
 import com.vdbanco.viridianDummy.funciones.inputModel.TransferenciaPropiaRequest;
 import com.vdbanco.viridianDummy.funciones.inputModel.TransferenciaTerceroRequest;
@@ -166,6 +168,46 @@ public class TransferenciasControllerTest {
                         .when().post("/users/tranferencias/terceros").as(ErrorSaldoInsuficiente.class);
 
         assertTrue(tranferenciasResponse.getEstado().equals("error"));
+
+    }
+
+    @Test
+    public void reversionTransferencia(){
+
+        AutorizacionModel autorizacionReversion = given().pathParam("id", "30001")
+                .when().get("/autorizacions/{id}")
+                .then().extract().body().as(AutorizacionModel.class);
+        autorizacionReversion.setAutorizacionId(2000008L);
+        autorizacionReversion.setAutorizacionNumber("AU002000008");
+        autorizacionReversion.setEmpleadoNumber("E0003000008");
+
+        AutorizacionModel autorizacionResponse= given()
+                .contentType("application/json")
+                .body(autorizacionReversion)
+                .when().post("/autorizacions")
+                .as(AutorizacionModel.class);
+
+        ReversionRequest reversionRequest = new ReversionRequest();
+        reversionRequest.setNumeroAutorizacion(autorizacionReversion.getAutorizacionNumber());
+        reversionRequest.setNumeroTransacion("T0003000000007");
+
+        TranferenciasResponse tranferenciasResponse =
+                given().contentType("application/json")
+                        .body(reversionRequest)
+                        .when().post("/users/reversion/transferencia").as(TranferenciasResponse.class);
+
+        assertTrue(tranferenciasResponse.getEstado().equals("successful"));
+
+
+        AutorizacionModel autorizacion = new AutorizacionModel();
+        autorizacion.setAutorizacionId(2000008L);
+        autorizacion.setAutorizacionNumber("E0002000008");
+
+        given().
+                contentType("application/json")
+                .body(autorizacion)
+                .when().delete("/autorizacions")
+                .then().statusCode(200);
 
     }
 
