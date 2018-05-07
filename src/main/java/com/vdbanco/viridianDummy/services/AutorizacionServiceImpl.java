@@ -44,8 +44,12 @@ public class AutorizacionServiceImpl implements AutorizacionService{
     @Override
     public AutorizacionModel save(AutorizacionModel autorizacion) {
         boolean existe = this.autorizacionRepository.existsById(autorizacion.getAutorizacionId());
+        autorizacion.setAutorizacionNumber("AU00"+autorizacion.getAutorizacionId().toString());
         if(!existe) {
             this.autorizacionRepository.save(autorizacion);
+        }else{
+            String errorMsg = "Una autorizacion con este id ya existe en la base de datos: "+ autorizacion.getAutorizacionId() ;
+            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(autorizacion.getAutorizacionId(), "006", "Una autorizacion con este id ya existe en la base de datos", "Hemos encontrado un error intentelo mas tarde"));
         }
         return this.getByAutorizacionNumber(autorizacion.getAutorizacionNumber());
     }

@@ -50,7 +50,7 @@ public class TransferenciasController {
 
     @PostMapping(value = "/reversion/transferencia")
     public TranferenciasResponse createReversionTranferencia(@RequestBody ReversionRequest reversionRequest){
-        return this.transferenciaService.createReversionTranferencia(reversionRequest);
+        return this.transferenciaService.createReversionTransferencia(reversionRequest);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

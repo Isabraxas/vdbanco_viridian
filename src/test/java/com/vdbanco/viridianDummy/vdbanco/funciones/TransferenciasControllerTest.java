@@ -40,7 +40,7 @@ public class TransferenciasControllerTest {
 
     @Test
     public void postTransfereciaCuentasPropias(){
-        //TODO consultar primero las cuentas propias de un usuario en particular y luego con esa info mandar los parametros
+        //DO consultar primero las cuentas propias de un usuario en particular y luego con esa info mandar los parametros
 
         ProductosClienteModel productosClienteModel= given().pathParam("id", "42")
                 .when().get("/users/{id}/productos")
@@ -84,7 +84,7 @@ public class TransferenciasControllerTest {
 
     @Test
     public void postTransferenciaCuentasTerceros(){
-        //DO verificar que la s cuentas sean de terceros dentro del servicio
+        //DO verificar que las cuentas sean de terceros dentro del servicio
 
         TransferenciaTerceroRequest transferenciaTerceroRequest = new TransferenciaTerceroRequest();
         transferenciaTerceroRequest.setAccountNumberOrigen("1230000003");
@@ -104,7 +104,7 @@ public class TransferenciasControllerTest {
 
     @Test
     public void postTransferenciaCuentasTercerosNotWork(){
-        //DO verificar que la s cuentas sean de terceros dentro del servicio
+        //DO verificar que las cuentas sean de terceros dentro del servicio
 
         TransferenciaTerceroRequest transferenciaTerceroRequest = new TransferenciaTerceroRequest();
         transferenciaTerceroRequest.setAccountNumberOrigen("1230000003");
@@ -126,7 +126,7 @@ public class TransferenciasControllerTest {
 
     @Test
     public void postTransferenciaCuentasOtrosBancos(){
-        //DO verificar que la s cuentas sean de terceros dentro del servicio
+        //DO verificar que las cuentas sean de terceros dentro del servicio
 
         TransferenciaOtroBancoRequest transferenciaOtroBancoRequest = new TransferenciaOtroBancoRequest();
         transferenciaOtroBancoRequest.setAccountNumberOrigen("1230000003");
@@ -149,7 +149,7 @@ public class TransferenciasControllerTest {
 
     @Test
     public void postTransferenciaCuentasOtrosBancosNotWork(){
-        //TODO verificar que la s cuentas sean de otros bancos
+        //DO verificar que las cuentas sean de otros bancos
 
         TransferenciaOtroBancoRequest transferenciaOtroBancoRequest = new TransferenciaOtroBancoRequest();
         transferenciaOtroBancoRequest.setAccountNumberOrigen("1230000003");

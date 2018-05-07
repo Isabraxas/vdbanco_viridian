@@ -28,4 +28,8 @@ public interface TransaccionRepository extends JpaRepository<TransaccionModel, L
 
     Page<TransaccionModel> findAllByOrderByTransaccionId(Pageable pageable);
 
+    @Query(value = "SELECT * FROM TRANSACCION WHERE rownum=1 ORDER BY TRANSACCION_ID DESC", nativeQuery = true)
+    TransaccionModel findFirstByOrderByAccountIdDesc();
+
+
 }

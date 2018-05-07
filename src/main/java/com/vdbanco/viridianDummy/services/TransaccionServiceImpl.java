@@ -83,4 +83,8 @@ public class TransaccionServiceImpl implements TransaccionService {
         this.transaccionRepository.deleteById(transaccion.getTransaccionId());
     }
 
+    @Override
+    public TransaccionModel getLastTransaccion(){
+        return this.transaccionRepository.findFirstByOrderByAccountIdDesc();
+    }
 }

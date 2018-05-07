@@ -21,4 +21,6 @@ public interface TransaccionService {
     TransaccionModel update(TransaccionModel transaccion);
 
     void delete(TransaccionModel transaccion);
+
+    TransaccionModel getLastTransaccion();
 }

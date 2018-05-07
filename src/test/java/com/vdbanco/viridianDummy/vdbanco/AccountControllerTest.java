@@ -75,7 +75,6 @@ public class AccountControllerTest {
         Timestamp fechaApertura = new Timestamp(System.currentTimeMillis());
         AccountModel account = new AccountModel();
         account.setAccountId(31L);
-        account.setAccountNumber("1230000031");
         account.setAccountTipo("credito");
         account.setAccountBalance(100.00);
         account.setAccountFechaApertura(fechaApertura);

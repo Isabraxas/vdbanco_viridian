@@ -36,9 +36,10 @@ public class TransferenciaServiceImpl implements TransferenciaService {
     PersonaService personaService;
     AutorizacionService autorizacionService;
     EmpleadoService empleadoService;
+    TransaccionService transaccionService;
 
     @Autowired
-    public TransferenciaServiceImpl(AccountRepository accountRepository, TransaccionRepository transaccionRepository, AutorizacionRepository autorizacionRepository, AccountService accountService, AccountHolderService accountHolderService, PersonaService personaService, AutorizacionService autorizacionService, EmpleadoService empleadoService) {
+    public TransferenciaServiceImpl(AccountRepository accountRepository, TransaccionRepository transaccionRepository, AutorizacionRepository autorizacionRepository, AccountService accountService, AccountHolderService accountHolderService, PersonaService personaService, AutorizacionService autorizacionService, EmpleadoService empleadoService, TransaccionService transaccionService) {
         this.accountRepository = accountRepository;
         this.transaccionRepository = transaccionRepository;
         this.autorizacionRepository = autorizacionRepository;
@@ -47,6 +48,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
         this.personaService = personaService;
         this.autorizacionService = autorizacionService;
         this.empleadoService = empleadoService;
+        this.transaccionService = transaccionService;
     }
 
     @Override
@@ -78,7 +80,9 @@ public class TransferenciaServiceImpl implements TransferenciaService {
             //Para prueba
             AutorizacionModel autorizacionTransaccion = new AutorizacionModel();
             autorizacionTransaccion.setAutorizacionNumber("AUXXXX");
-            final String transaccionNumber= "T0003000000004";
+
+            TransaccionModel lastTransaccion = this.transaccionService.getLastTransaccion();
+            final String transaccionNumber = "T000"+(Long.valueOf(lastTransaccion.getTransaccionNumber().substring(4)) + 1 );
             //
 
             log.info("Inicio proceso Cuenta origen");
@@ -90,7 +94,6 @@ public class TransferenciaServiceImpl implements TransferenciaService {
             transaccionOrigen.setTransaccionDate(fechaTransO);
             //Automatizar
             transaccionOrigen.setAutorizacionNumber(autorizacionTransaccion.getAutorizacionNumber());
-            //transaccionOrigen.setTransaccionId(3000000004L);
             transaccionOrigen.setTransaccionNumber(transaccionNumber);
 
             log.info("Actualizacion de balance en la cuenta de origen");
@@ -110,7 +113,6 @@ public class TransferenciaServiceImpl implements TransferenciaService {
             transaccionDestino.setTransaccionDate(fechaTransD);
             //Automatizar
             transaccionDestino.setAutorizacionNumber(autorizacionTransaccion.getAutorizacionNumber());
-            //transaccionDestino.setTransaccionId(3000000005L);
             transaccionDestino.setTransaccionNumber(transaccionNumber);
 
             log.info("Actualizacion de balance en la cuenta de destino");
@@ -141,6 +143,86 @@ public class TransferenciaServiceImpl implements TransferenciaService {
 
     }
 
+
+
+    public TranferenciasResponse createTranferencia(TransferenciaReversionRequest transferenciaPropiaRequest) {
+        log.info("Buscando Cuentas");
+        AccountModel accountOrigen = this.accountService.getByAccountNumber(transferenciaPropiaRequest.getAccountNumberOrigen());
+        AccountModel accountDestino = this.accountService.getByAccountNumber(transferenciaPropiaRequest.getAccountNumberDestino());
+
+        log.info("Comprobando si el saldo es suficiente");
+        if (transferenciaPropiaRequest.getMonto() < accountOrigen.getAccountBalance()) {
+
+            log.info("Iniciando la Transaccion");
+            TransaccionModel transaccionOrigen = new TransaccionModel();
+            TransaccionModel transaccionDestino = new TransaccionModel();
+            Timestamp fechaTransO = new Timestamp(System.currentTimeMillis());
+            Timestamp fechaTransD = new Timestamp(System.currentTimeMillis());
+            //Para prueba
+            AutorizacionModel autorizacionTransaccion = new AutorizacionModel();
+            autorizacionTransaccion.setAutorizacionNumber("AUXXXX");
+
+            TransaccionModel lastTransaccion = this.transaccionService.getLastTransaccion();
+            final String transaccionNumber = "T000"+(Long.valueOf(lastTransaccion.getTransaccionNumber().substring(4)) + 1 );
+            //
+
+            log.info("Inicio proceso Cuenta origen");
+            //Origen
+            transaccionOrigen.setAccountNumber(transferenciaPropiaRequest.getAccountNumberOrigen());
+            transaccionOrigen.setTransaccionMonto((-1)* transferenciaPropiaRequest.getMonto());
+            transaccionOrigen.setTransaccionDetalle("Tranferencia cuentas propias");
+            transaccionOrigen.setTransaccionGlossa(transferenciaPropiaRequest.getGlossa());
+            transaccionOrigen.setTransaccionDate(fechaTransO);
+            //Automatizar
+            transaccionOrigen.setAutorizacionNumber(autorizacionTransaccion.getAutorizacionNumber());
+            transaccionOrigen.setTransaccionNumber(transaccionNumber);
+
+            log.info("Actualizacion de balance en la cuenta de origen");
+            Double balanceO = accountOrigen.getAccountBalance() - transferenciaPropiaRequest.getMonto();
+            accountOrigen.setAccountBalance(balanceO);
+            this.accountRepository.save(accountOrigen);
+
+            log.info("Fin proceso cuenta origen");
+            //FOrigen
+
+            log.info("Inicio proceso Cuenta destino");
+            //Destino
+            transaccionDestino.setAccountNumber(transferenciaPropiaRequest.getAccountNumberDestino());
+            transaccionDestino.setTransaccionMonto(transferenciaPropiaRequest.getMonto());
+            transaccionDestino.setTransaccionDetalle("Tranferencia cuentas propias");
+            transaccionDestino.setTransaccionGlossa(transferenciaPropiaRequest.getGlossa());
+            transaccionDestino.setTransaccionDate(fechaTransD);
+            //Automatizar
+            transaccionDestino.setAutorizacionNumber(autorizacionTransaccion.getAutorizacionNumber());
+            transaccionDestino.setTransaccionNumber(transaccionNumber);
+
+            log.info("Actualizacion de balance en la cuenta de destino");
+            Double balanceD = accountDestino.getAccountBalance() + transferenciaPropiaRequest.getMonto();
+            accountDestino.setAccountBalance(balanceD);
+            this.accountRepository.save(accountDestino);
+
+            log.info("Fin proceso cuenta destino");
+            //FDestino
+
+            log.info("Guardando registro de transacciones");
+            this.transaccionRepository.save(transaccionOrigen);
+            this.transaccionRepository.save(transaccionDestino);
+            log.info("Finalizando transaccion");
+
+            TranferenciasResponse pagoResponse = new TranferenciasResponse();
+            pagoResponse.setFecha(fechaTransO);
+            pagoResponse.setEstado("successful");
+            pagoResponse.setDetalle(transaccionOrigen);
+
+            return pagoResponse;
+
+        }else{
+
+            String errorMsg = "La cuenta de origen no tiene saldo suficiente para este monto: "+ transferenciaPropiaRequest.getMonto() ;
+            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(accountOrigen.getAccountId(), "002", "El saldo es insuficiente para procesar la transferencia", "Hemos encontrado un error intentelo nuevamente"));
+        }
+
+    }
 
     @Override
     public TranferenciasResponse createTranferenciaByCuentasTerceros(TransferenciaTerceroRequest transferenciaTerceroRequest) {
@@ -614,65 +696,49 @@ public class TransferenciaServiceImpl implements TransferenciaService {
     }
 
     @Override
-    public TranferenciasResponse createReversionTranferencia(ReversionRequest reversionRequest) {
+    public TranferenciasResponse createReversionTransferencia(ReversionRequest reversionRequest) {
 
         List<TransaccionModel> transaccionList = transaccionRepository.findByTransaccionNumber(reversionRequest.getNumeroTransacion());
         AutorizacionModel autorizacion = autorizacionService.getByAutorizacionNumber(reversionRequest.getNumeroAutorizacion());
 
-        //TODO crear y obtener los datos de la autorizacion referente a la reversion.
-        //TODO comprobar que la fecha entre la transacion y la autorizacion no sea mayor a un dia.
+        //comprobar tanto que tarnasacciones con ese numero como autorizacion existen
+        // la autorizacion debe crearce aparte no se si a mano o con un metodo especifico para esta
+        //comprobar que la uatorizacion type es para una reversion
+        // realizar la reversion
+        if (!transaccionList.isEmpty() && autorizacion != null) {
 
+            int dias = (int) ((transaccionList.get(0).getTransaccionDate().getTime() - autorizacion.getAutorizacionDateFin().getTime()) / 86400000);
 
+            log.info("La diferencia de dias son menor 1");
+            if (dias < 1) {
 
-        int dias=(int) ((transaccionList.get(0).getTransaccionDate().getTime() - autorizacion.getAutorizacionDateFin().getTime())/86400000);
+                log.info("Comprobando el origen y el destino");
+                TransaccionModel transaccionOrigen = new TransaccionModel();
+                TransaccionModel transaccionDestino = new TransaccionModel();
+                for (TransaccionModel transaccion : transaccionList) {
+                    if (transaccion.getTransaccionMonto() < 0) {
+                        transaccionOrigen = transaccion;
+                    } else {
+                        transaccionDestino = transaccion;
+                    }
+                }
 
-        log.info("La diferencia de dias son menor 1");
-        if(dias < 1){
+                if (autorizacion.getAutorizacionType().equals("Reversion")) {
+                    TransferenciaReversionRequest transferenciaReversionRequest = new TransferenciaReversionRequest();
 
-            log.info("Comprobando el origen y el destino");
-            TransaccionModel transaccionOrigen = new TransaccionModel();
-            TransaccionModel transaccionDestino = new TransaccionModel();
-            for (TransaccionModel transaccion : transaccionList) {
-                if (transaccion.getTransaccionMonto() < 0) {
-                    transaccionOrigen = transaccion;
-                } else {
-                    transaccionDestino = transaccion;
+                    transferenciaReversionRequest.setAccountNumberOrigen(transaccionDestino.getAccountNumber());
+                    transferenciaReversionRequest.setAccountNumberDestino(transaccionOrigen.getAccountNumber());
+                    transferenciaReversionRequest.setMonto(transaccionDestino.getTransaccionMonto());
+                    transferenciaReversionRequest.setGlossa("Reversion de transaccion numero:" + reversionRequest.getNumeroTransacion());
+
+                    this.createTranferencia(transferenciaReversionRequest);
                 }
             }
 
-            if(autorizacion.getAutorizacionType().equals("Reversion transferencia")) {
 
-                //TODO comprobar que los datos de la autorizacion correspondan con el tipo de reversion de transaccion.
-                // en el autorizacion type se debe definir que tipo de transaccion es
-                if(!autorizacion.getEmpleadoNumber().isEmpty()
-                        && !autorizacion.getEmpleadoNumberAuth1().isEmpty()
-                        && autorizacion.getAutorizacionDetalle().equals("Tranferencia menor igual a 500")
-                        && transaccionOrigen.getTransaccionMonto() <= 500) {
-
-                    log.info("Creando transferencia inversa para monto menor igual a 500");
-                    //Entre cuentas propias
-                    TransferenciaPropiaRequest transferenciaPropiaRequest = new TransferenciaPropiaRequest();
-                    transferenciaPropiaRequest.setAccountNumberOrigen(transaccionDestino.getAccountNumber());
-                    transferenciaPropiaRequest.setAccountNumberDestino(transaccionOrigen.getAccountNumber());
-                    transferenciaPropiaRequest.setMonto(transaccionDestino.getTransaccionMonto());
-                    transferenciaPropiaRequest.setGlossa("Reversion" + transaccionOrigen.getAccountNumber());
-
-                    log.info("Guardando transaccion revertida");
-                    return this.createTranferenciaByCuentasPropias(transferenciaPropiaRequest);
-                }
-
-            }else {
-
-            }
-
-        }else {
-
-            return null;
         }
-
         return null;
     }
-
 
 /*
     public AutorizacionModel createAutorizacionReversionTransacciones(String accountNumberOrigen, String accountNumberDestino ){

@@ -17,5 +17,5 @@ public interface TransferenciaService {
 
     PagoResponse createPagoTarjetaCredito(PagoPrestamoRequest pagoPrestamoRequest);
 
-    TranferenciasResponse createReversionTranferencia(ReversionRequest reversionRequest);
+    TranferenciasResponse createReversionTransferencia(ReversionRequest reversionRequest);
 }

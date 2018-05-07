@@ -2,9 +2,7 @@ package com.vdbanco.viridianDummy.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -13,6 +11,8 @@ import java.sql.Timestamp;
 public class AutorizacionModel implements Serializable {
 
     @Id
+    //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "AUTH_SEQ")
+    //@SequenceGenerator(sequenceName = "AUTORIZACION_ID_SEQ", allocationSize = 1, name = "AUTH_SEQ")
     private Long autorizacionId;
     private String autorizacionNumber;
     private String empleadoNumber;
