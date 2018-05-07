@@ -2,9 +2,7 @@ package com.vdbanco.viridianDummy.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -20,6 +18,10 @@ public class UserModel implements Serializable{
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Timestamp userCreateTime;
     private String personaPersonaNumber;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "PERSONA_PERSONA_ID")
+    private PersonaModel persona;
+
 
     public Long getUserId() {
         return userId;
@@ -67,5 +69,13 @@ public class UserModel implements Serializable{
 
     public void setPersonaPersonaNumber(String personaPersonaNumber) {
         this.personaPersonaNumber = personaPersonaNumber;
+    }
+
+    public PersonaModel getPersona() {
+        return persona;
+    }
+
+    public void setPersona(PersonaModel persona) {
+        this.persona = persona;
     }
 }

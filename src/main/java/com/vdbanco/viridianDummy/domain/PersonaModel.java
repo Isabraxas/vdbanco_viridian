@@ -1,17 +1,18 @@
 package com.vdbanco.viridianDummy.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Blob;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Table(name="PERSONA")
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class PersonaModel implements Serializable {
 
     @Id
@@ -51,6 +52,7 @@ public class PersonaModel implements Serializable {
     private Blob personaFirma1;
     private Blob personaFirma2;
     private Blob personaFirma3;
+
 
     public Long getPersonaId() {
         return personaId;

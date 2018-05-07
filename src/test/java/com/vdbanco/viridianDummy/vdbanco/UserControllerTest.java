@@ -83,7 +83,7 @@ public class UserControllerTest {
         user.setUserCreateTime(new Timestamp(System.currentTimeMillis()));
         user.setUserName("Sara123");
         user.setUserPassword("123456");
-        user.setPersonaPersonaNumber("P00021");
+        //user.setPersonaPersonaNumber("P00021");
 
         UserModel userResponse= given()
                 .contentType("application/json")
@@ -93,7 +93,7 @@ public class UserControllerTest {
 
         log.info("Response: "+ userResponse.toString());
 
-        assertTrue(userResponse.getPersonaPersonaNumber().equals("P00021"));
+        //assertTrue(userResponse.getPersonaPersonaNumber().equals("P00021"));
         assertTrue(userResponse.getUserNumber().equals("E0003000003"));
 
     }
@@ -106,7 +106,7 @@ public class UserControllerTest {
         user.setUserCreateTime(new Timestamp(System.currentTimeMillis()));
         user.setUserName("Sara21");
         user.setUserPassword("123456");
-        user.setPersonaPersonaNumber("P00021");
+        //user.setPersonaPersonaNumber("P00021");
 
         UserModel userResponse= given()
                 .contentType("application/json")

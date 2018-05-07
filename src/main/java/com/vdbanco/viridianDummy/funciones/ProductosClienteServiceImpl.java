@@ -37,13 +37,14 @@ public class ProductosClienteServiceImpl implements ProductosClienteService{
         ProductosClienteModel productosClienteModel = new ProductosClienteModel();
 
         Optional<UserModel> userModel = userService.getById(id);
-        PersonaModel personaModel = personaService.getByPersonaNumber(userModel.get().getPersonaPersonaNumber());
+        //PersonaModel personaModel = personaService.getByPersonaNumber(userModel.get().getPersonaPersonaNumber());
+        PersonaModel personaModel = userModel.get().getPersona();
         AccountHolderModel accountHolderModel = accountHolderService.getAccountHolderByPersonaNumber(personaModel.getPersonaNumber());
         List<AccountModel> accountModel = accountService.getAccountByAccountHolder(accountHolderModel.getAccountHolderNumber());
 
 
         productosClienteModel.setUserId(userModel.get().getUserId());
-        productosClienteModel.setPersonaPersonaNumber(userModel.get().getPersonaPersonaNumber());
+        productosClienteModel.setPersonaPersonaNumber(userModel.get().getPersona().getPersonaNumber());
         productosClienteModel.setPersona(personaModel);
         productosClienteModel.setCuentas(accountModel);
 
