@@ -1,14 +1,19 @@
 package com.vdbanco.viridianDummy.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.hateoas.ResourceSupport;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+
 @Table(name="USER_")
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
-public class UserModel implements Serializable{
+public class UserModel extends ResourceSupport{
 
     @Id
     private Long userId;
@@ -20,6 +25,7 @@ public class UserModel implements Serializable{
     private String personaPersonaNumber;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "PERSONA_PERSONA_ID")
+    @JsonIgnore
     private PersonaModel persona;
 
 
