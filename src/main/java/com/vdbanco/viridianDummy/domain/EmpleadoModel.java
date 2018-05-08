@@ -1,8 +1,6 @@
 package com.vdbanco.viridianDummy.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Table(name = "EMPLEADO")
@@ -16,6 +14,10 @@ public class EmpleadoModel implements Serializable {
     private String empleadoCargo;
     private String empleadoAgencia;
     private String empleadoGrupo;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "PERSONA_PERSONA_ID")
+    private PersonaModel persona;
     private String personaPersonaNumber;
 
     public Long getEmpleadoId() {
@@ -64,6 +66,14 @@ public class EmpleadoModel implements Serializable {
 
     public void setEmpleadoGrupo(String empleadoGrupo) {
         this.empleadoGrupo = empleadoGrupo;
+    }
+
+    public PersonaModel getPersona() {
+        return persona;
+    }
+
+    public void setPersona(PersonaModel persona) {
+        this.persona = persona;
     }
 
     public String getPersonaPersonaNumber() {

@@ -21,6 +21,10 @@ public class TransaccionModel implements Serializable {
     private String accountNumber;
     private String transaccionDetalle;
     private String transaccionGlossa;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "AUTORIZACION_ID")
+    private AutorizacionModel autorizacion;
     private String autorizacionNumber;
 
 
@@ -78,6 +82,14 @@ public class TransaccionModel implements Serializable {
 
     public void setTransaccionGlossa(String transaccionGlossa) {
         this.transaccionGlossa = transaccionGlossa;
+    }
+
+    public AutorizacionModel getAutorizacion() {
+        return autorizacion;
+    }
+
+    public void setAutorizacion(AutorizacionModel autorizacion) {
+        this.autorizacion = autorizacion;
     }
 
     public String getAutorizacionNumber() {

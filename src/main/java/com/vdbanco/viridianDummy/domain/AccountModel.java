@@ -1,6 +1,7 @@
 package com.vdbanco.viridianDummy.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -8,6 +9,7 @@ import java.sql.Timestamp;
 
 @Table(name = "ACCOUNT")
 @Entity
+@JsonIgnoreProperties("")
 public class AccountModel implements Serializable {
 
     @Id
@@ -20,7 +22,15 @@ public class AccountModel implements Serializable {
     @JsonFormat(pattern="yyyy-MM-dd")
     private Timestamp accountFechaApertura;
     private Double accountBalance;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "ACCOUNT_HOLDER_ID")
+    private AccountHolderModel accountHolder;
     private String accountHolderNumber;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "PRODUCTOS_BANCARIOS_ID")
+    private ProductosBancariosModel productoBancario;
     private String productosBancariosNumber;
 
 
@@ -73,12 +83,28 @@ public class AccountModel implements Serializable {
         this.accountBalance = accountBalance;
     }
 
+    public AccountHolderModel getAccountHolder() {
+        return accountHolder;
+    }
+
+    public void setAccountHolder(AccountHolderModel accountHolder) {
+        this.accountHolder = accountHolder;
+    }
+
     public String getAccountHolderNumber() {
         return accountHolderNumber;
     }
 
     public void setAccountHolderNumber(String accountHolderNumber) {
         this.accountHolderNumber = accountHolderNumber;
+    }
+
+    public ProductosBancariosModel getProductoBancario() {
+        return productoBancario;
+    }
+
+    public void setProductoBancario(ProductosBancariosModel productoBancario) {
+        this.productoBancario = productoBancario;
     }
 
     public String getProductosBancariosNumber() {

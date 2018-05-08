@@ -1,9 +1,8 @@
 package com.vdbanco.viridianDummy.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Table(name = "ACCOUNT_HOLDER")
@@ -24,8 +23,16 @@ public class AccountHolderModel implements Serializable {
     private String accountHolderFirmanteNumber;
     private String accountHolderBanco;
     private String accountHolderBancoNumber;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "PERSONA_PERSONA_ID")
+    @JsonProperty(value = "persona")
+    private PersonaModel persona;
     private String personaPersonaNumber;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "JURIDICAS_JURIDICAS_ID")
+    private JuridicasModel juridica;
     private String juridicasJuridicasNumber;
+
 
 
     public Long getAccountHolderId() {
@@ -112,6 +119,14 @@ public class AccountHolderModel implements Serializable {
         return accountHolderBancoNumber;
     }
 
+    public PersonaModel getPersona() {
+        return persona;
+    }
+
+    public void setPersona(PersonaModel persona) {
+        this.persona = persona;
+    }
+
     public void setAccountHolderBancoNumber(String accountHolderBancoNumber) {
         this.accountHolderBancoNumber = accountHolderBancoNumber;
     }
@@ -122,6 +137,14 @@ public class AccountHolderModel implements Serializable {
 
     public void setPersonaPersonaNumber(String personaPersonaNumber) {
         this.personaPersonaNumber = personaPersonaNumber;
+    }
+
+    public JuridicasModel getJuridica() {
+        return juridica;
+    }
+
+    public void setJuridica(JuridicasModel juridica) {
+        this.juridica = juridica;
     }
 
     public String getJuridicasJuridicasNumber() {
