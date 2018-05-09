@@ -2,6 +2,7 @@ package com.vdbanco.viridianDummy.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.hateoas.ResourceSupport;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -10,7 +11,7 @@ import java.sql.Timestamp;
 @Table(name = "ACCOUNT")
 @Entity
 @JsonIgnoreProperties("")
-public class AccountModel implements Serializable {
+public class AccountModel extends ResourceSupport implements Serializable {
 
     @Id
     //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ACCOUNT_SEQ")

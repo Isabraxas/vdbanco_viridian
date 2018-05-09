@@ -1,28 +1,56 @@
 package com.vdbanco.viridianDummy.controller;
 
 import com.vdbanco.viridianDummy.domain.AutorizacionModel;
+import com.vdbanco.viridianDummy.domain.AutorizacionModelList;
 import com.vdbanco.viridianDummy.services.AutorizacionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(value = "/autorizacions")
 public class AutorizacionController {
 
     private AutorizacionService autorizacionService;
+    private Environment env;
 
     @Autowired
-    public AutorizacionController(AutorizacionService autorizacionService) {
+    public AutorizacionController(AutorizacionService autorizacionService, Environment env) {
         this.autorizacionService = autorizacionService;
+        this.env = env;
     }
 
     @GetMapping
-    public Page<AutorizacionModel> getAllPageable(Pageable pageable){
-        return this.autorizacionService.getAll(pageable);
+    public AutorizacionModelList getAllPageable(@RequestParam( required = false, defaultValue = "0") int page,
+                                                @RequestParam( required = false, defaultValue = "20") int size ){
+
+        PageRequest pageRequest = PageRequest.of(page,size);
+        Page<AutorizacionModel> autorizacionPages = this.autorizacionService.getAll(pageRequest);
+        List<AutorizacionModel> autorizacionList = autorizacionPages.getContent();
+
+        for (AutorizacionModel autorizacion: autorizacionList ) {
+            autorizacion.add(linkTo(methodOn(AutorizacionController.class).getAutorizacionByNumber(autorizacion.getAutorizacionNumber())).withSelfRel());
+        }
+
+        AutorizacionModelList autorizacionModelList = new AutorizacionModelList(autorizacionList);
+
+        Link linkNext = ControllerLinkBuilder.linkTo(methodOn(AutorizacionController.class).getAllPageable(pageRequest.next().getPageNumber(),pageRequest.getPageSize())).withRel("next page");
+        Link linkPrevious = ControllerLinkBuilder.linkTo(methodOn(AutorizacionController.class).getAllPageable(pageRequest.previousOrFirst().getPageNumber(),pageRequest.getPageSize())).withRel("previous page");
+        autorizacionModelList.add(linkNext);
+        autorizacionModelList.add(linkPrevious);
+        return autorizacionModelList;
+
     }
 
     @GetMapping(value = "/{id}")
@@ -32,7 +60,11 @@ public class AutorizacionController {
 
     @GetMapping(value = "/number/{number}")
     public AutorizacionModel getAutorizacionByNumber(@PathVariable String number){
-        return this.autorizacionService.getByAutorizacionNumber(number);
+
+        AutorizacionModel autorizacion = this.autorizacionService.getByAutorizacionNumber(number);
+        autorizacion.add(linkTo(methodOn(AutorizacionController.class).getAutorizacionByNumber(autorizacion.getAutorizacionNumber())).withSelfRel());
+        autorizacion.add(linkTo(methodOn(AutorizacionController.class).getAllPageable(0, Integer.parseInt(env.getProperty("spring.data.rest.max-page-size")))).withRel("Lista de autorizacions"));
+        return autorizacion;
     }
 
     @PostMapping

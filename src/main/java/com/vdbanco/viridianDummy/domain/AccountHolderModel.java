@@ -1,13 +1,14 @@
 package com.vdbanco.viridianDummy.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.hateoas.ResourceSupport;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Table(name = "ACCOUNT_HOLDER")
 @Entity
-public class AccountHolderModel implements Serializable {
+public class AccountHolderModel extends ResourceSupport implements Serializable {
 
     @Id
     private Long accountHolderId;
@@ -25,7 +26,7 @@ public class AccountHolderModel implements Serializable {
     private String accountHolderBancoNumber;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "PERSONA_PERSONA_ID")
-    @JsonProperty(value = "persona")
+    //@JsonProperty(value = "persona")
     private PersonaModel persona;
     private String personaPersonaNumber;
     @ManyToOne(fetch = FetchType.EAGER)

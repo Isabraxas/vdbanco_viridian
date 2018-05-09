@@ -1,11 +1,13 @@
 package com.vdbanco.viridianDummy.domain;
 
+import org.springframework.hateoas.ResourceSupport;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Table(name = "JURIDICAS")
 @Entity
-public class JuridicasModel implements Serializable{
+public class JuridicasModel extends ResourceSupport implements Serializable{
 
     @Id
     private Long juridicasId;

@@ -1,32 +1,59 @@
 package com.vdbanco.viridianDummy.controller;
 
 import com.vdbanco.viridianDummy.domain.AccountHolderModel;
+import com.vdbanco.viridianDummy.domain.AccountHolderModelList;
 import com.vdbanco.viridianDummy.error.EntidadError;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.services.AccountHolderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
 @RestController
 @RequestMapping(value = "/accountHolders")
 public class AccountHolderController {
 
     private AccountHolderService accountHolderService;
+    private Environment env;
 
     @Autowired
-    public AccountHolderController(AccountHolderService accountHolderService) {
+    public AccountHolderController(AccountHolderService accountHolderService, Environment env) {
         this.accountHolderService = accountHolderService;
+        this.env = env;
     }
 
     @GetMapping
-    public Page<AccountHolderModel> getAllPageable(Pageable pageable){
-        return this.accountHolderService.getAll(pageable);
+    public AccountHolderModelList getAllPageable(@RequestParam( required = false, defaultValue = "0") int page,
+                                           @RequestParam( required = false, defaultValue = "20") int size ){
+
+        PageRequest pageRequest = PageRequest.of(page,size);
+        Page<AccountHolderModel> accountHolderPages = this.accountHolderService.getAll(pageRequest);
+        List<AccountHolderModel> accountHolderList = accountHolderPages.getContent();
+
+        for (AccountHolderModel accountHolder: accountHolderList ) {
+            accountHolder.add(linkTo(methodOn(AccountHolderController.class).getAccountHolderByNumber(accountHolder.getAccountHolderNumber())).withSelfRel());
+        }
+
+        AccountHolderModelList accountHolderModelList = new AccountHolderModelList(accountHolderList);
+
+        Link linkNext = ControllerLinkBuilder.linkTo(methodOn(AccountHolderController.class).getAllPageable(pageRequest.next().getPageNumber(),pageRequest.getPageSize())).withRel("next page");
+        Link linkPrevious = ControllerLinkBuilder.linkTo(methodOn(AccountHolderController.class).getAllPageable(pageRequest.previousOrFirst().getPageNumber(),pageRequest.getPageSize())).withRel("previous page");
+        accountHolderModelList.add(linkNext);
+        accountHolderModelList.add(linkPrevious);
+        return accountHolderModelList;
+
     }
 
     @GetMapping(value = "/{id}")
@@ -36,12 +63,15 @@ public class AccountHolderController {
 
     @GetMapping(value = "/number/{number}")
     public AccountHolderModel getAccountHolderByNumber(@PathVariable String number){
-        return this.accountHolderService.getByAccountHolderNumber(number);
-    }
 
-    @GetMapping(value = "/personaNumber/{number}")
-    public AccountHolderModel getAccountHolderByPersonaNumber(@PathVariable String number){
-        return this.accountHolderService.getAccountHolderByPersonaNumber(number);
+        AccountHolderModel accountHolder = this.accountHolderService.getByAccountHolderNumber(number);
+        accountHolder.add(linkTo(methodOn(AccountHolderController.class).getAccountHolderByNumber(accountHolder.getAccountHolderNumber())).withSelfRel());
+        if(accountHolder.getPersonaPersonaNumber() != null)
+        accountHolder.add(linkTo(methodOn(PersonaController.class).getPersonaByNumber(accountHolder.getPersonaPersonaNumber())).withRel("persona"));
+        if(accountHolder.getJuridicasJuridicasNumber() != null)
+        accountHolder.add(linkTo(methodOn(JuridicasController.class).getJuridicasByNumber(accountHolder.getJuridicasJuridicasNumber())).withRel("juridica"));
+        accountHolder.add(linkTo(methodOn(AccountHolderController.class).getAllPageable(0, Integer.parseInt(env.getProperty("spring.data.rest.max-page-size")))).withRel("Lista de accountHolders"));
+        return accountHolder;
     }
 
     @PostMapping

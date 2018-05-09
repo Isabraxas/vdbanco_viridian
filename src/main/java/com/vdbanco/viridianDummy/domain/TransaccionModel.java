@@ -1,6 +1,7 @@
 package com.vdbanco.viridianDummy.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.hateoas.ResourceSupport;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -8,7 +9,7 @@ import java.sql.Timestamp;
 
 @Table(name="TRANSACCION")
 @Entity
-public class TransaccionModel implements Serializable {
+public class TransaccionModel extends ResourceSupport implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TRANS_SEQ")

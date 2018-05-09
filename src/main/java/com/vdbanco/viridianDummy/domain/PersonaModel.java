@@ -3,6 +3,7 @@ package com.vdbanco.viridianDummy.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.hateoas.ResourceSupport;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -13,7 +14,7 @@ import java.util.List;
 @Table(name="PERSONA")
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class PersonaModel implements Serializable {
+public class PersonaModel extends ResourceSupport implements Serializable {
 
     @Id
     private Long personaId;

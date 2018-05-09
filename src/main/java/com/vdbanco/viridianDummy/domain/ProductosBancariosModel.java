@@ -1,5 +1,7 @@
 package com.vdbanco.viridianDummy.domain;
 
+import org.springframework.hateoas.ResourceSupport;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -8,7 +10,7 @@ import java.io.Serializable;
 
 @Table(name = "PRODUCTOS_BANCARIOS")
 @Entity
-public class ProductosBancariosModel implements Serializable {
+public class ProductosBancariosModel extends ResourceSupport implements Serializable {
 
     @Id
     @Column(name = "PRODUCTOS_BANCARIO_ID")

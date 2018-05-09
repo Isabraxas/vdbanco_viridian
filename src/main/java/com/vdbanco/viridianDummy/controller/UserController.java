@@ -7,6 +7,7 @@ import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.services.UserService;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,28 +29,31 @@ public class UserController {
 
     // logger
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(UserController.class);
-
-    private UserService userService;
+    @Autowired
+    private Environment env;
 
     @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    private UserService userService;
+
 
     @GetMapping
-    public UserModelList  getAllPageable(Pageable pageable){
-        Page<UserModel> userPages = this.userService.getAll(pageable);
+    public UserModelList  getAllPageable(@RequestParam( required = false, defaultValue = "0") int page,
+                                         @RequestParam( required = false, defaultValue = "20") int size ){
+
+        PageRequest pageRequest = PageRequest.of(page,size);
+        Page<UserModel> userPages = this.userService.getAll(pageRequest);
         List<UserModel> userList = userPages.getContent();
+
         for (UserModel user: userList ) {
             user.add(linkTo(methodOn(UserController.class).getUserByNumber(user.getUserNumber())).withSelfRel());
         }
-        UserModelList userModelList = new UserModelList(userList);
-        log.info("Pageable next= " + pageable);
-        log.info("Pageable next= " + pageable.next());
-        pageable = pageable.next();
-        //Link link = ControllerLinkBuilder.linkTo(methodOn(UserController.class).getAllPageable(pageable1)).withRel("nextPage");
 
-        userModelList.setNextPage("http://localhost:8081/users?page=" +1);
+        UserModelList userModelList = new UserModelList(userList);
+
+        Link linkNext = ControllerLinkBuilder.linkTo(methodOn(UserController.class).getAllPageable(pageRequest.next().getPageNumber(),pageRequest.getPageSize())).withRel("next page");
+        Link linkPrevious = ControllerLinkBuilder.linkTo(methodOn(UserController.class).getAllPageable(pageRequest.previousOrFirst().getPageNumber(),pageRequest.getPageSize())).withRel("previous page");
+        userModelList.add(linkNext);
+        userModelList.add(linkPrevious);
         return userModelList;
     }
 
@@ -58,18 +62,18 @@ public class UserController {
         Pageable pageable = null;
         Optional<UserModel> user = this.userService.getById(id);
         user.get().add(linkTo(methodOn(PersonaController.class).getPersonaByNumber(user.get().getPersonaPersonaNumber())).withRel("Persona detalle"));
-        user.get().add(linkTo(methodOn(UserController.class).getAllPageable(pageable)).withRel("Lista de eventos"));
+        user.get().add(linkTo(methodOn(UserController.class).getAllPageable(0, Integer.parseInt(env.getProperty("spring.data.rest.max-page-size")))).withRel("Lista de eventos"));
         return user;
     }
 
     @GetMapping(value = "/number/{number}", produces = MediaTypes.HAL_JSON_VALUE)
     public UserModel getUserByNumber(@PathVariable String number){
 
-        Pageable pageable = null;
         UserModel user = this.userService.getByUserNumber(number);
         Link link = ControllerLinkBuilder.linkTo(UserController.class).slash("number").slash(user.getUserNumber()).withSelfRel();
         user.add(link);
-        user.add(linkTo(methodOn(UserController.class).getAllPageable(pageable)).withRel("Lista de eventos"));
+        user.add(linkTo(methodOn(PersonaController.class).getPersonaByNumber(user.getPersonaPersonaNumber())).withRel("Persona detalle"));
+        user.add(linkTo(methodOn(UserController.class).getAllPageable(0, Integer.parseInt(env.getProperty("spring.data.rest.max-page-size")))).withRel("Lista de eventos"));
         return user;
     }
 

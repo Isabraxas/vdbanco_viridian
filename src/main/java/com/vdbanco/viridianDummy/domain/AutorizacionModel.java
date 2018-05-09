@@ -1,6 +1,7 @@
 package com.vdbanco.viridianDummy.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.hateoas.ResourceSupport;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -8,7 +9,7 @@ import java.sql.Timestamp;
 
 @Table(name="AUTORIZACION")
 @Entity
-public class AutorizacionModel implements Serializable {
+public class AutorizacionModel extends ResourceSupport implements Serializable {
 
     @Id
     //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "AUTH_SEQ")
