@@ -67,7 +67,7 @@ public class EmpleadoController {
         EmpleadoModel empleado = this.empleadoService.getByEmpleadoNumber(number);
         empleado.add(linkTo(methodOn(EmpleadoController.class).getEmpleadoByNumber(empleado.getEmpleadoNumber())).withSelfRel());
         empleado.add(linkTo(methodOn(PersonaController.class).getPersonaByNumber(empleado.getPersonaPersonaNumber())).withRel("persona"));
-        empleado.add(linkTo(methodOn(EmpleadoController.class).getAllPageable(0, Integer.parseInt(env.getProperty("spring.data.rest.max-page-size")))).withRel("Lista de eventos"));
+        empleado.add(linkTo(methodOn(EmpleadoController.class).getAllPageable(0, Integer.parseInt(env.getProperty("spring.data.rest.max-page-size")))).withRel("Lista de empleados"));
         return empleado;
     }
 

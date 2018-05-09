@@ -4,6 +4,7 @@ import com.vdbanco.viridianDummy.domain.AccountModel;
 import com.vdbanco.viridianDummy.domain.AccountModelList;
 import com.vdbanco.viridianDummy.error.EntidadError;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
+import com.vdbanco.viridianDummy.funciones.controller.MovimientosController;
 import com.vdbanco.viridianDummy.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -68,7 +69,9 @@ public class AccountController {
         account.add(linkTo(methodOn(AccountController.class).getAccountByNumber(account.getAccountNumber())).withSelfRel());
         account.add(linkTo(methodOn(AccountHolderController.class).getAccountHolderByNumber(account.getAccountHolderNumber())).withRel("account holder"));
         account.add(linkTo(methodOn(ProductosBancariosController.class).getProductosBancariosByNumber(account.getProductosBancariosNumber())).withRel("producto bancario"));
-        account.add(linkTo(methodOn(AccountController.class).getAllPageable(0, Integer.parseInt(env.getProperty("spring.data.rest.max-page-size")))).withRel("Lista de eventos"));
+        account.add(linkTo(methodOn(MovimientosController.class).getMovimientosByAccountNumber(account.getAccountNumber())).withRel("account movimientos"));
+        account.add(linkTo(methodOn(MovimientosController.class).getMovimientosByAccountNumberAndLastMonths(account.getAccountNumber(),1)).withRel("account movimientos mes pasado"));
+        account.add(linkTo(methodOn(AccountController.class).getAllPageable(0, Integer.parseInt(env.getProperty("spring.data.rest.max-page-size")))).withRel("Lista de productos bancarios"));
         return account;
     }
 

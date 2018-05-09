@@ -1,6 +1,7 @@
 package com.vdbanco.viridianDummy.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.hateoas.ResourceSupport;
 
@@ -26,11 +27,13 @@ public class AccountModel extends ResourceSupport implements Serializable {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ACCOUNT_HOLDER_ID")
+    @JsonIgnore
     private AccountHolderModel accountHolder;
     private String accountHolderNumber;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "PRODUCTOS_BANCARIOS_ID")
+    @JsonIgnore
     private ProductosBancariosModel productoBancario;
     private String productosBancariosNumber;
 

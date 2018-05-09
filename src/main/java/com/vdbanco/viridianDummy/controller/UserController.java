@@ -73,7 +73,7 @@ public class UserController {
         Link link = ControllerLinkBuilder.linkTo(UserController.class).slash("number").slash(user.getUserNumber()).withSelfRel();
         user.add(link);
         user.add(linkTo(methodOn(PersonaController.class).getPersonaByNumber(user.getPersonaPersonaNumber())).withRel("Persona detalle"));
-        user.add(linkTo(methodOn(UserController.class).getAllPageable(0, Integer.parseInt(env.getProperty("spring.data.rest.max-page-size")))).withRel("Lista de eventos"));
+        user.add(linkTo(methodOn(UserController.class).getAllPageable(0, Integer.parseInt(env.getProperty("spring.data.rest.max-page-size")))).withRel("Lista de usuarios"));
         return user;
     }
 

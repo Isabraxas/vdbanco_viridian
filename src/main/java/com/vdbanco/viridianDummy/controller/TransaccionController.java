@@ -69,7 +69,7 @@ public class TransaccionController {
 
             transaccion.add(linkTo(methodOn(TransaccionController.class).getTransaccionByNumber(transaccion.getTransaccionNumber())).withSelfRel());
             transaccion.add(linkTo(methodOn(AutorizacionController.class).getAutorizacionByNumber(transaccion.getAutorizacionNumber())).withSelfRel());
-            transaccion.add(linkTo(methodOn(TransaccionController.class).getAllPageable(0, Integer.parseInt(env.getProperty("spring.data.rest.max-page-size")))).withRel("Lista de transaccions"));
+            transaccion.add(linkTo(methodOn(TransaccionController.class).getAllPageable(0, Integer.parseInt(env.getProperty("spring.data.rest.max-page-size")))).withRel("Lista de transacciones"));
 
         }
         return transaccionList;

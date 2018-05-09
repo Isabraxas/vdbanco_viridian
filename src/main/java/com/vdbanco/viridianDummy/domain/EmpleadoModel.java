@@ -1,5 +1,6 @@
 package com.vdbanco.viridianDummy.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.hateoas.ResourceSupport;
 
 import javax.persistence.*;
@@ -19,6 +20,7 @@ public class EmpleadoModel extends ResourceSupport implements Serializable {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "PERSONA_PERSONA_ID")
+    @JsonIgnore
     private PersonaModel persona;
     private String personaPersonaNumber;
 

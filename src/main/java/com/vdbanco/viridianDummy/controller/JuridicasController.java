@@ -67,7 +67,7 @@ public class JuridicasController {
         JuridicasModel juridicas = this.juridicasService.getByJuridicasNumber(number);
         juridicas.add(linkTo(methodOn(JuridicasController.class).getJuridicasByNumber(juridicas.getJuridicasNumber())).withSelfRel());
         juridicas.add(linkTo(methodOn(PersonaController.class).getPersonaByNumber(juridicas.getJuridicasRepresentanteLegalNumber())).withRel("representante legal"));
-        juridicas.add(linkTo(methodOn(JuridicasController.class).getAllPageable(0, Integer.parseInt(env.getProperty("spring.data.rest.max-page-size")))).withRel("Lista de eventos"));
+        juridicas.add(linkTo(methodOn(JuridicasController.class).getAllPageable(0, Integer.parseInt(env.getProperty("spring.data.rest.max-page-size")))).withRel("Lista de juridicas"));
         return juridicas;
     }
 

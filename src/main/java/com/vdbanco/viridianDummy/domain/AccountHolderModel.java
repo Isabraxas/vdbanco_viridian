@@ -1,5 +1,6 @@
 package com.vdbanco.viridianDummy.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.hateoas.ResourceSupport;
 
@@ -27,10 +28,12 @@ public class AccountHolderModel extends ResourceSupport implements Serializable 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "PERSONA_PERSONA_ID")
     //@JsonProperty(value = "persona")
+    @JsonIgnore
     private PersonaModel persona;
     private String personaPersonaNumber;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "JURIDICAS_JURIDICAS_ID")
+    @JsonIgnore
     private JuridicasModel juridica;
     private String juridicasJuridicasNumber;
 

@@ -63,7 +63,7 @@ public class AutorizacionController {
 
         AutorizacionModel autorizacion = this.autorizacionService.getByAutorizacionNumber(number);
         autorizacion.add(linkTo(methodOn(AutorizacionController.class).getAutorizacionByNumber(autorizacion.getAutorizacionNumber())).withSelfRel());
-        autorizacion.add(linkTo(methodOn(AutorizacionController.class).getAllPageable(0, Integer.parseInt(env.getProperty("spring.data.rest.max-page-size")))).withRel("Lista de autorizacions"));
+        autorizacion.add(linkTo(methodOn(AutorizacionController.class).getAllPageable(0, Integer.parseInt(env.getProperty("spring.data.rest.max-page-size")))).withRel("Lista de autorizaciones"));
         return autorizacion;
     }
 

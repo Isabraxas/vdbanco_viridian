@@ -1,6 +1,7 @@
 package com.vdbanco.viridianDummy.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.hateoas.ResourceSupport;
 
 import javax.persistence.*;
@@ -25,6 +26,7 @@ public class TransaccionModel extends ResourceSupport implements Serializable {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "AUTORIZACION_ID")
+    @JsonIgnore
     private AutorizacionModel autorizacion;
     private String autorizacionNumber;
 
