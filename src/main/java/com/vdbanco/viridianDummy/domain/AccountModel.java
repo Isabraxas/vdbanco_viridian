@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.hateoas.ResourceSupport;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -15,9 +16,11 @@ import java.sql.Timestamp;
 public class AccountModel extends ResourceSupport implements Serializable {
 
     @Id
-    //@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ACCOUNT_SEQ")
-    //@SequenceGenerator(sequenceName = "ACCOUNT_ID_SEQ", allocationSize = 1, name = "ACCOUNT_SEQ")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ACCOUNT_SEQ")
+    @SequenceGenerator(sequenceName = "ACCOUNT_ID_SEQ", allocationSize = 1, name = "ACCOUNT_SEQ")
     private Long accountId;
+
+    @NotNull
     private String accountNumber;
     private String accountTipo;
     private String accountNaturaleza;
@@ -29,12 +32,16 @@ public class AccountModel extends ResourceSupport implements Serializable {
     @JoinColumn(name = "ACCOUNT_HOLDER_ID")
     @JsonIgnore
     private AccountHolderModel accountHolder;
+
+    @NotNull
     private String accountHolderNumber;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "PRODUCTOS_BANCARIOS_ID")
     @JsonIgnore
     private ProductosBancariosModel productoBancario;
+
+    @NotNull
     private String productosBancariosNumber;
 
 

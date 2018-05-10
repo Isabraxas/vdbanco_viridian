@@ -2,6 +2,7 @@ package com.vdbanco.viridianDummy.controller;
 
 import com.vdbanco.viridianDummy.domain.EmpleadoModel;
 import com.vdbanco.viridianDummy.domain.EmpleadoModelList;
+import com.vdbanco.viridianDummy.error.ConflictsException;
 import com.vdbanco.viridianDummy.error.EntidadError;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.services.EmpleadoService;
@@ -14,6 +15,7 @@ import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,13 +72,14 @@ public class EmpleadoController {
         return empleado;
     }
 
+    @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping
-    public EmpleadoModel saveEmpleado(@RequestBody EmpleadoModel empleado){
+    public EmpleadoModel saveEmpleado(@RequestBody @Valid EmpleadoModel empleado){
         return this.empleadoService.save(empleado);
     }
 
     @PutMapping
-    public EmpleadoModel updateEmpleado(@RequestBody EmpleadoModel empleado){
+    public EmpleadoModel updateEmpleado(@RequestBody @Valid EmpleadoModel empleado){
 
         return this.empleadoService.update(empleado);
     }
@@ -89,6 +92,16 @@ public class EmpleadoController {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoEncontradoRestException.class)
     public EntidadError handleNotFound(NoEncontradoRestException exception){
+        EntidadError error = new EntidadError();
+        error.setId(exception.getErrorDetalle().getId());
+        error.setEstado("error");
+        error.setError(exception.getErrorDetalle());
+        return error;
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(ConflictsException.class)
+    public EntidadError handleConflict(ConflictsException exception){
         EntidadError error = new EntidadError();
         error.setId(exception.getErrorDetalle().getId());
         error.setEstado("error");

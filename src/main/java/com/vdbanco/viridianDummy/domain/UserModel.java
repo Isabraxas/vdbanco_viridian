@@ -20,13 +20,22 @@ public class UserModel extends ResourceSupport{
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "USER_SEQ")
     @SequenceGenerator(sequenceName = "USER_ID_SEQ", allocationSize = 1, name = "USER_SEQ")
     private Long userId;
+
     @NotNull
     private String userNumber;
+
+    @NotNull
     private String userName;
+
+    @NotNull
     private String userPassword;
+
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Timestamp userCreateTime;
+
+    @NotNull
     private String personaPersonaNumber;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "PERSONA_PERSONA_ID")
     @JsonIgnore

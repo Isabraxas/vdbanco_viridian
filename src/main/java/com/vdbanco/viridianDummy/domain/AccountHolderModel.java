@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.hateoas.ResourceSupport;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Table(name = "ACCOUNT_HOLDER")
@@ -12,7 +13,11 @@ import java.io.Serializable;
 public class AccountHolderModel extends ResourceSupport implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ACCOUNT_HOLDER_SEQ")
+    @SequenceGenerator(sequenceName = "ACCOUNT_HOLDER_ACCOUNT_HOLDER_", allocationSize = 1, name = "ACCOUNT_HOLDER_SEQ")
     private Long accountHolderId;
+
+    @NotNull
     private String accountHolderNumber;
     private String accountHolderTipo;
     private String accountHolderTitular;
@@ -27,14 +32,18 @@ public class AccountHolderModel extends ResourceSupport implements Serializable 
     private String accountHolderBancoNumber;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "PERSONA_PERSONA_ID")
-    //@JsonProperty(value = "persona")
     @JsonIgnore
     private PersonaModel persona;
+
+    @NotNull
     private String personaPersonaNumber;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "JURIDICAS_JURIDICAS_ID")
     @JsonIgnore
     private JuridicasModel juridica;
+
+    @NotNull
     private String juridicasJuridicasNumber;
 
 

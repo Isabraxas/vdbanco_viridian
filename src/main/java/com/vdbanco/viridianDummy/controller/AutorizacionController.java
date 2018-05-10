@@ -2,6 +2,9 @@ package com.vdbanco.viridianDummy.controller;
 
 import com.vdbanco.viridianDummy.domain.AutorizacionModel;
 import com.vdbanco.viridianDummy.domain.AutorizacionModelList;
+import com.vdbanco.viridianDummy.error.ConflictsException;
+import com.vdbanco.viridianDummy.error.EntidadError;
+import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.services.AutorizacionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -10,8 +13,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,12 +73,12 @@ public class AutorizacionController {
     }
 
     @PostMapping
-    public AutorizacionModel saveAutorizacion(@RequestBody AutorizacionModel autorizacion){
+    public AutorizacionModel saveAutorizacion(@RequestBody @Valid AutorizacionModel autorizacion){
         return this.autorizacionService.save(autorizacion);
     }
 
     @PutMapping
-    public AutorizacionModel updateAutorizacion(@RequestBody AutorizacionModel autorizacion){
+    public AutorizacionModel updateAutorizacion(@RequestBody @Valid AutorizacionModel autorizacion){
 
         return this.autorizacionService.update(autorizacion);
     }
@@ -81,6 +86,27 @@ public class AutorizacionController {
     @DeleteMapping
     public void deleteAutorizacion(@RequestBody AutorizacionModel autorizacion){
         this.autorizacionService.delete(autorizacion);
+    }
+
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NoEncontradoRestException.class)
+    public EntidadError handleNotFound(NoEncontradoRestException exception){
+        EntidadError error = new EntidadError();
+        error.setId(exception.getErrorDetalle().getId());
+        error.setEstado("error");
+        error.setError(exception.getErrorDetalle());
+        return error;
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(ConflictsException.class)
+    public EntidadError handleConflict(ConflictsException exception){
+        EntidadError error = new EntidadError();
+        error.setId(exception.getErrorDetalle().getId());
+        error.setEstado("error");
+        error.setError(exception.getErrorDetalle());
+        return error;
     }
 
 }

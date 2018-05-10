@@ -1,6 +1,7 @@
 package com.vdbanco.viridianDummy.services;
 
 import com.vdbanco.viridianDummy.domain.PersonaModel;
+import com.vdbanco.viridianDummy.error.ConflictsException;
 import com.vdbanco.viridianDummy.error.ErrorDetalle;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.repository.PersonaRepository;
@@ -50,36 +51,46 @@ public class PersonaServiceImpl implements PersonaService {
     }
 
     @Override
-    public PersonaModel save(PersonaModel persona) {
-        log.info("Buscando existencia de persona");
-        boolean existe = this.personaRepository.existsById(persona.getPersonaId());
-        if(!existe) {
-            log.info("Se puede crear la persona");
-            this.personaRepository.save(persona);
-            log.info("Persona creada");
-        }
-        return this.getByPersonaNumber(persona.getPersonaNumber());
-    }
-
-    @Override
     public Page<PersonaModel> getAll(Pageable pageable) {
         return this.personaRepository.findAllByOrderByPersonaId(pageable);
     }
 
     @Override
-    public PersonaModel update(PersonaModel persona) {
-        log.info("Buscando existencia de persona");
-        boolean existe = this.personaRepository.existsById(persona.getPersonaId());
-        if(existe) {
-            log.info("Actualizando persona");
-            this.personaRepository.save(persona);
-            log.info("Persona actualizada");
+    public PersonaModel save(PersonaModel persona) {
+        log.info("Revisando si exite el persona por number");
+        PersonaModel personaModel = this.personaRepository.findByPersonaNumber(persona.getPersonaNumber());
+        if(personaModel == null) {
+            log.info("Creando persona");
 
-            return this.getByPersonaNumber(persona.getPersonaNumber());
+                log.info("Almacenando  persona");
+                this.personaRepository.save(persona);
+
+        }else{
+            log.error("El persona con number: "+ persona.getPersonaNumber() +" ya existe");
+            String errorMsg = "El persona con number: "+ persona.getPersonaNumber() +" ya existe";
+            throw new ConflictsException(errorMsg, new ErrorDetalle(persona.getPersonaId(),"409","El persona con number: "+ persona.getPersonaNumber() +" ya existe","Hemos encontrado un error intentelo nuevamente"));
+        }
+        return this.getByPersonaNumber(persona.getPersonaNumber());
+    }
+    
+    @Override
+    public PersonaModel update(PersonaModel persona) {
+
+        log.info("Revisando si exite el persona por number");
+        PersonaModel currentPersona = this.getByPersonaNumber(persona.getPersonaNumber());
+        
+        if(currentPersona != null) {
+            log.info("Actualizando persona");
+            //persona = this.actualizarEntityPersona(currentPersona , persona);
+                log.info("Almacenando cambios");
+                this.personaRepository.save(persona);
+                return this.getByPersonaNumber(persona.getPersonaNumber());
+            
         }
         return null;
     }
-
+    
+    
     @Override
     public void delete(PersonaModel persona) {
 

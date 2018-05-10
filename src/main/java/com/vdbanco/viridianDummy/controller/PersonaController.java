@@ -2,6 +2,7 @@ package com.vdbanco.viridianDummy.controller;
 
 import com.vdbanco.viridianDummy.domain.PersonaModel;
 import com.vdbanco.viridianDummy.domain.PersonaModelList;
+import com.vdbanco.viridianDummy.error.ConflictsException;
 import com.vdbanco.viridianDummy.error.EntidadError;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.services.PersonaService;
@@ -14,6 +15,7 @@ import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,12 +72,12 @@ public class PersonaController {
     }
 
     @PostMapping
-    public PersonaModel savePersona(@RequestBody PersonaModel persona){
+    public PersonaModel savePersona(@RequestBody @Valid PersonaModel persona){
         return this.personaService.save(persona);
     }
 
     @PutMapping
-    public PersonaModel updatePersona(@RequestBody PersonaModel persona){
+    public PersonaModel updatePersona(@RequestBody @Valid PersonaModel persona){
         return this.personaService.update(persona);
     }
 
@@ -88,6 +90,16 @@ public class PersonaController {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoEncontradoRestException.class)
     public EntidadError handleNotFound(NoEncontradoRestException exception){
+        EntidadError error = new EntidadError();
+        error.setId(exception.getErrorDetalle().getId());
+        error.setEstado("error");
+        error.setError(exception.getErrorDetalle());
+        return error;
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(ConflictsException.class)
+    public EntidadError handleConflict(ConflictsException exception){
         EntidadError error = new EntidadError();
         error.setId(exception.getErrorDetalle().getId());
         error.setEstado("error");

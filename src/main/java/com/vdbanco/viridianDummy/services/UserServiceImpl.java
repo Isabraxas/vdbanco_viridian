@@ -6,6 +6,7 @@ import com.vdbanco.viridianDummy.error.ConflictsException;
 import com.vdbanco.viridianDummy.error.ErrorDetalle;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.repository.UserRepository;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,9 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService{
+
+    // logger
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(UserServiceImpl.class);
 
     private UserRepository userRepository;
     private PersonaService personaService;
@@ -48,15 +52,18 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserModel save(UserModel user) {
+        log.info("Revisando si exite el user por number");
         UserModel userModel = this.userRepository.findByUserNumber(user.getUserNumber());
         if(userModel == null) {
+            log.info("Creando user");
             PersonaModel persona = this.personaService.getByPersonaNumber(user.getPersonaPersonaNumber());
             if(persona != null) {
                 user.setPersona(persona);
+                log.info("Almacenando  user");
                 this.userRepository.save(user);
             }
         }else{
-
+            log.error("El user con number: "+ user.getUserNumber() +" ya existe");
             String errorMsg = "El user con number: "+ user.getUserNumber() +" ya existe";
             throw new ConflictsException(errorMsg, new ErrorDetalle(user.getUserId(),"409","El user con number: "+ user.getUserNumber() +" ya existe","Hemos encontrado un error intentelo nuevamente"));
         }
@@ -70,13 +77,17 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserModel update(UserModel user) {
-        UserModel userModel = this.getByUserNumber(user.getUserNumber());
-        if(userModel != null) {
-            user = this.actualizarEntityUser(userModel , user);
+
+        log.info("Revisando si exite el user por number");
+        UserModel currentUser = this.getByUserNumber(user.getUserNumber());
+        if(currentUser != null) {
+            log.info("Actualizando user");
+            user = this.actualizarEntityUser(currentUser , user);
             PersonaModel persona = this.personaService.getByPersonaNumber(user.getPersonaPersonaNumber());
             if(persona != null) {
-                user.setUserId(userModel.getUserId());
+                user.setUserId(currentUser.getUserId());
                 user.setPersona(persona);
+                log.info("Almacenando cambios");
                 this.userRepository.save(user);
                 return this.getByUserNumber(user.getUserNumber());
             }

@@ -1,9 +1,12 @@
 package com.vdbanco.viridianDummy.services;
 
 import com.vdbanco.viridianDummy.domain.JuridicasModel;
+import com.vdbanco.viridianDummy.domain.PersonaModel;
+import com.vdbanco.viridianDummy.error.ConflictsException;
 import com.vdbanco.viridianDummy.error.ErrorDetalle;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.repository.JuridicasRepository;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,11 +16,17 @@ import java.util.Optional;
 
 @Service    
 public class JuridicasServiceImpl implements JuridicasService {
-    private JuridicasRepository juridicasRepository;
 
+    // logger
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(JuridicasServiceImpl.class);
+    
+    private JuridicasRepository juridicasRepository;
+    private PersonaService personaService;
+    
     @Autowired
-    public JuridicasServiceImpl(JuridicasRepository juridicasRepository) {
+    public JuridicasServiceImpl(JuridicasRepository juridicasRepository, PersonaService personaService) {
         this.juridicasRepository = juridicasRepository;
+        this.personaService = personaService;
     }
 
     @Override
@@ -42,28 +51,53 @@ public class JuridicasServiceImpl implements JuridicasService {
     }
 
     @Override
+    public Page<JuridicasModel> getAll(Pageable pageable) {
+        return this.juridicasRepository.findAllByOrderByJuridicasId(pageable);
+    }
+
+    
+
+    @Override
     public JuridicasModel save(JuridicasModel juridicas) {
-        boolean existe = this.juridicasRepository.existsById(juridicas.getJuridicasId());
-        if(!existe) {
-            this.juridicasRepository.save(juridicas);
+        log.info("Revisando si exite el juridicas por number");
+        JuridicasModel juridicasModel = this.juridicasRepository.findByJuridicasNumber(juridicas.getJuridicasNumber());
+        if(juridicasModel == null) {
+            log.info("Creando juridicas");
+            PersonaModel persona = this.personaService.getByPersonaNumber(juridicas.getJuridicasRepresentanteLegalNumber());
+            if(persona != null) {
+                juridicas.setJuridicasRepresentanteLegal(persona.getPersonaNombre());
+                juridicas.setJuridicasRepresentante(persona);
+                log.info("Almacenando  juridicas");
+                this.juridicasRepository.save(juridicas);
+            }
+        }else{
+            log.error("La persona juridica con number: "+ juridicas.getJuridicasNumber() +" ya existe");
+            String errorMsg = "La persona juridica con number: "+ juridicas.getJuridicasNumber() +" ya existe";
+            throw new ConflictsException(errorMsg, new ErrorDetalle(juridicas.getJuridicasId(),"409","La persona juridica con number: "+ juridicas.getJuridicasNumber() +" ya existe","Hemos encontrado un error intentelo nuevamente"));
         }
         return this.getByJuridicasNumber(juridicas.getJuridicasNumber());
     }
 
     @Override
-    public Page<JuridicasModel> getAll(Pageable pageable) {
-        return this.juridicasRepository.findAllByOrderByJuridicasId(pageable);
-    }
-
-    @Override
     public JuridicasModel update(JuridicasModel juridicas) {
-        boolean existe = this.juridicasRepository.existsById(juridicas.getJuridicasId());
-        if(existe) {
-            this.juridicasRepository.save(juridicas);
-            return this.getByJuridicasNumber(juridicas.getJuridicasNumber());
+
+        log.info("Revisando si exite el juridicas por number");
+        JuridicasModel currentJuridicas = this.getByJuridicasNumber(juridicas.getJuridicasNumber());
+        if(currentJuridicas != null) {
+            log.info("Actualizando juridicas");
+            //juridicas = this.actualizarEntityJuridicas(currentJuridicas , juridicas);
+            PersonaModel persona = this.personaService.getByPersonaNumber(juridicas.getJuridicasRepresentanteLegalNumber());
+            if(persona != null) {
+                juridicas.setJuridicasRepresentanteLegal(persona.getPersonaNombre());
+                juridicas.setJuridicasRepresentante(persona);
+                log.info("Almacenando cambios");
+                this.juridicasRepository.save(juridicas);
+                return this.getByJuridicasNumber(juridicas.getJuridicasNumber());
+            }
         }
         return null;
     }
+
 
     @Override
     public void delete(JuridicasModel juridicas) {

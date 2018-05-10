@@ -1,5 +1,6 @@
 package com.vdbanco.viridianDummy.services;
 
+import com.vdbanco.viridianDummy.domain.AutorizacionModel;
 import com.vdbanco.viridianDummy.domain.TransaccionModel;
 import com.vdbanco.viridianDummy.error.ErrorDetalle;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
@@ -55,6 +56,11 @@ public class TransaccionServiceImpl implements TransaccionService {
     }
 
     @Override
+    public Page<TransaccionModel> getAll(Pageable pageable) {
+        return this.transaccionRepository.findAllByOrderByTransaccionId(pageable);
+    }
+
+    @Override
     public TransaccionModel save(TransaccionModel transaccion) {
         boolean existe = this.transaccionRepository.existsById(transaccion.getTransaccionId());
         if(!existe) {
@@ -64,10 +70,29 @@ public class TransaccionServiceImpl implements TransaccionService {
     }
 
     @Override
-    public Page<TransaccionModel> getAll(Pageable pageable) {
-        return this.transaccionRepository.findAllByOrderByTransaccionId(pageable);
-    }
+    public TransaccionModel update(TransaccionModel transaccion) {
 
+        log.info("Revisando si exite el transaccion por number");
+        //TODO tener la lista de transacciones
+        //TODO hacer un foreach y comparar la cuenta para determinar que transacion debe modificarse
+        //TODO tambien de debe cambiar el metodo save
+        TransaccionModel currentTransaccion = this.getByTransaccionNumber(transaccion.getTransaccionNumber());
+
+        if(currentTransaccion != null) {
+            log.info("Actualizando transaccion");
+            //transaccion = this.actualizarEntityTransaccion(currentTransaccion , transaccion);
+            AutorizacionModel autorizacion = this.autorizacionService.getByAutorizacionNumber(transaccion.getAutorizacionAutorizacionNumber());
+            if(autorizacion != null) {
+                transaccion.setTransaccionId(currentTransaccion.getTransaccionId());
+                transaccion.setAutorizacion(autorizacion);
+                log.info("Almacenando cambios");
+                this.transaccionRepository.save(transaccion);
+                return this.getByTransaccionNumber(transaccion.getTransaccionNumber());
+            }
+        }
+        return null;
+    }
+    
     @Override
     public TransaccionModel update(TransaccionModel transaccion) {
         boolean existe = this.transaccionRepository.existsById(transaccion.getTransaccionId());

@@ -2,6 +2,7 @@ package com.vdbanco.viridianDummy.controller;
 
 import com.vdbanco.viridianDummy.domain.JuridicasModel;
 import com.vdbanco.viridianDummy.domain.JuridicasModelList;
+import com.vdbanco.viridianDummy.error.ConflictsException;
 import com.vdbanco.viridianDummy.error.EntidadError;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.services.JuridicasService;
@@ -14,6 +15,7 @@ import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,12 +73,12 @@ public class JuridicasController {
     }
 
     @PostMapping
-    public JuridicasModel saveJuridicas(@RequestBody JuridicasModel juridicas){
+    public JuridicasModel saveJuridicas(@RequestBody @Valid JuridicasModel juridicas){
         return this.juridicasService.save(juridicas);
     }
 
     @PutMapping
-    public JuridicasModel updateJuridicas(@RequestBody JuridicasModel juridicas){
+    public JuridicasModel updateJuridicas(@RequestBody @Valid JuridicasModel juridicas){
 
         return this.juridicasService.update(juridicas);
     }
@@ -89,6 +91,16 @@ public class JuridicasController {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoEncontradoRestException.class)
     public EntidadError handleNotFound(NoEncontradoRestException exception){
+        EntidadError error = new EntidadError();
+        error.setId(exception.getErrorDetalle().getId());
+        error.setEstado("error");
+        error.setError(exception.getErrorDetalle());
+        return error;
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(ConflictsException.class)
+    public EntidadError handleConflict(ConflictsException exception){
         EntidadError error = new EntidadError();
         error.setId(exception.getErrorDetalle().getId());
         error.setEstado("error");

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.hateoas.ResourceSupport;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.sql.Blob;
 import java.sql.Timestamp;
@@ -17,7 +18,11 @@ import java.util.List;
 public class PersonaModel extends ResourceSupport implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PERSONA_SEQ")
+    @SequenceGenerator(sequenceName = "PERSONA_PERSONA_ID_SEQ", allocationSize = 1, name = "PERSONA_SEQ")
     private Long personaId;
+
+    @NotNull
     private String personaNumber;
     private String personaNombre;
     private String personaNit;

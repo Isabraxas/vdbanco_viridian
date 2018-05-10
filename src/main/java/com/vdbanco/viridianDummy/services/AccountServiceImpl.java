@@ -1,9 +1,13 @@
 package com.vdbanco.viridianDummy.services;
 
+import com.vdbanco.viridianDummy.domain.AccountHolderModel;
 import com.vdbanco.viridianDummy.domain.AccountModel;
+import com.vdbanco.viridianDummy.domain.ProductosBancariosModel;
+import com.vdbanco.viridianDummy.error.ConflictsException;
 import com.vdbanco.viridianDummy.error.ErrorDetalle;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.repository.AccountRepository;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,12 +18,19 @@ import java.util.Optional;
 
 @Service
 public class AccountServiceImpl implements AccountService {
-    
+
+    // logger
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(AccountServiceImpl.class);
+
     private AccountRepository accountRepository;
+    private AccountHolderService accountHolderService;
+    private ProductosBancariosService productosBancariosService;
 
     @Autowired
-    public AccountServiceImpl(AccountRepository accountRepository) {
+    public AccountServiceImpl(AccountRepository accountRepository, AccountHolderService accountHolderService, ProductosBancariosService productosBancariosService) {
         this.accountRepository = accountRepository;
+        this.accountHolderService = accountHolderService;
+        this.productosBancariosService = productosBancariosService;
     }
 
     @Override
@@ -56,16 +67,6 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountModel save(AccountModel account) {
-        boolean existe = this.accountRepository.existsById(account.getAccountId());
-        boolean existeNumber = this.accountRepository.existsByAccountNumber(account.getAccountNumber());
-        if(!existe && !existeNumber) {
-            this.accountRepository.save(account);
-        }
-        return this.getByAccountNumber(account.getAccountNumber());
-    }
-
-    @Override
     public Page<AccountModel> getAll(Pageable pageable) {
         return this.accountRepository.findAllByOrderByAccountId(pageable);
     }
@@ -76,18 +77,58 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public AccountModel save(AccountModel account) {
+        log.info("Revisando si exite el account por number");
+        AccountModel accountModel = this.accountRepository.findByAccountNumber(account.getAccountNumber());
+        if(accountModel == null) {
+            log.info("Creando account");
+            AccountHolderModel accountHolder = this.accountHolderService.getByAccountHolderNumber(account.getAccountHolderNumber());
+            ProductosBancariosModel productosBancarios = this.productosBancariosService.getByProductosBancariosNumber(account.getProductosBancariosNumber());
+
+            if(accountHolder != null && productosBancarios != null) {
+
+                account.setAccountHolder(accountHolder);
+                account.setProductoBancario(productosBancarios);
+                log.info("Almacenando  account");
+                this.accountRepository.save(account);
+            }
+        }else{
+            log.error("El account con number: "+ account.getAccountNumber() +" ya existe");
+            String errorMsg = "El account con number: "+ account.getAccountNumber() +" ya existe";
+            throw new ConflictsException(errorMsg, new ErrorDetalle(account.getAccountId(),"409","El account con number: "+ account.getAccountNumber() +" ya existe","Hemos encontrado un error intentelo nuevamente"));
+        }
+        return this.getByAccountNumber(account.getAccountNumber());
+    }
+
+
+    @Override
     public AccountModel update(AccountModel account) {
-        boolean existe = this.accountRepository.existsById(account.getAccountId());
-        if(existe) {
-            this.accountRepository.save(account);
-            return this.getByAccountNumber(account.getAccountNumber());
+
+        log.info("Revisando si exite el account por number");
+        AccountModel currentAccount = this.getByAccountNumber(account.getAccountNumber());
+        if(currentAccount != null) {
+            log.info("Actualizando account");
+            //account = this.actualizarEntityAccount(currentAccount , account);
+            AccountHolderModel accountHolder = this.accountHolderService.getByAccountHolderNumber(account.getAccountHolderNumber());
+            ProductosBancariosModel productosBancarios = this.productosBancariosService.getByProductosBancariosNumber(account.getProductosBancariosNumber());
+
+            if(accountHolder != null && productosBancarios != null) {
+
+                account.setAccountId(currentAccount.getAccountId());
+                account.setAccountHolder(accountHolder);
+                account.setProductoBancario(productosBancarios);
+                log.info("Almacenando cambios");
+                this.accountRepository.save(account);
+                return this.getByAccountNumber(account.getAccountNumber());
+            }
         }
         return null;
     }
+
 
     @Override
     public void delete(AccountModel account) {
         this.accountRepository.deleteById(account.getAccountId());
     }
-
+    
 }

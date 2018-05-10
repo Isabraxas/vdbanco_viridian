@@ -82,7 +82,7 @@ public class UserController {
 
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping
-    public UserModel saveUser(@RequestBody UserModel user){
+    public UserModel saveUser(@RequestBody @Valid UserModel user){
         return this.userService.save(user);
     }
 

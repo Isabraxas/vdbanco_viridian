@@ -2,6 +2,7 @@ package com.vdbanco.viridianDummy.controller;
 
 import com.vdbanco.viridianDummy.domain.AccountModel;
 import com.vdbanco.viridianDummy.domain.AccountModelList;
+import com.vdbanco.viridianDummy.error.ConflictsException;
 import com.vdbanco.viridianDummy.error.EntidadError;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.funciones.controller.MovimientosController;
@@ -15,6 +16,7 @@ import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,12 +77,12 @@ public class AccountController {
     }
 
     @PostMapping
-    public AccountModel saveAccount(@RequestBody AccountModel account){
+    public AccountModel saveAccount(@RequestBody @Valid AccountModel account){
         return this.accountService.save(account);
     }
 
     @PutMapping
-    public AccountModel updateAccount(@RequestBody AccountModel account){
+    public AccountModel updateAccount(@RequestBody @Valid AccountModel account){
 
         return this.accountService.update(account);
     }
@@ -100,4 +102,13 @@ public class AccountController {
         return error;
     }
 
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(ConflictsException.class)
+    public EntidadError handleConflict(ConflictsException exception){
+        EntidadError error = new EntidadError();
+        error.setId(exception.getErrorDetalle().getId());
+        error.setEstado("error");
+        error.setError(exception.getErrorDetalle());
+        return error;
+    }
 }

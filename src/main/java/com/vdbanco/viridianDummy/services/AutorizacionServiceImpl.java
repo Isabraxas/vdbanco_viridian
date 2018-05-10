@@ -1,9 +1,11 @@
 package com.vdbanco.viridianDummy.services;
 
 import com.vdbanco.viridianDummy.domain.AutorizacionModel;
+import com.vdbanco.viridianDummy.error.ConflictsException;
 import com.vdbanco.viridianDummy.error.ErrorDetalle;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.repository.AutorizacionRepository;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +15,11 @@ import java.util.Optional;
 
 @Service
 public class AutorizacionServiceImpl implements AutorizacionService{
+
+    // logger
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(AutorizacionServiceImpl.class);
+
+
     private AutorizacionRepository autorizacionRepository;
 
     @Autowired
@@ -42,32 +49,44 @@ public class AutorizacionServiceImpl implements AutorizacionService{
     }
 
     @Override
-    public AutorizacionModel save(AutorizacionModel autorizacion) {
-        boolean existe = this.autorizacionRepository.existsById(autorizacion.getAutorizacionId());
-        autorizacion.setAutorizacionNumber("AU00"+autorizacion.getAutorizacionId().toString());
-        if(!existe) {
-            this.autorizacionRepository.save(autorizacion);
-        }else{
-            String errorMsg = "Una autorizacion con este id ya existe en la base de datos: "+ autorizacion.getAutorizacionId() ;
-            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(autorizacion.getAutorizacionId(), "006", "Una autorizacion con este id ya existe en la base de datos", "Hemos encontrado un error intentelo mas tarde"));
-        }
-        return this.getByAutorizacionNumber(autorizacion.getAutorizacionNumber());
-    }
-
-    @Override
     public Page<AutorizacionModel> getAll(Pageable pageable) {
         return this.autorizacionRepository.findAllByOrderByAutorizacionId(pageable);
     }
 
     @Override
+    public AutorizacionModel save(AutorizacionModel autorizacion) {
+        log.info("Revisando si exite el autorizacion por number");
+        AutorizacionModel autorizacionModel = this.autorizacionRepository.findByAutorizacionNumber(autorizacion.getAutorizacionNumber());
+        if(autorizacionModel == null) {
+            log.info("Creando autorizacion");
+                log.info("Almacenando  autorizacion");
+                this.autorizacionRepository.save(autorizacion);
+
+        }else{
+            log.error("El autorizacion con number: "+ autorizacion.getAutorizacionNumber() +" ya existe");
+            String errorMsg = "El autorizacion con number: "+ autorizacion.getAutorizacionNumber() +" ya existe";
+            throw new ConflictsException(errorMsg, new ErrorDetalle(autorizacion.getAutorizacionId(),"409","El autorizacion con number: "+ autorizacion.getAutorizacionNumber() +" ya existe","Hemos encontrado un error intentelo nuevamente"));
+        }
+        return this.getByAutorizacionNumber(autorizacion.getAutorizacionNumber());
+    }
+    
+    @Override
     public AutorizacionModel update(AutorizacionModel autorizacion) {
-        boolean existe = this.autorizacionRepository.existsById(autorizacion.getAutorizacionId());
-        if(existe) {
-            this.autorizacionRepository.save(autorizacion);
-            return this.getByAutorizacionNumber(autorizacion.getAutorizacionNumber());
+
+        log.info("Revisando si exite el autorizacion por number");
+        AutorizacionModel currentAutorizacion = this.getByAutorizacionNumber(autorizacion.getAutorizacionNumber());
+        if(currentAutorizacion != null) {
+            log.info("Actualizando autorizacion");
+            //autorizacion = this.actualizarEntityAutorizacion(currentAutorizacion , autorizacion);
+                autorizacion.setAutorizacionId(currentAutorizacion.getAutorizacionId());
+                log.info("Almacenando cambios");
+                this.autorizacionRepository.save(autorizacion);
+                return this.getByAutorizacionNumber(autorizacion.getAutorizacionNumber());
+           
         }
         return null;
     }
+    
 
     @Override
     public void delete(AutorizacionModel autorizacion) {

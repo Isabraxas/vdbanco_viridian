@@ -2,10 +2,8 @@ package com.vdbanco.viridianDummy.domain;
 
 import org.springframework.hateoas.ResourceSupport;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Table(name = "PRODUCTOS_BANCARIOS")
@@ -13,8 +11,12 @@ import java.io.Serializable;
 public class ProductosBancariosModel extends ResourceSupport implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PRODUCTO_BANCARIO_SEQ")
+    @SequenceGenerator(sequenceName = "PRODUCTO_BANCARIO_ID_SEQ", allocationSize = 1, name = "PRODUCTO_BANCARIO_SEQ")
     @Column(name = "PRODUCTOS_BANCARIO_ID")
     private Long productosBancariosId;
+
+    @NotNull
     private String productosBancariosNumber;
     private String productosBancariosNombre;
 

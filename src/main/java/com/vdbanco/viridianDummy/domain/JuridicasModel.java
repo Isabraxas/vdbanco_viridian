@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.hateoas.ResourceSupport;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Table(name = "JURIDICAS")
@@ -11,8 +12,13 @@ import java.io.Serializable;
 public class JuridicasModel extends ResourceSupport implements Serializable{
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "JURIDICAS_SEQ")
+    @SequenceGenerator(sequenceName = "JURIDICAS_JURIDICAS_ID_SEQ", allocationSize = 1, name = "JURIDICAS_SEQ")
     private Long juridicasId;
+
+    @NotNull
     private String juridicasNumber;
+
     private String juridicasNit;
     private String juridicasFundaEmpresa;
     private String juridicasRazonSocial;
@@ -20,8 +26,9 @@ public class JuridicasModel extends ResourceSupport implements Serializable{
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "JURIDICAS_REPRESENTANTE_ID")
     @JsonIgnore
-    private PersonaModel juridicasRepresentanteId;
+    private PersonaModel juridicasRepresentante;
 
+    @NotNull
     @Column(name = "JURIDICAS_REPRESENTANTE_LEGAL_")
     private String juridicasRepresentanteLegalNumber;
 
@@ -74,12 +81,12 @@ public class JuridicasModel extends ResourceSupport implements Serializable{
         this.juridicasRepresentanteLegal = juridicasRepresentanteLegal;
     }
 
-    public PersonaModel getJuridicasRepresentanteId() {
-        return juridicasRepresentanteId;
+    public PersonaModel getJuridicasRepresentante() {
+        return juridicasRepresentante;
     }
 
-    public void setJuridicasRepresentanteId(PersonaModel juridicasRepresentanteId) {
-        this.juridicasRepresentanteId = juridicasRepresentanteId;
+    public void setJuridicasRepresentante(PersonaModel juridicasRepresentante) {
+        this.juridicasRepresentante = juridicasRepresentante;
     }
 
     public String getJuridicasRepresentanteLegalNumber() {

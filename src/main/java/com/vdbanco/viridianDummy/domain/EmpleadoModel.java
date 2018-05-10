@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.hateoas.ResourceSupport;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Table(name = "EMPLEADO")
@@ -11,8 +12,13 @@ import java.io.Serializable;
 public class EmpleadoModel extends ResourceSupport implements Serializable {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "EMPLEADO_SEQ")
+    @SequenceGenerator(sequenceName = "EMPLEADO_ID_SEQ", allocationSize = 1, name = "EMPLEADO_SEQ")
     private Long empleadoId;
+
+    @NotNull
     private String empleadoNumber;
+
     private String empleadoUsername;
     private String empleadoCargo;
     private String empleadoAgencia;
@@ -22,6 +28,8 @@ public class EmpleadoModel extends ResourceSupport implements Serializable {
     @JoinColumn(name = "PERSONA_PERSONA_ID")
     @JsonIgnore
     private PersonaModel persona;
+
+    @NotNull
     private String personaPersonaNumber;
 
     public Long getEmpleadoId() {

@@ -1,9 +1,11 @@
 package com.vdbanco.viridianDummy.services;
 
 import com.vdbanco.viridianDummy.domain.ProductosBancariosModel;
+import com.vdbanco.viridianDummy.error.ConflictsException;
 import com.vdbanco.viridianDummy.error.ErrorDetalle;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.repository.ProductosBancariosRepository;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +15,10 @@ import java.util.Optional;
 
 @Service
 public class ProductosBancariosServiceImpl implements ProductosBancariosService {
+
+    // logger
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(ProductosBancariosServiceImpl.class);
+    
     private ProductosBancariosRepository productosBancariosRepository;
 
     @Autowired
@@ -42,25 +48,41 @@ public class ProductosBancariosServiceImpl implements ProductosBancariosService 
     }
 
     @Override
-    public ProductosBancariosModel save(ProductosBancariosModel productosBancarios) {
-        boolean existe = this.productosBancariosRepository.existsById(productosBancarios.getProductosBancariosId());
-        if(!existe) {
-            this.productosBancariosRepository.save(productosBancarios);
-        }
-        return this.getByProductosBancariosNumber(productosBancarios.getProductosBancariosNumber());
-    }
-
-    @Override
     public Page<ProductosBancariosModel> getAll(Pageable pageable) {
         return this.productosBancariosRepository.findAllByOrderByProductosBancariosId(pageable);
     }
 
     @Override
+    public ProductosBancariosModel save(ProductosBancariosModel productosBancarios) {
+        log.info("Revisando si exite el productosBancarios por number");
+        ProductosBancariosModel productosBancariosModel = this.productosBancariosRepository.findByProductosBancariosNumber(productosBancarios.getProductosBancariosNumber());
+        if(productosBancariosModel == null) {
+            log.info("Creando productosBancarios");
+                log.info("Almacenando  productosBancarios");
+                this.productosBancariosRepository.save(productosBancarios);
+
+        }else{
+            log.error("El productosBancarios con number: "+ productosBancarios.getProductosBancariosNumber() +" ya existe");
+            String errorMsg = "El productosBancarios con number: "+ productosBancarios.getProductosBancariosNumber() +" ya existe";
+            throw new ConflictsException(errorMsg, new ErrorDetalle(productosBancarios.getProductosBancariosId(),"409","El productosBancarios con number: "+ productosBancarios.getProductosBancariosNumber() +" ya existe","Hemos encontrado un error intentelo nuevamente"));
+        }
+        return this.getByProductosBancariosNumber(productosBancarios.getProductosBancariosNumber());
+    }
+
+    @Override
     public ProductosBancariosModel update(ProductosBancariosModel productosBancarios) {
-        boolean existe = this.productosBancariosRepository.existsById(productosBancarios.getProductosBancariosId());
-        if(existe) {
-            this.productosBancariosRepository.save(productosBancarios);
-            return this.getByProductosBancariosNumber(productosBancarios.getProductosBancariosNumber());
+
+        log.info("Revisando si exite el productosBancarios por number");
+        ProductosBancariosModel currentProductosBancarios = this.getByProductosBancariosNumber(productosBancarios.getProductosBancariosNumber());
+        if(currentProductosBancarios != null) {
+            log.info("Actualizando productosBancarios");
+            //productosBancarios = this.actualizarEntityProductosBancarios(currentProductosBancarios , productosBancarios);
+
+                productosBancarios.setProductosBancariosId(currentProductosBancarios.getProductosBancariosId());
+                log.info("Almacenando cambios");
+                this.productosBancariosRepository.save(productosBancarios);
+                return this.getByProductosBancariosNumber(productosBancarios.getProductosBancariosNumber());
+
         }
         return null;
     }

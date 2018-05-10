@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.hateoas.ResourceSupport;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -16,6 +17,8 @@ public class TransaccionModel extends ResourceSupport implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TRANS_SEQ")
     @SequenceGenerator(sequenceName = "TRANSACCION_ID_SEQ", allocationSize = 1, name = "TRANS_SEQ")
     private Long transaccionId;
+
+    @NotNull
     private String transaccionNumber;
     //@JsonFormat(pattern = "yyyy-MM-dd")
     private Timestamp transaccionDate;
@@ -28,6 +31,8 @@ public class TransaccionModel extends ResourceSupport implements Serializable {
     @JoinColumn(name = "AUTORIZACION_ID")
     @JsonIgnore
     private AutorizacionModel autorizacion;
+
+    @NotNull
     private String autorizacionNumber;
 
 
