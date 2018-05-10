@@ -1,7 +1,7 @@
 package com.vdbanco.viridianDummy.services;
 
 import com.vdbanco.viridianDummy.domain.ProductosBancariosModel;
-import com.vdbanco.viridianDummy.error.ErrorNoEncontrado;
+import com.vdbanco.viridianDummy.error.ErrorDetalle;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.repository.ProductosBancariosRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class ProductosBancariosServiceImpl implements ProductosBancariosService 
         Optional<ProductosBancariosModel> productosBancarios = this.productosBancariosRepository.findById(id);
         if(!productosBancarios.isPresent()) {
             String errorMsg = "El producto Bancario con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return this.productosBancariosRepository.findById(id);
     }
@@ -36,7 +36,7 @@ public class ProductosBancariosServiceImpl implements ProductosBancariosService 
         Long id= Long.valueOf(number.substring(4));
         if(productosBancarios == null) {
             String errorMsg = "El producto Bancario con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return productosBancarios;
     }

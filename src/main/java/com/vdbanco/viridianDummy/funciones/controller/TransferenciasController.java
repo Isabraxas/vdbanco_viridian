@@ -61,7 +61,7 @@ public class TransferenciasController {
 
         error.setFecha(fecha);
         error.setEstado("error");
-        error.setError(exception.getErrorNoEncontrado());
+        error.setError(exception.getErrorDetalle());
         return error;
     }
 }

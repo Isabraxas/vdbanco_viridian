@@ -1,7 +1,7 @@
 package com.vdbanco.viridianDummy.services;
 
 import com.vdbanco.viridianDummy.domain.EmpleadoModel;
-import com.vdbanco.viridianDummy.error.ErrorNoEncontrado;
+import com.vdbanco.viridianDummy.error.ErrorDetalle;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.repository.EmpleadoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class EmpleadoServiceImpl implements EmpleadoService {
         Optional<EmpleadoModel> empleado = this.empleadoRepository.findById(id);
         if(!empleado.isPresent()) {
             String errorMsg = "El empleado con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return this.empleadoRepository.findById(id);
     }
@@ -36,7 +36,7 @@ public class EmpleadoServiceImpl implements EmpleadoService {
         Long id= Long.valueOf(number.substring(4));
         if(empleado == null) {
             String errorMsg = "El empleado con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return empleado;
     }

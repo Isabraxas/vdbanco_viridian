@@ -1,7 +1,7 @@
 package com.vdbanco.viridianDummy.services;
 
 import com.vdbanco.viridianDummy.domain.AccountHolderModel;
-import com.vdbanco.viridianDummy.error.ErrorNoEncontrado;
+import com.vdbanco.viridianDummy.error.ErrorDetalle;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.repository.AccountHolderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class AccountHolderServiceImpl implements AccountHolderService {
         Optional<AccountHolderModel> accountHolder = this.accountHolderRepository.findById(id);
         if(!accountHolder.isPresent()) {
             String errorMsg = "El accountHolder con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return this.accountHolderRepository.findById(id);
     }
@@ -37,7 +37,7 @@ public class AccountHolderServiceImpl implements AccountHolderService {
         Long id= Long.valueOf(number.substring(4));
         if(accountHolder == null) {
             String errorMsg = "El accountHolder con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return accountHolder;
     }

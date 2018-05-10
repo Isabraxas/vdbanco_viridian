@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.hateoas.ResourceSupport;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -16,7 +17,10 @@ import java.sql.Timestamp;
 public class UserModel extends ResourceSupport{
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "USER_SEQ")
+    @SequenceGenerator(sequenceName = "USER_ID_SEQ", allocationSize = 1, name = "USER_SEQ")
     private Long userId;
+    @NotNull
     private String userNumber;
     private String userName;
     private String userPassword;

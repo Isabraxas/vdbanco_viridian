@@ -2,6 +2,7 @@ package com.vdbanco.viridianDummy.controller;
 
 import com.vdbanco.viridianDummy.domain.UserModel;
 import com.vdbanco.viridianDummy.domain.UserModelList;
+import com.vdbanco.viridianDummy.error.ConflictsException;
 import com.vdbanco.viridianDummy.error.EntidadError;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.services.UserService;
@@ -15,8 +16,10 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,14 +80,14 @@ public class UserController {
         return user;
     }
 
+    @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping
     public UserModel saveUser(@RequestBody UserModel user){
         return this.userService.save(user);
     }
 
     @PutMapping
-    public UserModel updateUser(@RequestBody UserModel user){
-
+    public UserModel updateUser(@RequestBody @Valid UserModel user){
         return this.userService.update(user);
     }
 
@@ -98,9 +101,19 @@ public class UserController {
     @ExceptionHandler(NoEncontradoRestException.class)
     public EntidadError handleNotFound(NoEncontradoRestException exception){
         EntidadError error = new EntidadError();
-        error.setId(exception.getErrorNoEncontrado().getId());
+        error.setId(exception.getErrorDetalle().getId());
         error.setEstado("error");
-        error.setError(exception.getErrorNoEncontrado());
+        error.setError(exception.getErrorDetalle());
+        return error;
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(ConflictsException.class)
+    public EntidadError handleConflict(ConflictsException exception){
+        EntidadError error = new EntidadError();
+        error.setId(exception.getErrorDetalle().getId());
+        error.setEstado("error");
+        error.setError(exception.getErrorDetalle());
         return error;
     }
 

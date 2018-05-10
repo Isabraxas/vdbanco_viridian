@@ -1,7 +1,7 @@
 package com.vdbanco.viridianDummy.funciones.service;
 
 import com.vdbanco.viridianDummy.domain.*;
-import com.vdbanco.viridianDummy.error.ErrorNoEncontrado;
+import com.vdbanco.viridianDummy.error.ErrorDetalle;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.funciones.inputModel.*;
 import com.vdbanco.viridianDummy.funciones.outputModel.PagoResponse;
@@ -16,9 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TransferenciaServiceImpl implements TransferenciaService {
@@ -65,7 +63,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
         }else{
 
             String errorMsg = "Las cuentas no pertenecen al mismo propiertario: "+ accountOrigen.getAccountNumber() + " - "+ accountDestino.getAccountNumber();
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(accountOrigen.getAccountId(), "002", "Las cuentas no pertenecen al mismo propiertario: "+ accountOrigen.getAccountNumber() + " - "+ accountDestino.getAccountNumber(), "Hemos encontrado un error intentelo nuevamente"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(accountOrigen.getAccountId(), "002", "Las cuentas no pertenecen al mismo propiertario: "+ accountOrigen.getAccountNumber() + " - "+ accountDestino.getAccountNumber(), "Hemos encontrado un error intentelo nuevamente"));
 
         }
 
@@ -138,7 +136,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
         }else{
 
             String errorMsg = "La cuenta de origen no tiene saldo suficiente para este monto: "+ transferenciaPropiaRequest.getMonto() ;
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(accountOrigen.getAccountId(), "002", "El saldo es insuficiente para procesar la transferencia", "Hemos encontrado un error intentelo nuevamente"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(accountOrigen.getAccountId(), "002", "El saldo es insuficiente para procesar la transferencia", "Hemos encontrado un error intentelo nuevamente"));
         }
 
     }
@@ -219,7 +217,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
         }else{
 
             String errorMsg = "La cuenta de origen no tiene saldo suficiente para este monto: "+ transferenciaPropiaRequest.getMonto() ;
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(accountOrigen.getAccountId(), "002", "El saldo es insuficiente para procesar la transferencia", "Hemos encontrado un error intentelo nuevamente"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(accountOrigen.getAccountId(), "002", "El saldo es insuficiente para procesar la transferencia", "Hemos encontrado un error intentelo nuevamente"));
         }
 
     }
@@ -235,7 +233,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
         if(accountOrigen.getAccountHolderNumber().equals(accountDestino.getAccountHolderNumber())){
 
             String errorMsg = "No son cuentas de terceros: "+ accountOrigen.getAccountNumber() + " - "+ accountDestino.getAccountNumber();
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(accountOrigen.getAccountId(), "002", "Las cuentas no pertenecen a terceros: "+ accountOrigen.getAccountNumber() + " - "+ accountDestino.getAccountNumber(), "Hemos encontrado un error intentelo nuevamente"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(accountOrigen.getAccountId(), "002", "Las cuentas no pertenecen a terceros: "+ accountOrigen.getAccountNumber() + " - "+ accountDestino.getAccountNumber(), "Hemos encontrado un error intentelo nuevamente"));
 
         }else{
             log.info("No son cuentas propias");
@@ -259,7 +257,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
 
             String errorMsg = "En nombre en la cuenta de destino no corresponde con: " + transferenciaTerceroRequest.getNombreDestinatario();
             log.error(errorMsg);
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(accountOrigen.getAccountId(), "003", "El nombre del destinatario no corresponde con la cuenta asociada", "Hemos encontrado un error intentelo nuevamente"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(accountOrigen.getAccountId(), "003", "El nombre del destinatario no corresponde con la cuenta asociada", "Hemos encontrado un error intentelo nuevamente"));
         }
 
             log.info("Comprobando si el saldo es suficiente");
@@ -331,7 +329,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
             } else {
 
                 String errorMsg = "La cuenta de origen no tiene saldo suficiente para este monto: " + transferenciaTerceroRequest.getMonto();
-                throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(accountOrigen.getAccountId(), "002", "El saldo es insuficiente para procesar la transferencia", "Hemos encontrado un error intentelo nuevamente"));
+                throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(accountOrigen.getAccountId(), "002", "El saldo es insuficiente para procesar la transferencia", "Hemos encontrado un error intentelo nuevamente"));
             }
 
 
@@ -356,7 +354,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
 
             String errorMsg = "Los datos del banco de destino asociados a la cuenta son incorrectos " ;
             log.error(errorMsg);
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(accountOrigen.getAccountId(), "004", "Los datos del banco de destino asocidos a la cuenta son incorrectos ", "Hemos encontrado un error intentelo nuevamente"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(accountOrigen.getAccountId(), "004", "Los datos del banco de destino asocidos a la cuenta son incorrectos ", "Hemos encontrado un error intentelo nuevamente"));
         }
 
         if ((accountHolderDestino.getAccountHolderTitular() != null &&
@@ -372,7 +370,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
 
             String errorMsg = "En nombre en la cuenta de destino no corresponde con: " + transferenciaOtroBancoRequest.getNombreDestinatario();
             log.error(errorMsg);
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(accountOrigen.getAccountId(), "003", "El nombre del destinatario no corresponde con la cuenta asociada", "Hemos encontrado un error intentelo nuevamente"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(accountOrigen.getAccountId(), "003", "El nombre del destinatario no corresponde con la cuenta asociada", "Hemos encontrado un error intentelo nuevamente"));
         }
 
         log.info("Comprobando si el saldo es suficiente");
@@ -444,7 +442,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
         } else {
 
             String errorMsg = "La cuenta de origen no tiene saldo suficiente para este monto: " + transferenciaOtroBancoRequest.getMonto();
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(accountOrigen.getAccountId(), "002", "El saldo es insuficiente para procesar la transferencia", "Hemos encontrado un error intentelo nuevamente"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(accountOrigen.getAccountId(), "002", "El saldo es insuficiente para procesar la transferencia", "Hemos encontrado un error intentelo nuevamente"));
         }
 
 
@@ -527,7 +525,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
         }else{
 
             String errorMsg = "La cuenta de origen no tiene saldo suficiente para este monto: "+ pagoPrestamoRequest.getMonto() ;
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(accountOrigen.getAccountId(), "002", "El saldo es insuficiente para procesar la transferencia", "Hemos encontrado un error intentelo nuevamente"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(accountOrigen.getAccountId(), "002", "El saldo es insuficiente para procesar la transferencia", "Hemos encontrado un error intentelo nuevamente"));
         }
 
     }
@@ -609,7 +607,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
         }else{
 
             String errorMsg = "La cuenta de origen no tiene saldo suficiente para este monto: "+ pagoPrestamoRequest.getMonto() ;
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(accountOrigen.getAccountId(), "002", "El saldo es insuficiente para procesar la transferencia", "Hemos encontrado un error intentelo nuevamente"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(accountOrigen.getAccountId(), "002", "El saldo es insuficiente para procesar la transferencia", "Hemos encontrado un error intentelo nuevamente"));
         }
 
     }
@@ -691,7 +689,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
         }else{
 
             String errorMsg = "La cuenta de origen no tiene saldo suficiente para este monto: "+ pagoPrestamoRequest.getMonto() ;
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(accountOrigen.getAccountId(), "002", "El saldo es insuficiente para procesar la transferencia", "Hemos encontrado un error intentelo nuevamente"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(accountOrigen.getAccountId(), "002", "El saldo es insuficiente para procesar la transferencia", "Hemos encontrado un error intentelo nuevamente"));
         }
     }
 

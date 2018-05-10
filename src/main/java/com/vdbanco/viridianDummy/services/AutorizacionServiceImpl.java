@@ -1,7 +1,7 @@
 package com.vdbanco.viridianDummy.services;
 
 import com.vdbanco.viridianDummy.domain.AutorizacionModel;
-import com.vdbanco.viridianDummy.error.ErrorNoEncontrado;
+import com.vdbanco.viridianDummy.error.ErrorDetalle;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.repository.AutorizacionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ public class AutorizacionServiceImpl implements AutorizacionService{
         Optional<AutorizacionModel> autorizacion = this.autorizacionRepository.findById(id);
         if(!autorizacion.isPresent()) {
             String errorMsg = "El autorizacion con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return this.autorizacionRepository.findById(id);
     }
@@ -36,7 +36,7 @@ public class AutorizacionServiceImpl implements AutorizacionService{
         Long id= Long.valueOf(number.substring(4));
         if(autorizacion == null) {
             String errorMsg = "El autorizacion con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return autorizacion;
     }
@@ -49,7 +49,7 @@ public class AutorizacionServiceImpl implements AutorizacionService{
             this.autorizacionRepository.save(autorizacion);
         }else{
             String errorMsg = "Una autorizacion con este id ya existe en la base de datos: "+ autorizacion.getAutorizacionId() ;
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(autorizacion.getAutorizacionId(), "006", "Una autorizacion con este id ya existe en la base de datos", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(autorizacion.getAutorizacionId(), "006", "Una autorizacion con este id ya existe en la base de datos", "Hemos encontrado un error intentelo mas tarde"));
         }
         return this.getByAutorizacionNumber(autorizacion.getAutorizacionNumber());
     }

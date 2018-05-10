@@ -6,7 +6,7 @@ public class ErrorSaldoInsuficiente {
 
     private Timestamp fecha;
     private String estado;
-    private ErrorNoEncontrado error;
+    private ErrorDetalle error;
 
 
     public Timestamp getFecha() {
@@ -25,11 +25,11 @@ public class ErrorSaldoInsuficiente {
         this.estado = estado;
     }
 
-    public ErrorNoEncontrado getError() {
+    public ErrorDetalle getError() {
         return error;
     }
 
-    public void setError(ErrorNoEncontrado error) {
+    public void setError(ErrorDetalle error) {
         this.error = error;
     }
 }

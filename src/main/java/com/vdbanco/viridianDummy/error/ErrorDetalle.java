@@ -3,16 +3,16 @@ package com.vdbanco.viridianDummy.error;
 /**
  * Created by marcelo on 07-03-18
  */
-public class ErrorNoEncontrado {
+public class ErrorDetalle {
     private Long id;
     private String codigo;
     private String detalle;
     private String mensaje;
 
-    public ErrorNoEncontrado() {
+    public ErrorDetalle() {
     }
 
-    public ErrorNoEncontrado(Long id,String codigo, String detalle, String mensaje) {
+    public ErrorDetalle(Long id, String codigo, String detalle, String mensaje) {
         this.id = id;
         this.codigo = codigo;
         this.detalle = detalle;

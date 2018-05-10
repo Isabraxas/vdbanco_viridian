@@ -4,34 +4,34 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Created by marcelo on 07-03-18
+ * Created by marcelo on 05-03-18
  */
-@ResponseStatus(HttpStatus.NOT_FOUND)
-public class NoEncontradoRestException extends RuntimeException{
+@ResponseStatus(HttpStatus.CONFLICT)
+public class ConflictsException extends RuntimeException{
 
     private ErrorDetalle errorDetalle;        // contiene informacion del error
 
-    public NoEncontradoRestException() {
+    public ConflictsException() {
     }
 
-    public NoEncontradoRestException(String message) {
+    public ConflictsException(String message) {
         super(message);
     }
 
-    public NoEncontradoRestException(String message, Throwable throwable) {
+    public ConflictsException(String message, Throwable throwable) {
         super(message, throwable);
     }
 
-    public NoEncontradoRestException(ErrorDetalle errorDetalle) {
+    public ConflictsException(ErrorDetalle errorDetalle) {
         this.errorDetalle = errorDetalle;
     }
 
-    public NoEncontradoRestException(String message, ErrorDetalle errorDetalle) {
+    public ConflictsException(String message, ErrorDetalle errorDetalle) {
         super(message);
         this.errorDetalle = errorDetalle;
     }
 
-    public NoEncontradoRestException(String message, Throwable throwable, ErrorDetalle errorDetalle) {
+    public ConflictsException(String message, Throwable throwable, ErrorDetalle errorDetalle) {
         super(message, throwable);
         this.errorDetalle = errorDetalle;
     }

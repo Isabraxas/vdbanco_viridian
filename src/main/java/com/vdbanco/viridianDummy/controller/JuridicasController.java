@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
@@ -91,9 +90,9 @@ public class JuridicasController {
     @ExceptionHandler(NoEncontradoRestException.class)
     public EntidadError handleNotFound(NoEncontradoRestException exception){
         EntidadError error = new EntidadError();
-        error.setId(exception.getErrorNoEncontrado().getId());
+        error.setId(exception.getErrorDetalle().getId());
         error.setEstado("error");
-        error.setError(exception.getErrorNoEncontrado());
+        error.setError(exception.getErrorDetalle());
         return error;
     }
 }

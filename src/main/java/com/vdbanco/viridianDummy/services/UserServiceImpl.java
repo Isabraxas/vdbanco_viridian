@@ -1,7 +1,9 @@
 package com.vdbanco.viridianDummy.services;
 
+import com.vdbanco.viridianDummy.domain.PersonaModel;
 import com.vdbanco.viridianDummy.domain.UserModel;
-import com.vdbanco.viridianDummy.error.ErrorNoEncontrado;
+import com.vdbanco.viridianDummy.error.ConflictsException;
+import com.vdbanco.viridianDummy.error.ErrorDetalle;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +15,14 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService{
+
     private UserRepository userRepository;
+    private PersonaService personaService;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, PersonaService personaService) {
         this.userRepository = userRepository;
+        this.personaService = personaService;
     }
 
     @Override
@@ -25,7 +30,7 @@ public class UserServiceImpl implements UserService{
         Optional<UserModel> user = this.userRepository.findById(id);
         if(!user.isPresent()) {
             String errorMsg = "El user con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return this.userRepository.findById(id);
     }
@@ -36,16 +41,24 @@ public class UserServiceImpl implements UserService{
         Long id= Long.valueOf(number.substring(4));
         if(user == null) {
             String errorMsg = "El user con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "404", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return user;
     }
 
     @Override
     public UserModel save(UserModel user) {
-        boolean existe = this.userRepository.existsById(user.getUserId());
-        if(!existe) {
-            this.userRepository.save(user);
+        UserModel userModel = this.userRepository.findByUserNumber(user.getUserNumber());
+        if(userModel == null) {
+            PersonaModel persona = this.personaService.getByPersonaNumber(user.getPersonaPersonaNumber());
+            if(persona != null) {
+                user.setPersona(persona);
+                this.userRepository.save(user);
+            }
+        }else{
+
+            String errorMsg = "El user con number: "+ user.getUserNumber() +" ya existe";
+            throw new ConflictsException(errorMsg, new ErrorDetalle(user.getUserId(),"409","El user con number: "+ user.getUserNumber() +" ya existe","Hemos encontrado un error intentelo nuevamente"));
         }
         return this.getByUserNumber(user.getUserNumber());
     }
@@ -57,10 +70,16 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserModel update(UserModel user) {
-        boolean existe = this.userRepository.existsById(user.getUserId());
-        if(existe) {
-            this.userRepository.save(user);
-            return this.getByUserNumber(user.getUserNumber());
+        UserModel userModel = this.getByUserNumber(user.getUserNumber());
+        if(userModel != null) {
+            user = this.actualizarEntityUser(userModel , user);
+            PersonaModel persona = this.personaService.getByPersonaNumber(user.getPersonaPersonaNumber());
+            if(persona != null) {
+                user.setUserId(userModel.getUserId());
+                user.setPersona(persona);
+                this.userRepository.save(user);
+                return this.getByUserNumber(user.getUserNumber());
+            }
         }
         return null;
     }
@@ -68,5 +87,24 @@ public class UserServiceImpl implements UserService{
     @Override
     public void delete(UserModel user) {
         this.userRepository.deleteById(user.getUserId());
+    }
+
+    public UserModel actualizarEntityUser(UserModel currentUser, UserModel newUser){
+        if(newUser.getUserId() == null){
+            newUser.setUserId(currentUser.getUserId());
+        }
+        if(newUser.getPersonaPersonaNumber() == null){
+           newUser.setPersonaPersonaNumber(currentUser.getPersonaPersonaNumber());
+        }
+        if(newUser.getUserName() == null){
+            newUser.setUserName(currentUser.getUserName());
+        }
+        if(newUser.getUserPassword() == null){
+            newUser.setUserPassword(currentUser.getUserPassword());
+        }
+        if(newUser.getUserCreateTime() == null){
+            newUser.setUserCreateTime(currentUser.getUserCreateTime());
+        }
+        return  newUser;
     }
 }

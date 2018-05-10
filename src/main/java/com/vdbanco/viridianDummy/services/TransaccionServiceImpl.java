@@ -1,7 +1,7 @@
 package com.vdbanco.viridianDummy.services;
 
 import com.vdbanco.viridianDummy.domain.TransaccionModel;
-import com.vdbanco.viridianDummy.error.ErrorNoEncontrado;
+import com.vdbanco.viridianDummy.error.ErrorDetalle;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.repository.TransaccionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class TransaccionServiceImpl implements TransaccionService {
         Optional<TransaccionModel> transaccion = this.transaccionRepository.findById(id);
         if(!transaccion.isPresent()) {
             String errorMsg = "El transaccion con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return this.transaccionRepository.findById(id);
     }
@@ -38,7 +38,7 @@ public class TransaccionServiceImpl implements TransaccionService {
         Long id= Long.valueOf(number.substring(4));
         if(transaccion.size()==0) {
             String errorMsg = "El transaccion con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return transaccion;
     }
@@ -49,7 +49,7 @@ public class TransaccionServiceImpl implements TransaccionService {
 
         if(transaccions.size()==0) {
             String errorMsg = "Las transacciones con accountNumber: "+ accountNumber +" no fueron encontradas";
-            throw new NoEncontradoRestException(errorMsg, new ErrorNoEncontrado(000L, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(000L, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return transaccions;
     }

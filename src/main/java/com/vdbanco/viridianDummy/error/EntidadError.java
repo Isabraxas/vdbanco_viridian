@@ -8,12 +8,12 @@ public class EntidadError {
 
     protected Long id;
     protected String estado;
-    protected ErrorNoEncontrado error;
+    protected ErrorDetalle error;
 
     public EntidadError() {
     }
 
-    public EntidadError(Long id, String estado, ErrorNoEncontrado error) {
+    public EntidadError(Long id, String estado, ErrorDetalle error) {
         this.id = id;
         this.estado = estado;
         this.error = error;
@@ -35,11 +35,11 @@ public class EntidadError {
         this.estado = estado;
     }
 
-    public ErrorNoEncontrado getError() {
+    public ErrorDetalle getError() {
         return error;
     }
 
-    public void setError(ErrorNoEncontrado error) {
+    public void setError(ErrorDetalle error) {
         this.error = error;
     }
 }
