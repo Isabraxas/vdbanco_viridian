@@ -128,7 +128,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void delete(AccountModel account) {
-        this.accountRepository.deleteById(account.getAccountId());
+        //this.accountRepository.deleteById(account.getAccountId());
+        this.accountRepository.deleteByAccountNumber(account.getAccountNumber());
     }
     
 }

@@ -36,19 +36,19 @@ public class EmpleadoControllerTest {
 
     @Test
     public void a_getEmpleados() {
-        given().when().get("/empleados").then().statusCode(200);
+        given().when().get("/api/empleados").then().statusCode(200);
     }
 
     @Test
     public void b_getEmpleadosPaginable() {
-        given().when().get("/empleados?page=1").then().statusCode(200);
+        given().when().get("/api/empleados?page=1").then().statusCode(200);
     }
 
     @Test
     public void c_getEmpleadosById() {
         given().pathParam("id",19)
                 .when()
-                    .get("/empleados/{id}")
+                    .get("/api/empleados/{id}")
                     .then().statusCode(200)
                     .body("personaPersonaNumber", notNullValue())
                     .body("empleadoNumber", notNullValue());
@@ -60,19 +60,19 @@ public class EmpleadoControllerTest {
         given()
                 .pathParam("id",3000003)
         .when()
-                .get("/empleados/{id}").then().statusCode(404).and()
+                .get("/api/empleados/{id}").then().statusCode(404).and()
                 .body("estado",equalTo("error"))
                 .body("error.codigo",equalTo("001"));
     }
 
     @Test
     public void e_getEmpleadosByNumber() {
-        given().pathParam("number","E00020").when().get("/empleados/number/{number}").then().statusCode(200);
+        given().pathParam("number","E00020").when().get("/api/empleados/number/{number}").then().statusCode(200);
     }
 
     @Test
     public void f_getEmpleadosByNumberNotFound() {
-        given().pathParam("number","E0003000008").when().get("/empleados/number/{number}").then().statusCode(404);
+        given().pathParam("number","E0003000008").when().get("/api/empleados/number/{number}").then().statusCode(404);
     }
 
     @Test
@@ -89,7 +89,7 @@ public class EmpleadoControllerTest {
         EmpleadoModel empleadoResponse= given()
                 .contentType("application/json")
                 .body(empleado)
-                .when().post("/empleados")
+                .when().post("/api/empleados")
                 .as(EmpleadoModel.class);
 
         log.info("Response: "+ empleadoResponse.toString());
@@ -113,7 +113,7 @@ public class EmpleadoControllerTest {
         EmpleadoModel empleadoResponse= given()
                 .contentType("application/json")
                 .body(empleado)
-                .when().put("/empleados")
+                .when().put("/api/empleados")
                 .as(EmpleadoModel.class);
 
         log.info("Response: "+ empleadoResponse.toString());
@@ -131,7 +131,7 @@ public class EmpleadoControllerTest {
              given().
                 contentType("application/json")
                 .body(empleado)
-                .when().delete("/empleados")
+                .when().delete("/api/empleados")
                 .then().statusCode(200);
     }
 

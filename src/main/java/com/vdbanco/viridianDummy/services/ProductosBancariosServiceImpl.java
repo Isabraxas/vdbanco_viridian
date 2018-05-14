@@ -89,6 +89,7 @@ public class ProductosBancariosServiceImpl implements ProductosBancariosService 
 
     @Override
     public void delete(ProductosBancariosModel productosBancarios) {
-        this.productosBancariosRepository.deleteById(productosBancarios.getProductosBancariosId());
+        //this.productosBancariosRepository.deleteById(productosBancarios.getProductosBancariosId());
+        this.productosBancariosRepository.deleteByProductosBancariosNumber(productosBancarios.getProductosBancariosNumber());
     }
 }

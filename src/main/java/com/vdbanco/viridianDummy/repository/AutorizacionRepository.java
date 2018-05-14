@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface AutorizacionRepository extends JpaRepository<AutorizacionModel, Long> , PagingAndSortingRepository<AutorizacionModel, Long> {
 
@@ -12,4 +13,6 @@ public interface AutorizacionRepository extends JpaRepository<AutorizacionModel,
 
     Page<AutorizacionModel> findAllByOrderByAutorizacionId(Pageable pageable);
 
+    @Transactional
+    void deleteByAutorizacionNumber(String autorizacionNumber);
 }

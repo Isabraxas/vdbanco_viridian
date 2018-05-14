@@ -37,17 +37,17 @@ public class AccountControllerTest {
 
     @Test
     public void a_getAccounts() {
-        given().when().get("/accounts").then().statusCode(200);
+        given().when().get("/api/accounts").then().statusCode(200);
     }
 
     @Test
     public void b_getAccountsPaginable() {
-        given().when().get("/accounts?page=1").then().statusCode(200);
+        given().when().get("/api/accounts?page=1").then().statusCode(200);
     }
 
     @Test
     public void c_getAccountsById() {
-        given().pathParam("id",10).when().get("/accounts/{id}").then().statusCode(200);
+        given().pathParam("id",10).when().get("/api/accounts/{id}").then().statusCode(200);
     }
 
     @Test
@@ -55,19 +55,19 @@ public class AccountControllerTest {
         given()
                 .pathParam("id",3000003)
         .when()
-                .get("/accounts/{id}").then().statusCode(404).and()
+                .get("/api/accounts/{id}").then().statusCode(404).and()
                 .body("estado",equalTo("error"))
                 .body("error.codigo",equalTo("001"));
     }
 
     @Test
     public void e_getAccountsByNumber() {
-        given().pathParam("number","1230000001").when().get("/accounts/number/{number}").then().statusCode(200);
+        given().pathParam("number","1230000001").when().get("/api/accounts/number/{number}").then().statusCode(200);
     }
 
     @Test
     public void f_getAccountsByNumberNotFound() {
-        given().pathParam("number","1230000040").when().get("/accounts/number/{number}").then().statusCode(404);
+        given().pathParam("number","1230000040").when().get("/api/accounts/number/{number}").then().statusCode(404);
     }
 
     @Test
@@ -75,6 +75,7 @@ public class AccountControllerTest {
         Timestamp fechaApertura = new Timestamp(System.currentTimeMillis());
         AccountModel account = new AccountModel();
         account.setAccountId(31L);
+        account.setAccountNumber("1230000031");
         account.setAccountTipo("credito");
         account.setAccountBalance(100.00);
         account.setAccountFechaApertura(fechaApertura);
@@ -84,7 +85,7 @@ public class AccountControllerTest {
         AccountModel accountResponse= given()
                 .contentType("application/json")
                 .body(account)
-                .when().post("/accounts")
+                .when().post("/api/accounts")
                 .as(AccountModel.class);
 
         log.info("Response: "+ accountResponse.toString());
@@ -109,7 +110,7 @@ public class AccountControllerTest {
         AccountModel accountResponse= given()
                 .contentType("application/json")
                 .body(account)
-                .when().put("/accounts")
+                .when().put("/api/accounts")
                 .as(AccountModel.class);
 
         log.info("Response: "+ accountResponse.toString());
@@ -127,7 +128,7 @@ public class AccountControllerTest {
              given().
                 contentType("application/json")
                 .body(account)
-                .when().delete("/accounts")
+                .when().delete("/api/accounts")
                 .then().statusCode(200);
     }
 

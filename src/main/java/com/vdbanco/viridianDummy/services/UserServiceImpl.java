@@ -97,7 +97,8 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public void delete(UserModel user) {
-        this.userRepository.deleteById(user.getUserId());
+        //this.userRepository.deleteById(user.getUserId());
+        this.userRepository.deleteByUserNumber(user.getUserNumber());
     }
 
     public UserModel actualizarEntityUser(UserModel currentUser, UserModel newUser){

@@ -13,7 +13,7 @@ public class JuridicasModel extends ResourceSupport implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "JURIDICAS_SEQ")
-    @SequenceGenerator(sequenceName = "JURIDICAS_JURIDICAS_ID_SEQ", allocationSize = 1, name = "JURIDICAS_SEQ")
+    @SequenceGenerator(sequenceName = "JURIDICAS_ID_SEQ", allocationSize = 1, name = "JURIDICAS_SEQ")
     private Long juridicasId;
 
     @NotNull

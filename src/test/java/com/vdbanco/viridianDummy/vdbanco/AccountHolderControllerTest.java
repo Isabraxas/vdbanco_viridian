@@ -37,17 +37,17 @@ public class AccountHolderControllerTest {
 
     @Test
     public void a_getAccountHolders() {
-        given().when().get("/accountHolders").then().statusCode(200);
+        given().when().get("/api/accountHolders").then().statusCode(200);
     }
 
     @Test
     public void b_getAccountHoldersPaginable() {
-        given().when().get("/accountHolders?page=1").then().statusCode(200);
+        given().when().get("/api/accountHolders?page=1").then().statusCode(200);
     }
 
     @Test
     public void c_getAccountHoldersById() {
-        given().pathParam("id",5).when().get("/accountHolders/{id}").then().statusCode(200);
+        given().pathParam("id",5).when().get("/api/accountHolders/{id}").then().statusCode(200);
     }
 
     @Test
@@ -55,19 +55,19 @@ public class AccountHolderControllerTest {
         given()
                 .pathParam("id",31)
         .when()
-                .get("/accountHolders/{id}").then().statusCode(404).and()
+                .get("/api/accountHolders/{id}").then().statusCode(404).and()
                 .body("estado",equalTo("error"))
                 .body("error.codigo",equalTo("001"));
     }
 
     @Test
     public void e_getAccountHoldersByNumber() {
-        given().pathParam("number","H0005").when().get("/accountHolders/number/{number}").then().statusCode(200);
+        given().pathParam("number","H0005").when().get("/api/accountHolders/number/{number}").then().statusCode(200);
     }
 
     @Test
     public void f_getAccountHoldersByNumberNotFound() {
-        given().pathParam("number","H00031").when().get("/accountHolders/number/{number}").then().statusCode(404);
+        given().pathParam("number","H00031").when().get("/api/accountHolders/number/{number}").then().statusCode(404);
     }
 
     @Test
@@ -83,7 +83,7 @@ public class AccountHolderControllerTest {
         AccountHolderModel accountHolderResponse= given()
                 .contentType("application/json")
                 .body(accountHolder)
-                .when().post("/accountHolders")
+                .when().post("/api/accountHolders")
                 .as(AccountHolderModel.class);
 
         log.info("Response: "+ accountHolderResponse.toString());
@@ -106,7 +106,7 @@ public class AccountHolderControllerTest {
         AccountHolderModel accountHolderResponse= given()
                 .contentType("application/json")
                 .body(accountHolder)
-                .when().put("/accountHolders")
+                .when().put("/api/accountHolders")
                 .as(AccountHolderModel.class);
 
         log.info("Response: "+ accountHolderResponse.toString());
@@ -127,7 +127,7 @@ public class AccountHolderControllerTest {
              given().
                 contentType("application/json")
                 .body(accountHolder)
-                .when().delete("/accountHolders")
+                .when().delete("/api/accountHolders")
                 .then().statusCode(200);
     }
 

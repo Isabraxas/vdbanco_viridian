@@ -73,16 +73,22 @@ public class AccountHolderServiceImpl implements AccountHolderService {
         log.info("Revisando si exite el accountHolder por number");
         AccountHolderModel accountHolderModel = this.accountHolderRepository.findByAccountHolderNumber(accountHolder.getAccountHolderNumber());
         if(accountHolderModel == null) {
+
             log.info("Creando accountHolder");
-            PersonaModel persona = this.personaService.getByPersonaNumber(accountHolder.getPersonaPersonaNumber());
-            JuridicasModel juridicas = this.juridicasService.getByJuridicasNumber(accountHolder.getJuridicasJuridicasNumber());
-            
-            if(persona != null && juridicas != null) {
-                accountHolder.setJuridica(juridicas);
+            PersonaModel persona = new PersonaModel();
+            if(accountHolder.getPersonaPersonaNumber() != null) {
+                persona = this.personaService.getByPersonaNumber(accountHolder.getPersonaPersonaNumber());
                 accountHolder.setPersona(persona);
-                log.info("Almacenando  accountHolder");
-                this.accountHolderRepository.save(accountHolder);
             }
+            JuridicasModel juridicas = new JuridicasModel();
+            if(accountHolder.getJuridicasJuridicasNumber() != null) {
+                juridicas = this.juridicasService.getByJuridicasNumber(accountHolder.getJuridicasJuridicasNumber());
+                accountHolder.setJuridica(juridicas);
+            }
+
+            log.info("Almacenando  accountHolder");
+            this.accountHolderRepository.save(accountHolder);
+
         }else{
             log.error("El accountHolder con number: "+ accountHolder.getAccountHolderNumber() +" ya existe");
             String errorMsg = "El accountHolder con number: "+ accountHolder.getAccountHolderNumber() +" ya existe";
@@ -99,16 +105,22 @@ public class AccountHolderServiceImpl implements AccountHolderService {
         if(currentAccountHolder != null) {
             log.info("Actualizando accountHolder");
             //accountHolder = this.actualizarEntityAccountHolder(currentAccountHolder , accountHolder);
-            PersonaModel persona = this.personaService.getByPersonaNumber(accountHolder.getPersonaPersonaNumber());
-            JuridicasModel juridicas = this.juridicasService.getByJuridicasNumber(accountHolder.getJuridicasJuridicasNumber());
-            if(persona != null && juridicas != null) {
-                accountHolder.setAccountHolderId(currentAccountHolder.getAccountHolderId());
-                accountHolder.setJuridica(juridicas);
+            PersonaModel persona = new PersonaModel();
+            if(accountHolder.getPersonaPersonaNumber() != null) {
+                persona = this.personaService.getByPersonaNumber(accountHolder.getPersonaPersonaNumber());
                 accountHolder.setPersona(persona);
-                log.info("Almacenando cambios");
-                this.accountHolderRepository.save(accountHolder);
-                return this.getByAccountHolderNumber(accountHolder.getAccountHolderNumber());
             }
+            JuridicasModel juridicas = new JuridicasModel();
+            if(accountHolder.getJuridicasJuridicasNumber() != null) {
+                juridicas = this.juridicasService.getByJuridicasNumber(accountHolder.getJuridicasJuridicasNumber());
+                accountHolder.setJuridica(juridicas);
+            }
+
+            accountHolder.setAccountHolderId(currentAccountHolder.getAccountHolderId());
+            log.info("Almacenando cambios");
+            this.accountHolderRepository.save(accountHolder);
+            return this.getByAccountHolderNumber(accountHolder.getAccountHolderNumber());
+
         }
         return null;
     }
@@ -116,6 +128,7 @@ public class AccountHolderServiceImpl implements AccountHolderService {
 
     @Override
     public void delete(AccountHolderModel accountHolder) {
-        this.accountHolderRepository.deleteById(accountHolder.getAccountHolderId());
+        //this.accountHolderRepository.deleteById(accountHolder.getAccountHolderId());
+        this.accountHolderRepository.deleteByAccountHolderNumber(accountHolder.getAccountHolderNumber());
     }
 }

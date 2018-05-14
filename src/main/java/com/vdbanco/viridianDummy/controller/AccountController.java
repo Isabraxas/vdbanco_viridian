@@ -24,7 +24,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping(value = "/accounts")
+@RequestMapping(value = "/api/accounts")
 public class AccountController {
 
     private AccountService accountService;

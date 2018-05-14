@@ -38,19 +38,19 @@ public class UserControllerTest {
 
     @Test
     public void a_getUsers() {
-        given().when().get("/users").then().statusCode(200);
+        given().when().get("/api/users").then().statusCode(200);
     }
 
     @Test
     public void b_getUsersPaginable() {
-        given().when().get("/users?page=1").then().statusCode(200);
+        given().when().get("/api/users?page=1").then().statusCode(200);
     }
 
     @Test
     public void c_getUsersById() {
         given().pathParam("id",20)
                 .when()
-                    .get("/users/{id}")
+                    .get("/api/users/{id}")
                     .then().statusCode(200);
         //Agregar algo mas del contenido del cuerpo como comprobar el user number
     }
@@ -60,26 +60,26 @@ public class UserControllerTest {
         given()
                 .pathParam("id",3000003)
         .when()
-                .get("/users/{id}").then().statusCode(404).and()
+                .get("/api/users/{id}").then().statusCode(404).and()
                 .body("estado",equalTo("error"))
                 .body("error.codigo",equalTo("001"));
     }
 
     @Test
     public void e_getUsersByNumber() {
-        given().pathParam("number","U00020").when().get("/users/number/{number}").then().statusCode(200);
+        given().pathParam("number","U00020").when().get("/api/users/number/{number}").then().statusCode(200);
     }
 
     @Test
     public void f_getUsersByNumberNotFound() {
-        given().pathParam("number","U0003000008").when().get("/users/number/{number}").then().statusCode(404);
+        given().pathParam("number","U0003000008").when().get("/api/users/number/{number}").then().statusCode(404);
     }
 
     @Test
     public void g_postUser(){
         UserModel user = new UserModel();
         user.setUserId(3000003L);
-        user.setUserNumber("E0003000003");
+        user.setUserNumber("U0003000003");
         user.setUserCreateTime(new Timestamp(System.currentTimeMillis()));
         user.setUserName("Sara123");
         user.setUserPassword("123456");
@@ -88,13 +88,13 @@ public class UserControllerTest {
         UserModel userResponse= given()
                 .contentType("application/json")
                 .body(user)
-                .when().post("/users")
+                .when().post("/api/users")
                 .as(UserModel.class);
 
         log.info("Response: "+ userResponse.toString());
 
         assertTrue(userResponse.getPersonaPersonaNumber().equals("P00021"));
-        assertTrue(userResponse.getUserNumber().equals("E0003000003"));
+        assertTrue(userResponse.getUserNumber().equals("U0003000003"));
 
     }
 
@@ -102,7 +102,7 @@ public class UserControllerTest {
     public void h_putUser(){
         UserModel user = new UserModel();
         user.setUserId(3000003L);
-        user.setUserNumber("E0003000003");
+        user.setUserNumber("U0003000003");
         user.setUserCreateTime(new Timestamp(System.currentTimeMillis()));
         user.setUserName("Sara21");
         user.setUserPassword("123456");
@@ -111,7 +111,7 @@ public class UserControllerTest {
         UserModel userResponse= given()
                 .contentType("application/json")
                 .body(user)
-                .when().put("/users")
+                .when().put("/api/users")
                 .as(UserModel.class);
 
         log.info("Response: "+ userResponse.toString());
@@ -124,12 +124,12 @@ public class UserControllerTest {
     public void i_deleteUser(){
         UserModel user = new UserModel();
         user.setUserId(3000003L);
-        user.setUserNumber("E0003000003");
+        user.setUserNumber("U0003000003");
 
              given().
                 contentType("application/json")
                 .body(user)
-                .when().delete("/users")
+                .when().delete("/api/users")
                 .then().statusCode(200);
     }
 

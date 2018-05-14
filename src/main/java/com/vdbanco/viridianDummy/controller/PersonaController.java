@@ -23,7 +23,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping(value = "/personas")
+@RequestMapping(value = "/api/personas")
 public class PersonaController {
 
     private PersonaService personaService;

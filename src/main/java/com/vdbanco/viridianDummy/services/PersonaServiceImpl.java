@@ -78,14 +78,14 @@ public class PersonaServiceImpl implements PersonaService {
 
         log.info("Revisando si exite el persona por number");
         PersonaModel currentPersona = this.getByPersonaNumber(persona.getPersonaNumber());
-        
         if(currentPersona != null) {
             log.info("Actualizando persona");
             //persona = this.actualizarEntityPersona(currentPersona , persona);
+                persona.setPersonaId(currentPersona.getPersonaId());
                 log.info("Almacenando cambios");
                 this.personaRepository.save(persona);
                 return this.getByPersonaNumber(persona.getPersonaNumber());
-            
+
         }
         return null;
     }
@@ -94,8 +94,9 @@ public class PersonaServiceImpl implements PersonaService {
     @Override
     public void delete(PersonaModel persona) {
 
-        this.getById(persona.getPersonaId());
-        this.personaRepository.deleteById(persona.getPersonaId());
+        //this.getById(persona.getPersonaId());
+        //this.personaRepository.deleteById(persona.getPersonaId());
+        this.personaRepository.deleteByPersonaNumberIn(persona.getPersonaNumber());
         log.info("Persona eliminada");
     }
 }

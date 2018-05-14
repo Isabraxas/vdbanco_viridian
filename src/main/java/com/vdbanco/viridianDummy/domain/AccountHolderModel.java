@@ -14,7 +14,7 @@ public class AccountHolderModel extends ResourceSupport implements Serializable 
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ACCOUNT_HOLDER_SEQ")
-    @SequenceGenerator(sequenceName = "ACCOUNT_HOLDER_ACCOUNT_HOLDER_", allocationSize = 1, name = "ACCOUNT_HOLDER_SEQ")
+    @SequenceGenerator(sequenceName = "ACCOUNT_HOLDER_ID_SEQ", allocationSize = 1, name = "ACCOUNT_HOLDER_SEQ")
     private Long accountHolderId;
 
     @NotNull
@@ -35,7 +35,6 @@ public class AccountHolderModel extends ResourceSupport implements Serializable 
     @JsonIgnore
     private PersonaModel persona;
 
-    @NotNull
     private String personaPersonaNumber;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -43,7 +42,6 @@ public class AccountHolderModel extends ResourceSupport implements Serializable 
     @JsonIgnore
     private JuridicasModel juridica;
 
-    @NotNull
     private String juridicasJuridicasNumber;
 
 

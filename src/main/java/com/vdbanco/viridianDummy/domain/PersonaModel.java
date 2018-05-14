@@ -19,7 +19,7 @@ public class PersonaModel extends ResourceSupport implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PERSONA_SEQ")
-    @SequenceGenerator(sequenceName = "PERSONA_PERSONA_ID_SEQ", allocationSize = 1, name = "PERSONA_SEQ")
+    @SequenceGenerator(sequenceName = "PERSONA_ID_SEQ", allocationSize = 1, name = "PERSONA_SEQ")
     private Long personaId;
 
     @NotNull

@@ -23,7 +23,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping(value = "/productosBancarios")
+@RequestMapping(value = "/api/productosBancarios")
 public class ProductosBancariosController {
 
     private ProductosBancariosService productosBancariosService;

@@ -20,7 +20,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ViridianDummyApplication.class , webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@FixMethodOrder(MethodSorters.JVM)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class PersonaControllerTest  {
     // logger
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(PersonaControllerTest.class);
@@ -34,42 +34,42 @@ public class PersonaControllerTest  {
     }
 
     @Test
-    public void getPersonas() {
-        given().when().get("/personas").then().statusCode(200);
+    public void a_getPersonas() {
+        given().when().get("/api/personas").then().statusCode(200);
     }
 
     @Test
-    public void getPersonasPaginable() {
-        given().when().get("/personas?page=1").then().statusCode(200);
+    public void b_getPersonasPaginable() {
+        given().when().get("/api/personas?page=1").then().statusCode(200);
     }
 
     @Test
-    public void getPersonasById() {
-        given().pathParam("id",120).when().get("/personas/{id}").then().statusCode(200);
+    public void c_getPersonasById() {
+        given().pathParam("id",20).when().get("/api/personas/{id}").then().statusCode(200);
     }
 
     @Test
-    public void getPersonasByIdNotFound() {
+    public void d_getPersonasByIdNotFound() {
         given()
                 .pathParam("id",3000003)
         .when()
-                .get("/personas/{id}").then().statusCode(404).and()
+                .get("/api/personas/{id}").then().statusCode(404).and()
                 .body("estado",equalTo("error"))
                 .body("error.codigo",equalTo("001"));
     }
 
     @Test
-    public void getPersonasByNumber() {
-        given().pathParam("number","P000120").when().get("/personas/number/{number}").then().statusCode(200);
+    public void e_getPersonasByNumber() {
+        given().pathParam("number","P00012").when().get("/api/personas/number/{number}").then().statusCode(200);
     }
 
     @Test
-    public void getPersonasByNumberNotFound() {
-        given().pathParam("number","P0003000008").when().get("/personas/number/{number}").then().statusCode(404);
+    public void f_getPersonasByNumberNotFound() {
+        given().pathParam("number","P0003000008").when().get("/api/personas/number/{number}").then().statusCode(404);
     }
 
     @Test
-    public void postPersona(){
+    public void g_postPersona(){
         PersonaModel persona = new PersonaModel();
         persona.setPersonaId(3000003L);
         persona.setPersonaNombre("In");
@@ -79,7 +79,7 @@ public class PersonaControllerTest  {
         PersonaModel personaResponse= given()
                 .contentType("application/json")
                 .body(persona)
-                .when().post("/personas")
+                .when().post("/api/personas")
                 .as(PersonaModel.class);
 
         log.info("Response: "+ personaResponse.toString());
@@ -90,7 +90,7 @@ public class PersonaControllerTest  {
     }
 
     @Test
-    public void putPersona(){
+    public void h_putPersona(){
         PersonaModel persona = new PersonaModel();
         persona.setPersonaId(3000003L);
         persona.setPersonaNumber("P0003000003");
@@ -99,7 +99,7 @@ public class PersonaControllerTest  {
         PersonaModel personaResponse= given()
                 .contentType("application/json")
                 .body(persona)
-                .when().put("/personas")
+                .when().put("/api/personas")
                 .as(PersonaModel.class);
 
         log.info("Response: "+ personaResponse.toString());
@@ -109,7 +109,7 @@ public class PersonaControllerTest  {
     }
 
     @Test
-    public void deletePersona(){
+    public void i_deletePersona(){
         PersonaModel persona = new PersonaModel();
         persona.setPersonaId(3000003L);
         persona.setPersonaNumber("P0003000003");
@@ -117,7 +117,7 @@ public class PersonaControllerTest  {
              given().
                 contentType("application/json")
                 .body(persona)
-                .when().delete("/personas")
+                .when().delete("/api/personas")
                 .then().statusCode(200);
     }
 

@@ -24,7 +24,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping(value = "/autorizacions")
+@RequestMapping(value = "/api/autorizacions")
 public class AutorizacionController {
 
     private AutorizacionService autorizacionService;

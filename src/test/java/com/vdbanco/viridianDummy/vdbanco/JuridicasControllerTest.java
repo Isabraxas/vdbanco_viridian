@@ -36,19 +36,19 @@ public class JuridicasControllerTest {
 
     @Test
     public void a_getJuridicass() {
-        given().when().get("/juridicas").then().statusCode(200);
+        given().when().get("/api/juridicas").then().statusCode(200);
     }
 
     @Test
     public void b_getJuridicassPaginable() {
-        given().when().get("/juridicas?page=1").then().statusCode(200);
+        given().when().get("/api/juridicas?page=1").then().statusCode(200);
     }
 
     @Test
     public void c_getJuridicassById() {
         given().pathParam("id",8)
                 .when()
-                    .get("/juridicas/{id}")
+                    .get("/api/juridicas/{id}")
                     .then().statusCode(200)
                     .body("juridicasRepresentanteLegalNumber", notNullValue())
                     .body("juridicasNumber", notNullValue());
@@ -60,19 +60,19 @@ public class JuridicasControllerTest {
         given()
                 .pathParam("id",3000003)
         .when()
-                .get("/juridicas/{id}").then().statusCode(404).and()
+                .get("/api/juridicas/{id}").then().statusCode(404).and()
                 .body("estado",equalTo("error"))
                 .body("error.codigo",equalTo("001"));
     }
 
     @Test
     public void e_getJuridicassByNumber() {
-        given().pathParam("number","J0008").when().get("/juridicas/number/{number}").then().statusCode(200);
+        given().pathParam("number","J0008").when().get("/api/juridicas/number/{number}").then().statusCode(200);
     }
 
     @Test
     public void f_getJuridicassByNumberNotFound() {
-        given().pathParam("number","J0003000003").when().get("/juridicas/number/{number}").then().statusCode(404);
+        given().pathParam("number","J0003000003").when().get("/api/juridicas/number/{number}").then().statusCode(404);
     }
 
     @Test
@@ -86,7 +86,7 @@ public class JuridicasControllerTest {
         JuridicasModel juridicaResponse= given()
                 .contentType("application/json")
                 .body(juridica)
-                .when().post("/juridicas")
+                .when().post("/api/juridicas")
                 .as(JuridicasModel.class);
 
         log.info("Response: "+ juridicaResponse.toString());
@@ -107,7 +107,7 @@ public class JuridicasControllerTest {
         JuridicasModel juridicaResponse= given()
                 .contentType("application/json")
                 .body(juridica)
-                .when().put("/juridicas")
+                .when().put("/api/juridicas")
                 .as(JuridicasModel.class);
 
         log.info("Response: "+ juridicaResponse.toString());
@@ -120,12 +120,12 @@ public class JuridicasControllerTest {
     public void i_deleteJuridicas(){
         JuridicasModel juridica = new JuridicasModel();
         juridica.setJuridicasId(3000003L);
-        juridica.setJuridicasNumber("P0003000003");
+        juridica.setJuridicasNumber("J0003000003");
 
              given().
                 contentType("application/json")
                 .body(juridica)
-                .when().delete("/juridicas")
+                .when().delete("/api/juridicas")
                 .then().statusCode(200);
     }
 

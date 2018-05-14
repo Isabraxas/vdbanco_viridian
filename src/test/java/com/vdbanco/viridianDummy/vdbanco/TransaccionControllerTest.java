@@ -41,19 +41,19 @@ public class TransaccionControllerTest {
 
     @Test
     public void a_getTransaccions() {
-        given().when().get("/transaccions").then().statusCode(200);
+        given().when().get("/api/transaccions").then().statusCode(200);
     }
 
     @Test
     public void b_getTransaccionsPaginable() {
-        given().when().get("/transaccions?page=1").then().statusCode(200);
+        given().when().get("/api/transaccions?page=1").then().statusCode(200);
     }
 
     @Test
     public void c_getTransaccionsById() {
         given().pathParam("id",189218)
                 .when()
-                    .get("/transaccions/{id}")
+                    .get("/api/transaccions/{id}")
                     .then().statusCode(200)
                     .body("transaccionNumber", notNullValue());
         //Agregar algo mas del contenido del cuerpo como comprobar el transaccion number
@@ -64,19 +64,19 @@ public class TransaccionControllerTest {
         given()
                 .pathParam("id",8000003)
         .when()
-                .get("/transaccions/{id}").then().statusCode(404).and()
+                .get("/api/transaccions/{id}").then().statusCode(404).and()
                 .body("estado",equalTo("error"))
                 .body("error.codigo",equalTo("001"));
     }
 
     @Test
     public void e_getTransaccionsByNumber() {
-        given().pathParam("number","T00019").when().get("/transaccions/number/{number}").then().statusCode(200);
+        given().pathParam("number","T00019").when().get("/api/transaccions/number/{number}").then().statusCode(200);
     }
 
     @Test
     public void f_getTransaccionsByNumberNotFound() {
-        given().pathParam("number","T0003000008").when().get("/transaccions/number/{number}").then().statusCode(404);
+        given().pathParam("number","T0003000008").when().get("/api/transaccions/number/{number}").then().statusCode(404);
     }
 
     @Test
@@ -92,7 +92,7 @@ public class TransaccionControllerTest {
         TransaccionModel transaccionResponse= given()
                 .contentType("application/json")
                 .body(transaccion)
-                .when().post("/transaccions")
+                .when().post("/api/transaccions")
                 .as(TransaccionModel.class);
 
         log.info("Response: "+ transaccionResponse.toString());
@@ -108,7 +108,7 @@ public class TransaccionControllerTest {
 
         TransaccionModel[] transaccion =
                 given().pathParam("number","T0008000003").
-                when().get("/transaccions/number/{number}")
+                when().get("/api/transaccions/number/{number}")
                 .then().extract().body().as(TransaccionModel[].class);
         transaccion[0].setTransaccionMonto(100.0);
         transaccion[0].setTransaccionGlossa("nuevoMonto");
@@ -116,7 +116,7 @@ public class TransaccionControllerTest {
         TransaccionModel transaccionResponse= given()
                 .contentType("application/json")
                 .body(transaccion[0])
-                .when().put("/transaccions")
+                .when().put("/api/transaccions")
                 .as(TransaccionModel.class);
 
         log.info("Response: "+ transaccionResponse.toString());
@@ -129,13 +129,13 @@ public class TransaccionControllerTest {
     @Test
     public void i_deleteTransaccion(){
         TransaccionModel[] transaccion = given().pathParam("number","T0008000003").
-                        when().get("/transaccions/number/{number}")
+                        when().get("/api/transaccions/number/{number}")
                         .then().extract().body().as(TransaccionModel[].class);
 
              given().
                 contentType("application/json")
                 .body(transaccion[0])
-                .when().delete("/transaccions")
+                .when().delete("/api/transaccions")
                 .then().statusCode(200);
     }
 

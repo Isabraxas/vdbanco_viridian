@@ -98,6 +98,7 @@ public class EmpleadoServiceImpl implements EmpleadoService {
 
     @Override
     public void delete(EmpleadoModel empleado) {
-        this.empleadoRepository.deleteById(empleado.getEmpleadoId());
+        //this.empleadoRepository.deleteById(empleado.getEmpleadoId());
+        this.empleadoRepository.deleteByEmpleadoNumber(empleado.getEmpleadoNumber());
     }
 }

@@ -90,6 +90,7 @@ public class AutorizacionServiceImpl implements AutorizacionService{
 
     @Override
     public void delete(AutorizacionModel autorizacion) {
-        this.autorizacionRepository.deleteById(autorizacion.getAutorizacionId());
+        //this.autorizacionRepository.deleteById(autorizacion.getAutorizacionId());
+        this.autorizacionRepository.deleteByAutorizacionNumber(autorizacion.getAutorizacionNumber());
     }
 }

@@ -37,17 +37,17 @@ public class ProductosBancariosControllerTest {
 
     @Test
     public void a_getProductosBancarios() {
-        given().when().get("/productosBancarios").then().statusCode(200);
+        given().when().get("/api/productosBancarios").then().statusCode(200);
     }
 
     @Test
     public void b_getProductosBancariosPaginable() {
-        given().when().get("/productosBancarios?page=1").then().statusCode(200);
+        given().when().get("/api/productosBancarios?page=1").then().statusCode(200);
     }
 
     @Test
     public void c_getProductosBancariosById() {
-        given().pathParam("id",5).when().get("/productosBancarios/{id}").then().statusCode(200);
+        given().pathParam("id",5).when().get("/api/productosBancarios/{id}").then().statusCode(200);
     }
 
     @Test
@@ -55,19 +55,19 @@ public class ProductosBancariosControllerTest {
         given()
                 .pathParam("id",31)
         .when()
-                .get("/productosBancarios/{id}").then().statusCode(404).and()
+                .get("/api/productosBancarios/{id}").then().statusCode(404).and()
                 .body("estado",equalTo("error"))
                 .body("error.codigo",equalTo("001"));
     }
 
     @Test
     public void e_getProductosBancariosByNumber() {
-        given().pathParam("number","B0005").when().get("/productosBancarios/number/{number}").then().statusCode(200);
+        given().pathParam("number","B0005").when().get("/api/productosBancarios/number/{number}").then().statusCode(200);
     }
 
     @Test
     public void f_getProductosBancariosByNumberNotFound() {
-        given().pathParam("number","B00031").when().get("/productosBancarios/number/{number}").then().statusCode(404);
+        given().pathParam("number","B00031").when().get("/api/productosBancarios/number/{number}").then().statusCode(404);
     }
 
     @Test
@@ -80,7 +80,7 @@ public class ProductosBancariosControllerTest {
         ProductosBancariosModel productosBancariosResponse= given()
                 .contentType("application/json")
                 .body(productosBancarios)
-                .when().post("/productosBancarios")
+                .when().post("/api/productosBancarios")
                 .as(ProductosBancariosModel.class);
 
         log.info("Response: "+ productosBancariosResponse.toString());
@@ -99,7 +99,7 @@ public class ProductosBancariosControllerTest {
         ProductosBancariosModel productosBancariosResponse= given()
                 .contentType("application/json")
                 .body(productosBancarios)
-                .when().put("/productosBancarios")
+                .when().put("/api/productosBancarios")
                 .as(ProductosBancariosModel.class);
 
         log.info("Response: "+ productosBancariosResponse.toString());
@@ -119,7 +119,7 @@ public class ProductosBancariosControllerTest {
              given().
                 contentType("application/json")
                 .body(productosBancarios)
-                .when().delete("/productosBancarios")
+                .when().delete("/api/productosBancarios")
                 .then().statusCode(200);
     }
 

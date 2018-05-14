@@ -2,9 +2,11 @@ package com.vdbanco.viridianDummy.services;
 
 import com.vdbanco.viridianDummy.domain.AutorizacionModel;
 import com.vdbanco.viridianDummy.domain.TransaccionModel;
+import com.vdbanco.viridianDummy.error.ConflictsException;
 import com.vdbanco.viridianDummy.error.ErrorDetalle;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.repository.TransaccionRepository;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,11 +18,15 @@ import java.util.Optional;
 @Service
 public class TransaccionServiceImpl implements TransaccionService {
 
-    private TransaccionRepository transaccionRepository;
+    // logger
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(TransaccionServiceImpl.class);
 
-    @Autowired
-    public TransaccionServiceImpl(TransaccionRepository transaccionRepository) {
+    private TransaccionRepository transaccionRepository;
+    private AutorizacionService autorizacionService;
+
+    public TransaccionServiceImpl(TransaccionRepository transaccionRepository, AutorizacionService autorizacionService) {
         this.transaccionRepository = transaccionRepository;
+        this.autorizacionService = autorizacionService;
     }
 
     @Override
@@ -62,13 +68,31 @@ public class TransaccionServiceImpl implements TransaccionService {
 
     @Override
     public TransaccionModel save(TransaccionModel transaccion) {
-        boolean existe = this.transaccionRepository.existsById(transaccion.getTransaccionId());
-        if(!existe) {
-            return this.transaccionRepository.save(transaccion);
+        
+        log.info("Revisando si exite el transaccion por number");
+        List<TransaccionModel> transaccions = this.transaccionRepository.findByTransaccionNumber(transaccion.getTransaccionNumber());
+        
+        
+        for (TransaccionModel transaccionModel : transaccions) {
+            
+            if(transaccionModel == null) {
+                log.info("Creando transaccion");
+                AutorizacionModel autorizacion = this.autorizacionService.getByAutorizacionNumber(transaccion.getAutorizacionNumber());
+                if(autorizacion != null) {
+                    transaccion.setAutorizacion(autorizacion);
+                    log.info("Almacenando  transaccion");
+                    return this.transaccionRepository.save(transaccion);
+                }
+            }else{
+                log.error("El transaccion con number: "+ transaccion.getTransaccionNumber() +" ya existe");
+                String errorMsg = "El transaccion con number: "+ transaccion.getTransaccionNumber() +" ya existe";
+                throw new ConflictsException(errorMsg, new ErrorDetalle(transaccion.getTransaccionId(),"409","El transaccion con number: "+ transaccion.getTransaccionNumber() +" ya existe","Hemos encontrado un error intentelo nuevamente"));
+            }
         }
+        
         return null;
     }
-
+    
     @Override
     public TransaccionModel update(TransaccionModel transaccion) {
 
@@ -76,32 +100,29 @@ public class TransaccionServiceImpl implements TransaccionService {
         //TODO tener la lista de transacciones
         //TODO hacer un foreach y comparar la cuenta para determinar que transacion debe modificarse
         //TODO tambien de debe cambiar el metodo save
-        TransaccionModel currentTransaccion = this.getByTransaccionNumber(transaccion.getTransaccionNumber());
-
+        List<TransaccionModel> currentTransaccions = this.getByTransaccionNumber(transaccion.getTransaccionNumber());
+        TransaccionModel currentTransaccion= new TransaccionModel();
+        for (TransaccionModel myTransaccion:currentTransaccions) {
+            if(myTransaccion.getAccountNumber() == transaccion.getAccountNumber()){
+                currentTransaccion = myTransaccion;
+            }
+        }
         if(currentTransaccion != null) {
             log.info("Actualizando transaccion");
             //transaccion = this.actualizarEntityTransaccion(currentTransaccion , transaccion);
-            AutorizacionModel autorizacion = this.autorizacionService.getByAutorizacionNumber(transaccion.getAutorizacionAutorizacionNumber());
+            AutorizacionModel autorizacion = this.autorizacionService.getByAutorizacionNumber(transaccion.getAutorizacionNumber());
             if(autorizacion != null) {
                 transaccion.setTransaccionId(currentTransaccion.getTransaccionId());
                 transaccion.setAutorizacion(autorizacion);
                 log.info("Almacenando cambios");
-                this.transaccionRepository.save(transaccion);
-                return this.getByTransaccionNumber(transaccion.getTransaccionNumber());
+                return this.transaccionRepository.save(transaccion);
+                //TODO creo que este metodo deberia devover las 2 transacciones relacionadas al number y en los servicios funcionales 
+                //TODO deberia devolverse solo el currespondiente a x cuenta
             }
         }
         return null;
     }
     
-    @Override
-    public TransaccionModel update(TransaccionModel transaccion) {
-        boolean existe = this.transaccionRepository.existsById(transaccion.getTransaccionId());
-        if(existe) {
-
-            return this.transaccionRepository.save(transaccion);
-        }
-        return null;
-    }
 
     @Override
     public void delete(TransaccionModel transaccion) {

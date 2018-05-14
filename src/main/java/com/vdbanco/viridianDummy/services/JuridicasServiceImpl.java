@@ -88,6 +88,7 @@ public class JuridicasServiceImpl implements JuridicasService {
             //juridicas = this.actualizarEntityJuridicas(currentJuridicas , juridicas);
             PersonaModel persona = this.personaService.getByPersonaNumber(juridicas.getJuridicasRepresentanteLegalNumber());
             if(persona != null) {
+                juridicas.setJuridicasId(currentJuridicas.getJuridicasId());
                 juridicas.setJuridicasRepresentanteLegal(persona.getPersonaNombre());
                 juridicas.setJuridicasRepresentante(persona);
                 log.info("Almacenando cambios");
@@ -101,6 +102,7 @@ public class JuridicasServiceImpl implements JuridicasService {
 
     @Override
     public void delete(JuridicasModel juridicas) {
-        this.juridicasRepository.deleteById(juridicas.getJuridicasId());
+        //this.juridicasRepository.deleteById(juridicas.getJuridicasId());
+        this.juridicasRepository.deleteAllByJuridicasNumber(juridicas.getJuridicasNumber());
     }
 }
