@@ -2,7 +2,7 @@ package com.vdbanco.viridianDummy.error;
 
 import java.sql.Timestamp;
 
-public class ErrorSaldoInsuficiente {
+public class ErrorTransferencia {
 
     private Timestamp fecha;
     private String estado;

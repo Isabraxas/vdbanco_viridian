@@ -6,6 +6,11 @@ import com.vdbanco.viridianDummy.error.ConflictsException;
 import com.vdbanco.viridianDummy.error.EntidadError;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.services.ProductosBancariosService;
+import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.annotation.ApiPathParam;
+import org.jsondoc.core.annotation.ApiQueryParam;
+import org.jsondoc.core.pojo.ApiStage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -24,6 +29,11 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(value = "/api/productosBancarios")
+@Api(
+        name = "Productos bancarios",
+        description = "Permite manejar a travez de una lista de metodos los productos bancarios del banco.",
+        stage = ApiStage.ALPHA
+)
 public class ProductosBancariosController {
 
     private ProductosBancariosService productosBancariosService;
@@ -36,8 +46,11 @@ public class ProductosBancariosController {
     }
 
     @GetMapping
-    public ProductosBancariosModelList getAllPageable(@RequestParam( required = false, defaultValue = "0") int page,
-                                                      @RequestParam( required = false, defaultValue = "20") int size ){
+    @ApiMethod(description = "Retorna una lista de productos bancarios paginados de 20 en 20")
+    public ProductosBancariosModelList getAllPageable(@ApiQueryParam(name = "page", description = "numero de pagina", required = false, defaultvalue = "0")
+                                                          @RequestParam( required = false, defaultValue = "0") int page,
+                                                      @ApiQueryParam(name = "size", description = "numero de pagina", required = false, defaultvalue = "20")
+                                                            @RequestParam( required = false, defaultValue = "20") int size ){
 
         PageRequest pageRequest = PageRequest.of(page,size);
         Page<ProductosBancariosModel> productosBancariosPages = this.productosBancariosService.getAll(pageRequest);
@@ -58,12 +71,14 @@ public class ProductosBancariosController {
     }
 
     @GetMapping(value = "/{id}")
-    public Optional<ProductosBancariosModel> getProductosBancariosById(@PathVariable Long id){
+    @ApiMethod(description = "Retorna el producto bancario correspondiente con id proporcionado en el path.")
+    public Optional<ProductosBancariosModel> getProductosBancariosById(@ApiPathParam(name="id",description = "id de producto bancario") @PathVariable Long id){
         return this.productosBancariosService.getById(id);
     }
 
     @GetMapping(value = "/number/{number}")
-    public ProductosBancariosModel getProductosBancariosByNumber(@PathVariable String number){
+    @ApiMethod(description = "Retorna el producto bancario correspondiente con el numero/codigo proporcionado en el path.")
+    public ProductosBancariosModel getProductosBancariosByNumber(@ApiPathParam(name = "number" , description = "numero o codigo de producto bancario") @PathVariable String number){
 
         ProductosBancariosModel productosBancarios = this.productosBancariosService.getByProductosBancariosNumber(number);
         productosBancarios.add(linkTo(methodOn(ProductosBancariosController.class).getProductosBancariosByNumber(productosBancarios.getProductosBancariosNumber())).withSelfRel());
@@ -71,17 +86,20 @@ public class ProductosBancariosController {
         return productosBancarios;
     }
     @PostMapping
+    @ApiMethod(description = "Almacena un nuevo producto bancario con los datos ingresados.", responsestatuscode = "201" )
     public ProductosBancariosModel saveProductosBancarios(@RequestBody @Valid ProductosBancariosModel productosBancarios){
         return this.productosBancariosService.save(productosBancarios);
     }
 
     @PutMapping
+    @ApiMethod(description = "Sustituye los datos del producto bancario que corresponda con el mismo numero/codigo")
     public ProductosBancariosModel updateProductosBancarios(@RequestBody @Valid ProductosBancariosModel productosBancarios){
 
         return this.productosBancariosService.update(productosBancarios);
     }
 
     @DeleteMapping
+    @ApiMethod(description = "Elimina el producto bancario que corresponda con el mismo numero/codigo")
     public void deleteProductosBancarios(@RequestBody ProductosBancariosModel productosBancarios){
         this.productosBancariosService.delete(productosBancarios);
     }

@@ -6,6 +6,10 @@ import com.vdbanco.viridianDummy.error.ConflictsException;
 import com.vdbanco.viridianDummy.error.EntidadError;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.services.JuridicasService;
+import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.annotation.ApiPathParam;
+import org.jsondoc.core.pojo.ApiStage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -24,6 +28,11 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(value = "/api/juridicas")
+@Api(
+        name = "Personas Juridicas",
+        description = "Permite manejar a travez de una lista de metodos, las personas Juridicas del banco.",
+        stage = ApiStage.ALPHA
+)
 public class JuridicasController {
 
     private JuridicasService juridicasService;
@@ -36,6 +45,7 @@ public class JuridicasController {
     }
 
     @GetMapping
+    @ApiMethod(description = "Retorna una lista de personas juridicas paginadas de 20 en 20")
     public JuridicasModelList getAllPageable(@RequestParam( required = false, defaultValue = "0") int page,
                                            @RequestParam( required = false, defaultValue = "20") int size ){
 
@@ -58,12 +68,14 @@ public class JuridicasController {
     }
 
     @GetMapping(value = "/{id}")
-    public Optional<JuridicasModel> getJuridicasById(@PathVariable Long id){
+    @ApiMethod(description = "Retorna los datos de persona juridica correspondiente con id proporcionado en el path.")
+    public Optional<JuridicasModel> getJuridicasById(@ApiPathParam(name="id",description = "id de persona Juridica") @PathVariable Long id){
         return this.juridicasService.getById(id);
     }
 
     @GetMapping(value = "/number/{number}")
-    public JuridicasModel getJuridicasByNumber(@PathVariable String number){
+    @ApiMethod(description = "Retorna los datos de persona juridica correspondiente con el numero/codigo proporcionado en el path.")
+    public JuridicasModel getJuridicasByNumber(@ApiPathParam(name = "number" , description = "numero o codigo de persona juridica") @PathVariable String number){
         
         JuridicasModel juridicas = this.juridicasService.getByJuridicasNumber(number);
         juridicas.add(linkTo(methodOn(JuridicasController.class).getJuridicasByNumber(juridicas.getJuridicasNumber())).withSelfRel());
@@ -73,17 +85,20 @@ public class JuridicasController {
     }
 
     @PostMapping
+    @ApiMethod(description = "Almacena una nueva persona juridica con los datos ingresados.", responsestatuscode = "201" )
     public JuridicasModel saveJuridicas(@RequestBody @Valid JuridicasModel juridicas){
         return this.juridicasService.save(juridicas);
     }
 
     @PutMapping
+    @ApiMethod(description = "Sustituye los datos de persona juridica que corresponda con el mismo numero/codigo")
     public JuridicasModel updateJuridicas(@RequestBody @Valid JuridicasModel juridicas){
 
         return this.juridicasService.update(juridicas);
     }
 
     @DeleteMapping
+    @ApiMethod(description = "Elimina la persona juridica que corresponda con el mismo numero/codigo")
     public void deleteJuridicas(@RequestBody JuridicasModel juridicas){
         this.juridicasService.delete(juridicas);
     }

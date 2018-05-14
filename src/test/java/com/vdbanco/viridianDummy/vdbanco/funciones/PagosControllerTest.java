@@ -2,7 +2,7 @@ package com.vdbanco.viridianDummy.vdbanco.funciones;
 
 import com.jayway.restassured.RestAssured;
 import com.vdbanco.viridianDummy.ViridianDummyApplication;
-import com.vdbanco.viridianDummy.error.ErrorSaldoInsuficiente;
+import com.vdbanco.viridianDummy.error.ErrorTransferencia;
 import com.vdbanco.viridianDummy.funciones.inputModel.PagoPrestamoRequest;
 import com.vdbanco.viridianDummy.funciones.outputModel.PagoResponse;
 import org.junit.Assert;
@@ -62,11 +62,11 @@ public class PagosControllerTest {
         pagoPrestamoRequest.setMonto(5.0);
         pagoPrestamoRequest.setGlossa("Pago de prestamo test");
 
-        ErrorSaldoInsuficiente pagoResponse =
+        ErrorTransferencia pagoResponse =
                 given().contentType("application/json")
                         .body(pagoPrestamoRequest)
                         .when().post("/users/pagos/prestamo")
-                        .as(ErrorSaldoInsuficiente .class);
+                        .as(ErrorTransferencia.class);
 
         Assert.assertTrue(pagoResponse.getEstado().equals("error"));
 
@@ -102,11 +102,11 @@ public class PagosControllerTest {
         pagoPrestamoRequest.setMonto(5.0);
         pagoPrestamoRequest.setGlossa("Pago de tarjeta de credito");
 
-        ErrorSaldoInsuficiente pagoResponse =
+        ErrorTransferencia pagoResponse =
                 given().contentType("application/json")
                         .body(pagoPrestamoRequest)
                         .when().post("/users/pagos/tarjetaCredito")
-                        .as(ErrorSaldoInsuficiente.class);
+                        .as(ErrorTransferencia.class);
 
         Assert.assertTrue(pagoResponse.getEstado().equals("error"));
     }

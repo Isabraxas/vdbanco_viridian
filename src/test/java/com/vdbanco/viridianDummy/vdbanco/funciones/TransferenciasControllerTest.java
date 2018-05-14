@@ -3,14 +3,13 @@ package com.vdbanco.viridianDummy.vdbanco.funciones;
 import com.jayway.restassured.RestAssured;
 import com.vdbanco.viridianDummy.ViridianDummyApplication;
 import com.vdbanco.viridianDummy.domain.AutorizacionModel;
-import com.vdbanco.viridianDummy.error.ErrorSaldoInsuficiente;
+import com.vdbanco.viridianDummy.error.ErrorTransferencia;
 import com.vdbanco.viridianDummy.funciones.ProductosClienteModel;
 import com.vdbanco.viridianDummy.funciones.inputModel.ReversionRequest;
 import com.vdbanco.viridianDummy.funciones.inputModel.TransferenciaOtroBancoRequest;
 import com.vdbanco.viridianDummy.funciones.inputModel.TransferenciaPropiaRequest;
 import com.vdbanco.viridianDummy.funciones.inputModel.TransferenciaTerceroRequest;
 import com.vdbanco.viridianDummy.funciones.outputModel.TranferenciasResponse;
-import com.vdbanco.viridianDummy.vdbanco.AutorizacionControllerTest;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -23,6 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.junit.Assert.assertTrue;
+import static org.hamcrest.Matchers.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ViridianDummyApplication.class , webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -45,8 +45,9 @@ public class TransferenciasControllerTest {
         //DO consultar primero las cuentas propias de un usuario en particular y luego con esa info mandar los parametros
 
         ProductosClienteModel productosClienteModel= given().pathParam("id", "42")
-                .when().get("/users/{id}/productos")
+              .when().get("/users/{id}/productos")
                 .then().extract().body().as(ProductosClienteModel.class);
+
 
         TransferenciaPropiaRequest transferenciaPropiaRequest = new TransferenciaPropiaRequest();
         transferenciaPropiaRequest.setAccountNumberOrigen(productosClienteModel.getCuentas().get(0).getAccountNumber());
@@ -55,12 +56,13 @@ public class TransferenciasControllerTest {
         transferenciaPropiaRequest.setGlossa("Transferencia en test a cuenta propia");
 
 
-                TranferenciasResponse tranferenciasResponse =
                         given().contentType("application/json")
                         .body(transferenciaPropiaRequest)
-                .when().post("/users/tranferencias/propias").as(TranferenciasResponse.class);
+                        .when().post("/users/tranferencias/propias").then()
+                                .statusCode(200)
+                                .body("estado",equalTo("successful"));
 
-        assertTrue(tranferenciasResponse.getEstado().equals("successful"));
+        //assertTrue(tranferenciasResponse.getEstado().equals("successful"));
     }
 
 
@@ -75,10 +77,10 @@ public class TransferenciasControllerTest {
         transferenciaPropiaRequest.setGlossa("Transferencia en test a cuenta propia");
 
 
-        ErrorSaldoInsuficiente tranferenciasResponse =
+        ErrorTransferencia tranferenciasResponse =
                 given().contentType("application/json")
                         .body(transferenciaPropiaRequest)
-                        .when().post("/users/tranferencias/propias").as(ErrorSaldoInsuficiente.class);
+                        .when().post("/users/tranferencias/propias").as(ErrorTransferencia.class);
 
         assertTrue(tranferenciasResponse.getEstado().equals("error"));
     }
@@ -115,11 +117,10 @@ public class TransferenciasControllerTest {
         transferenciaTerceroRequest.setMonto(10.0);
         transferenciaTerceroRequest.setGlossa("Transferencia en test a cuentas de terceros");
 
-        //TODO cambiar clase ErrorSaldoInsuficiente por ErrorTransferencia
-        ErrorSaldoInsuficiente tranferenciasResponse =
+        ErrorTransferencia tranferenciasResponse =
                 given().contentType("application/json")
                         .body(transferenciaTerceroRequest)
-                        .when().post("/users/tranferencias/terceros").as(ErrorSaldoInsuficiente.class);
+                        .when().post("/users/tranferencias/terceros").as(ErrorTransferencia.class);
 
         assertTrue(tranferenciasResponse.getEstado().equals("error"));
 
@@ -162,10 +163,10 @@ public class TransferenciasControllerTest {
         transferenciaOtroBancoRequest.setMonto(10.0);
         transferenciaOtroBancoRequest.setGlossa("Transferencia en test a cuentas para otros bancos");
 
-        ErrorSaldoInsuficiente tranferenciasResponse =
+        ErrorTransferencia tranferenciasResponse =
                 given().contentType("application/json")
                         .body(transferenciaOtroBancoRequest)
-                        .when().post("/users/tranferencias/terceros").as(ErrorSaldoInsuficiente.class);
+                        .when().post("/users/tranferencias/terceros").as(ErrorTransferencia.class);
 
         assertTrue(tranferenciasResponse.getEstado().equals("error"));
 

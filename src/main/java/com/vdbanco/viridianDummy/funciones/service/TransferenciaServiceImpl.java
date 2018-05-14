@@ -63,6 +63,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
         }else{
 
             String errorMsg = "Las cuentas no pertenecen al mismo propiertario: "+ accountOrigen.getAccountNumber() + " - "+ accountDestino.getAccountNumber();
+            log.error(errorMsg);
             throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(accountOrigen.getAccountId(), "002", "Las cuentas no pertenecen al mismo propiertario: "+ accountOrigen.getAccountNumber() + " - "+ accountDestino.getAccountNumber(), "Hemos encontrado un error intentelo nuevamente"));
 
         }
@@ -140,7 +141,6 @@ public class TransferenciaServiceImpl implements TransferenciaService {
         }
 
     }
-
 
 
     public TranferenciasResponse createTranferencia(TransferenciaReversionRequest transferenciaPropiaRequest) {
@@ -233,6 +233,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
         if(accountOrigen.getAccountHolderNumber().equals(accountDestino.getAccountHolderNumber())){
 
             String errorMsg = "No son cuentas de terceros: "+ accountOrigen.getAccountNumber() + " - "+ accountDestino.getAccountNumber();
+            log.error(errorMsg);
             throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(accountOrigen.getAccountId(), "002", "Las cuentas no pertenecen a terceros: "+ accountOrigen.getAccountNumber() + " - "+ accountDestino.getAccountNumber(), "Hemos encontrado un error intentelo nuevamente"));
 
         }else{
@@ -699,7 +700,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
         List<TransaccionModel> transaccionList = transaccionRepository.findByTransaccionNumber(reversionRequest.getNumeroTransacion());
         AutorizacionModel autorizacion = autorizacionService.getByAutorizacionNumber(reversionRequest.getNumeroAutorizacion());
 
-        //comprobar tanto que tarnasacciones con ese numero como autorizacion existen
+        //TODO comprobar tanto que tarnasacciones con ese numero como autorizacion existen
         // la autorizacion debe crearce aparte no se si a mano o con un metodo especifico para esta
         //comprobar que la uatorizacion type es para una reversion
         // realizar la reversion

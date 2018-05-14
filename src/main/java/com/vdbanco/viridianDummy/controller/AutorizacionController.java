@@ -6,6 +6,11 @@ import com.vdbanco.viridianDummy.error.ConflictsException;
 import com.vdbanco.viridianDummy.error.EntidadError;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.services.AutorizacionService;
+import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.annotation.ApiPathParam;
+import org.jsondoc.core.annotation.ApiQueryParam;
+import org.jsondoc.core.pojo.ApiStage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -25,6 +30,11 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(value = "/api/autorizacions")
+@Api(
+        name = "Autorizaciones",
+        description = "Permite manejar por medio de una lista de metodos las operaciones aplicadas a las autorizaciones bancarias.",
+        stage = ApiStage.ALPHA
+)
 public class AutorizacionController {
 
     private AutorizacionService autorizacionService;
@@ -37,8 +47,11 @@ public class AutorizacionController {
     }
 
     @GetMapping
-    public AutorizacionModelList getAllPageable(@RequestParam( required = false, defaultValue = "0") int page,
-                                                @RequestParam( required = false, defaultValue = "20") int size ){
+    @ApiMethod(description = "Retorna una lista de autorizacines paginadas de 20 en 20")
+    public AutorizacionModelList getAllPageable(@ApiQueryParam(name = "page", description = "numero de pagina", required = false, defaultvalue = "0")
+                                                    @RequestParam( required = false, defaultValue = "0") int page,
+                                                @ApiQueryParam(name = "size", description = "cantidad de elementos", required = false, defaultvalue = "20")
+                                                    @RequestParam( required = false, defaultValue = "20") int size ){
 
         PageRequest pageRequest = PageRequest.of(page,size);
         Page<AutorizacionModel> autorizacionPages = this.autorizacionService.getAll(pageRequest);
@@ -59,12 +72,14 @@ public class AutorizacionController {
     }
 
     @GetMapping(value = "/{id}")
-    public Optional<AutorizacionModel> getAutorizacionById(@PathVariable Long id){
+    @ApiMethod(description = "Retorna la autorizacion correspondiente con id proporcionado en el path.")
+    public Optional<AutorizacionModel> getAutorizacionById(@ApiPathParam(name="id",description = "id de autorizacion") @PathVariable Long id){
         return this.autorizacionService.getById(id);
     }
 
     @GetMapping(value = "/number/{number}")
-    public AutorizacionModel getAutorizacionByNumber(@PathVariable String number){
+    @ApiMethod(description = "Retorna la autorizacion correspondiente con el numero/codigo proporcionado en el path.")
+    public AutorizacionModel getAutorizacionByNumber(@ApiPathParam(name = "number" , description = "numero o codigo de autorizacion") @PathVariable String number){
 
         AutorizacionModel autorizacion = this.autorizacionService.getByAutorizacionNumber(number);
         autorizacion.add(linkTo(methodOn(AutorizacionController.class).getAutorizacionByNumber(autorizacion.getAutorizacionNumber())).withSelfRel());
@@ -73,17 +88,20 @@ public class AutorizacionController {
     }
 
     @PostMapping
+    @ApiMethod(description = "Almacena una nueva autorizacion con los datos ingresados.", responsestatuscode = "201" )
     public AutorizacionModel saveAutorizacion(@RequestBody @Valid AutorizacionModel autorizacion){
         return this.autorizacionService.save(autorizacion);
     }
 
     @PutMapping
+    @ApiMethod(description = "Sustituye los datos de la autorizacion que corresponda con el mismo numero/codigo")
     public AutorizacionModel updateAutorizacion(@RequestBody @Valid AutorizacionModel autorizacion){
 
         return this.autorizacionService.update(autorizacion);
     }
 
     @DeleteMapping
+    @ApiMethod(description = "Elimina la autorizacion que corresponda con el mismo numero/codigo")
     public void deleteAutorizacion(@RequestBody AutorizacionModel autorizacion){
         this.autorizacionService.delete(autorizacion);
     }

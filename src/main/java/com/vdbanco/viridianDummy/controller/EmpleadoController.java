@@ -6,6 +6,10 @@ import com.vdbanco.viridianDummy.error.ConflictsException;
 import com.vdbanco.viridianDummy.error.EntidadError;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.services.EmpleadoService;
+import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.annotation.ApiPathParam;
+import org.jsondoc.core.pojo.ApiStage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -24,6 +28,11 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(value = "/api/empleados")
+@Api(
+        name = "Empleados",
+        description = "Permite manejar por medio de una lista de metodos las operaciones aplicadas a los empleados del banco.",
+        stage = ApiStage.ALPHA
+)
 public class EmpleadoController {
 
     private EmpleadoService empleadoService;
@@ -36,6 +45,7 @@ public class EmpleadoController {
     }
 
     @GetMapping
+    @ApiMethod(description = "Retorna una lista de empleados paginados de 20 en 20")
     public EmpleadoModelList getAllPageable(@RequestParam( required = false, defaultValue = "0") int page,
                                            @RequestParam( required = false, defaultValue = "20") int size ){
 
@@ -58,12 +68,14 @@ public class EmpleadoController {
     }
 
     @GetMapping(value = "/{id}")
-    public Optional<EmpleadoModel> getEmpleadoById(@PathVariable Long id){
+    @ApiMethod(description = "Retorna el empleado correspondiente con id proporcionado en el path.")
+    public Optional<EmpleadoModel> getEmpleadoById(@ApiPathParam(name="id",description = "id de empleado") @PathVariable Long id){
         return this.empleadoService.getById(id);
     }
 
     @GetMapping(value = "/number/{number}")
-    public EmpleadoModel getEmpleadoByNumber(@PathVariable String number){
+    @ApiMethod(description = "Retorna el empleado correspondiente con el numero/codigo proporcionado en el path.")
+    public EmpleadoModel getEmpleadoByNumber(@ApiPathParam(name = "number" , description = "numero o codigo de empleado")@PathVariable String number){
 
         EmpleadoModel empleado = this.empleadoService.getByEmpleadoNumber(number);
         empleado.add(linkTo(methodOn(EmpleadoController.class).getEmpleadoByNumber(empleado.getEmpleadoNumber())).withSelfRel());
@@ -74,17 +86,20 @@ public class EmpleadoController {
 
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping
+    @ApiMethod(description = "Almacena un nuevo empleado con los datos ingresados.", responsestatuscode = "201" )
     public EmpleadoModel saveEmpleado(@RequestBody @Valid EmpleadoModel empleado){
         return this.empleadoService.save(empleado);
     }
 
     @PutMapping
+    @ApiMethod(description = "Sustituye los datos del empleado que corresponda con el mismo numero/codigo")
     public EmpleadoModel updateEmpleado(@RequestBody @Valid EmpleadoModel empleado){
 
         return this.empleadoService.update(empleado);
     }
 
     @DeleteMapping
+    @ApiMethod(description = "Elimina al empleado que corresponda con el mismo numero/codigo")
     public void deleteEmpleado(@RequestBody EmpleadoModel empleado){
         this.empleadoService.delete(empleado);
     }

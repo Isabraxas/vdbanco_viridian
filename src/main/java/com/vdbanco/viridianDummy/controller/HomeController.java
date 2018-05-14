@@ -1,6 +1,9 @@
 package com.vdbanco.viridianDummy.controller;
 
 import com.vdbanco.viridianDummy.domain.ResourcesModel;
+import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.pojo.ApiStage;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +13,10 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
+@Api(
+        name= "Bamco dummy (Super Banco)",
+        description = "Provee una lista de enlaces a los recursos que compenen el banco",
+        stage = ApiStage.ALPHA)
 
 public class HomeController {
 
@@ -19,6 +26,7 @@ public class HomeController {
     }
 
     @RequestMapping("/api")
+    @ApiMethod(description = "Obtine los enlaces a los recursos del banco")
     public ResourcesModel apiHome() {
 
         ResourcesModel resources = new ResourcesModel();

@@ -6,6 +6,10 @@ import com.vdbanco.viridianDummy.error.ConflictsException;
 import com.vdbanco.viridianDummy.error.EntidadError;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.services.AccountHolderService;
+import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.annotation.ApiPathParam;
+import org.jsondoc.core.pojo.ApiStage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -24,6 +28,11 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(value = "/api/accountHolders")
+@Api(
+        name = "Propietarios de cuentas",
+        description = "Permite manejar por medio de una lista de metodos las operaciones aplicadas sobre los propietariosde cuentas del banco.",
+        stage = ApiStage.ALPHA
+)
 public class AccountHolderController {
 
     private AccountHolderService accountHolderService;
@@ -36,6 +45,7 @@ public class AccountHolderController {
     }
 
     @GetMapping
+    @ApiMethod(description = "Retorna una lista de propietarios de cuentas paginadas de 20 en 20")
     public AccountHolderModelList getAllPageable(@RequestParam( required = false, defaultValue = "0") int page,
                                            @RequestParam( required = false, defaultValue = "20") int size ){
 
@@ -58,12 +68,14 @@ public class AccountHolderController {
     }
 
     @GetMapping(value = "/{id}")
-    public Optional<AccountHolderModel> getAccountHolderById(@PathVariable Long id){
+    @ApiMethod(description = "Retorna el propietario de cuenta correspondiente con id proporcionado en el path.")
+    public Optional<AccountHolderModel> getAccountHolderById(@ApiPathParam(name="id",description = "id de propietario de cuenta") @PathVariable Long id){
         return this.accountHolderService.getById(id);
     }
 
     @GetMapping(value = "/number/{number}")
-    public AccountHolderModel getAccountHolderByNumber(@PathVariable String number){
+    @ApiMethod(description = "Retorna el propietario de cuenta correspondiente con el numero/codigo proporcionado en el path.")
+    public AccountHolderModel getAccountHolderByNumber(@ApiPathParam(name = "number" , description = "numero o codigo de propietario de cuenta") @PathVariable String number){
 
         AccountHolderModel accountHolder = this.accountHolderService.getByAccountHolderNumber(number);
         accountHolder.add(linkTo(methodOn(AccountHolderController.class).getAccountHolderByNumber(accountHolder.getAccountHolderNumber())).withSelfRel());
@@ -76,17 +88,20 @@ public class AccountHolderController {
     }
 
     @PostMapping
+    @ApiMethod(description = "Almacena un nuevo propietario de cuenta con los datos ingresados.", responsestatuscode = "201" )
     public AccountHolderModel saveAccountHolder(@RequestBody @Valid AccountHolderModel accountHolder){
         return this.accountHolderService.save(accountHolder);
     }
 
     @PutMapping
+    @ApiMethod(description = "Sustituye los datos del propietario de cuenta que corresponda con el mismo numero/codigo")
     public AccountHolderModel updateAccountHolder(@RequestBody @Valid AccountHolderModel accountHolder){
 
         return this.accountHolderService.update(accountHolder);
     }
 
     @DeleteMapping
+    @ApiMethod(description = "Elimina al propietario de cuenta que corresponda con el mismo numero/codigo")
     public void deleteAccountHolder(@RequestBody AccountHolderModel accountHolder){
         this.accountHolderService.delete(accountHolder);
     }

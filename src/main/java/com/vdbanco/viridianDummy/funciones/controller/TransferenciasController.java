@@ -1,6 +1,6 @@
 package com.vdbanco.viridianDummy.funciones.controller;
 
-import com.vdbanco.viridianDummy.error.ErrorSaldoInsuficiente;
+import com.vdbanco.viridianDummy.error.ErrorTransferencia;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.funciones.inputModel.*;
 import com.vdbanco.viridianDummy.funciones.outputModel.PagoResponse;
@@ -55,9 +55,9 @@ public class TransferenciasController {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoEncontradoRestException.class)
-    public ErrorSaldoInsuficiente handleNotFound(NoEncontradoRestException exception){
+    public ErrorTransferencia handleNotFound(NoEncontradoRestException exception){
         Timestamp fecha = new Timestamp(System.currentTimeMillis());
-        ErrorSaldoInsuficiente error = new ErrorSaldoInsuficiente();
+        ErrorTransferencia error = new ErrorTransferencia();
 
         error.setFecha(fecha);
         error.setEstado("error");

@@ -6,6 +6,11 @@ import com.vdbanco.viridianDummy.error.ConflictsException;
 import com.vdbanco.viridianDummy.error.EntidadError;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.services.TransaccionService;
+import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.annotation.ApiPathParam;
+import org.jsondoc.core.annotation.ApiQueryParam;
+import org.jsondoc.core.pojo.ApiStage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -24,6 +29,11 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(value = "/api/transaccions")
+@Api(
+        name = "Transacciones",
+        description = "Permite manejar a travez de una lista de metodos las transacciones del banco.",
+        stage = ApiStage.ALPHA
+)
 public class TransaccionController {
 
     private TransaccionService transaccionService;
@@ -36,8 +46,11 @@ public class TransaccionController {
     }
 
     @GetMapping
-    public TransaccionModelList getAllPageable(@RequestParam( required = false, defaultValue = "0") int page,
-                                           @RequestParam( required = false, defaultValue = "20") int size ){
+    @ApiMethod(description = "Retorna una lista de lista de transacciones paginadas por defecto de 20 en 20")
+    public TransaccionModelList getAllPageable(@ApiQueryParam(name = "page", description = "numero de pagina", required = false, defaultvalue = "0")
+                                                   @RequestParam( required = false, defaultValue = "0") int page,
+                                               @ApiQueryParam(name = "size", description = "numero de pagina", required = false, defaultvalue = "20")
+                                                    @RequestParam( required = false, defaultValue = "20") int size ){
 
         PageRequest pageRequest = PageRequest.of(page,size);
         Page<TransaccionModel> transaccionPages = this.transaccionService.getAll(pageRequest);
@@ -58,12 +71,14 @@ public class TransaccionController {
     }
 
     @GetMapping(value = "/{id}")
-    public Optional<TransaccionModel> getTransaccionById(@PathVariable Long id){
+    @ApiMethod(description = "Retorna la transaccion correspondiente con id proporcionado en el path.")
+    public Optional<TransaccionModel> getTransaccionById(@ApiPathParam(name="id",description = "id de transaccion") @PathVariable Long id){
         return this.transaccionService.getById(id);
     }
 
     @GetMapping(value = "/number/{number}")
-    public List<TransaccionModel> getTransaccionByNumber(@PathVariable String number){
+    @ApiMethod(description = "Retorna la transaccion correspondiente con el numero/codigo proporcionado en el path.")
+    public List<TransaccionModel> getTransaccionByNumber(@ApiPathParam(name = "number" , description = "numero o codigo de transaccion") @PathVariable String number){
 
         List<TransaccionModel> transaccionList = this.transaccionService.getByTransaccionNumber(number);
         for (TransaccionModel transaccion: transaccionList ) {
@@ -77,17 +92,20 @@ public class TransaccionController {
     }
 
     @PostMapping
+    @ApiMethod(description = "Almacena una nueva transaccion con los datos ingresados.", responsestatuscode = "201" )
     public TransaccionModel saveTransaccion(@RequestBody @Valid TransaccionModel transaccion){
         return this.transaccionService.save(transaccion);
     }
 
     @PutMapping
+    @ApiMethod(description = "Sustituye los datos de la transaccion que corresponda con el mismo numero/codigo")
     public TransaccionModel updateTransaccion(@RequestBody @Valid TransaccionModel transaccion){
 
         return this.transaccionService.update(transaccion);
     }
 
     @DeleteMapping
+    @ApiMethod(description = "elimina la transaccion que corresponda con el mismo numero/codigo")
     public void deleteTransaccion(@RequestBody TransaccionModel transaccion){
         this.transaccionService.delete(transaccion);
     }

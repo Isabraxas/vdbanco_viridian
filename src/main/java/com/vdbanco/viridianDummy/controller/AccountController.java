@@ -7,6 +7,10 @@ import com.vdbanco.viridianDummy.error.EntidadError;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.funciones.controller.MovimientosController;
 import com.vdbanco.viridianDummy.services.AccountService;
+import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.annotation.ApiPathParam;
+import org.jsondoc.core.pojo.ApiStage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -25,6 +29,11 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping(value = "/api/accounts")
+@Api(
+        name = "Cuentas",
+        description = "Permite manejar a travez de una lista de metodos las cuentas del banco.",
+        stage = ApiStage.ALPHA
+)
 public class AccountController {
 
     private AccountService accountService;
@@ -36,7 +45,8 @@ public class AccountController {
         this.env = env;
     }
 
-    @GetMapping
+    @RequestMapping(method = RequestMethod.GET)
+    @ApiMethod(description = "Retorna una lista de cuentas paginadas de 20 en 20")
     public AccountModelList getAllPageable(@RequestParam( required = false, defaultValue = "0") int page,
                                            @RequestParam( required = false, defaultValue = "20") int size ){
 
@@ -58,13 +68,14 @@ public class AccountController {
 
     }
 
-    @GetMapping(value = "/{id}")
-    public Optional<AccountModel> getAccountById(@PathVariable Long id){
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}")
+    public Optional<AccountModel> getAccountById(@ApiPathParam(name="id",description = "id de cuenta")@PathVariable Long id){
         return this.accountService.getById(id);
     }
 
-    @GetMapping(value = "/number/{number}")
-    public AccountModel getAccountByNumber(@PathVariable String number){
+    @RequestMapping(method = RequestMethod.GET,value = "/number/{number}")
+    @ApiMethod(description = "Retorna la cuenta correspondiente con el numero/codigo del proporcionado en el path.")
+    public AccountModel getAccountByNumber(@ApiPathParam(name="number",description = "numero/codigo de cuenta") @PathVariable String number){
 
         AccountModel account = this.accountService.getByAccountNumber(number);
         account.add(linkTo(methodOn(AccountController.class).getAccountByNumber(account.getAccountNumber())).withSelfRel());
@@ -76,18 +87,21 @@ public class AccountController {
         return account;
     }
 
-    @PostMapping
+    @RequestMapping(method = RequestMethod.POST)
+    @ApiMethod(description = "Retorna la cuenta correspondiente con id proporcionado en el path.")
     public AccountModel saveAccount(@RequestBody @Valid AccountModel account){
         return this.accountService.save(account);
     }
 
-    @PutMapping
+    @RequestMapping(method = RequestMethod.PUT)
+    @ApiMethod(description = "Retorna la cuenta correspondiente con el numero/codigo proporcionado en el path.")
     public AccountModel updateAccount(@RequestBody @Valid AccountModel account){
 
         return this.accountService.update(account);
     }
 
-    @DeleteMapping
+    @RequestMapping(method = RequestMethod.DELETE)
+    @ApiMethod(description = "Elimina la cuenta que corresponda con el mismo numero/codigo")
     public void deleteAccount(@RequestBody AccountModel account){
         this.accountService.delete(account);
     }
