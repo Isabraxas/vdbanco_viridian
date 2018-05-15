@@ -1,10 +1,20 @@
 package com.vdbanco.viridianDummy.funciones.inputModel;
 
-public class PagoPrestamoRequest {
+import org.jsondoc.core.annotation.ApiObject;
+import org.jsondoc.core.annotation.ApiObjectField;
 
+import java.io.Serializable;
+
+@ApiObject(name = "PagoPrestamoRequest")
+public class PagoPrestamoRequest implements Serializable{
+
+    @ApiObjectField(name = "accountNumberOrigen", required = true)
     private String accountNumberOrigen;
+    @ApiObjectField(name = "accountNumberDestino", required = true)
     private String accountNumberDestino;
+    @ApiObjectField(name = "monto", required = true)
     private Double monto;
+    @ApiObjectField(name = "glossa", required = true)
     private String glossa;
 
 

@@ -1,9 +1,15 @@
 package com.vdbanco.viridianDummy.funciones.inputModel;
 
-import java.sql.Timestamp;
+import org.jsondoc.core.annotation.ApiObject;
+import org.jsondoc.core.annotation.ApiObjectField;
 
-public class ReversionRequest {
+import java.io.Serializable;
+
+@ApiObject(name = "ReversionRequest", show = true)
+public class ReversionRequest implements Serializable{
+    @ApiObjectField(name = "numeroTransacion", required = true)
     private String numeroTransacion;
+    @ApiObjectField(name = "numeroAutorizacion", required = true)
     private String numeroAutorizacion;
 
     public String getNumeroTransacion() {

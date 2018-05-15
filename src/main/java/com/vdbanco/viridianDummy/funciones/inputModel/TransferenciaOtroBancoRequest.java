@@ -1,13 +1,24 @@
 package com.vdbanco.viridianDummy.funciones.inputModel;
 
+import org.jsondoc.core.annotation.ApiObject;
+import org.jsondoc.core.annotation.ApiObjectField;
+
+@ApiObject(name = "TransferenciaOtroBancoRequest")
 public class TransferenciaOtroBancoRequest {
 
+    @ApiObjectField(name = "accountNumberOrigen")
     private String accountNumberOrigen;
+    @ApiObjectField(name ="accountNumberDestino")
     private String accountNumberDestino;
+    @ApiObjectField(name ="nombreDestinatario")
     private String nombreDestinatario;
+    @ApiObjectField(name ="nombreBancoDestino")
     private String nombreBancoDestino;
+    @ApiObjectField(name ="numeroBancoDestino")
     private String numeroBancoDestino;
+    @ApiObjectField(name ="monto")
     private Double monto;
+    @ApiObjectField(name ="glossa")
     private String glossa;
 
 

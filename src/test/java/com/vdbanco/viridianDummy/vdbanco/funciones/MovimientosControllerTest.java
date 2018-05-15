@@ -68,7 +68,7 @@ public class MovimientosControllerTest {
                         .then().statusCode(200)
                         .extract().as(TransaccionModel[].class);
 
-        assertTrue(transaccions.length == 3);
+        assertTrue(transaccions.length == 7);
 
     }
 
@@ -82,7 +82,7 @@ public class MovimientosControllerTest {
                         .then().statusCode(200)
                         .extract().as(TransaccionModel[].class);
 
-        assertTrue(transaccions.length == 13);
+        assertTrue(transaccions.length == 17);
 
     }
 
@@ -96,7 +96,7 @@ public class MovimientosControllerTest {
                         .then().statusCode(200)
                         .extract().as(TransaccionModel[].class);
 
-        assertTrue(transaccions.length == 13);
+        assertTrue(transaccions.length == 17);
 
     }
 }

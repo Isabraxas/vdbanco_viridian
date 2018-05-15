@@ -78,6 +78,8 @@ public class TransferenciaServiceImpl implements TransferenciaService {
             Timestamp fechaTransD = new Timestamp(System.currentTimeMillis());
             //Para prueba
             AutorizacionModel autorizacionTransaccion = new AutorizacionModel();
+            //autorizacionTransaccion = this.autorizacionService.getByAutorizacionNumber(transferenciaPropiaRequest.getAutorizacionNumber);
+            //autorizacionTransaccion.setAutorizacionNumber(autorizacionTransaccion.getAutorizacionNumber());
             autorizacionTransaccion.setAutorizacionNumber("AUXXXX");
 
             TransaccionModel lastTransaccion = this.transaccionService.getLastTransaccion();
@@ -271,6 +273,8 @@ public class TransferenciaServiceImpl implements TransferenciaService {
                 Timestamp fechaTransD = new Timestamp(System.currentTimeMillis());
                 //Para prueba
                 AutorizacionModel autorizacionTransaccion = new AutorizacionModel();
+                //autorizacionTransaccion = this.autorizacionService.getByAutorizacionNumber(transferenciaPropiaRequest.getAutorizacionNumber);
+                //autorizacionTransaccion.setAutorizacionNumber(autorizacionTransaccion.getAutorizacionNumber());
                 autorizacionTransaccion.setAutorizacionNumber("AUXXXX");
                 final String transaccionNumber = "T0003000000004";
                 //
@@ -384,6 +388,8 @@ public class TransferenciaServiceImpl implements TransferenciaService {
             Timestamp fechaTransD = new Timestamp(System.currentTimeMillis());
             //Para prueba
             AutorizacionModel autorizacionTransaccion = new AutorizacionModel();
+            //autorizacionTransaccion = this.autorizacionService.getByAutorizacionNumber(transferenciaPropiaRequest.getAutorizacionNumber);
+            //autorizacionTransaccion.setAutorizacionNumber(autorizacionTransaccion.getAutorizacionNumber());
             autorizacionTransaccion.setAutorizacionNumber("AUXXXX");
             final String transaccionNumber = "T0003000000004";
             //
@@ -450,251 +456,6 @@ public class TransferenciaServiceImpl implements TransferenciaService {
     }
 
     @Override
-    public PagoResponse createPagoServicio(PagoPrestamoRequest pagoPrestamoRequest){
-
-        AccountModel accountOrigen = this.accountService.getByAccountNumber(pagoPrestamoRequest.getAccountNumberOrigen());
-        //TODO buscar a la persona juridica con el nombre dado en el request
-        //TODO buscar el account hollder segun juridicas number y por ultimo encontrar la cuenta asociada
-        AccountModel accountDestino = new AccountModel();
-
-        log.info("Comprobando si el saldo es suficiente");
-        if (pagoPrestamoRequest.getMonto() < accountOrigen.getAccountBalance()) {
-
-            log.info("Iniciando la Transaccion");
-            TransaccionModel transaccionOrigen = new TransaccionModel();
-            TransaccionModel transaccionDestino = new TransaccionModel();
-            Timestamp fechaTransO = new Timestamp(System.currentTimeMillis());
-            Timestamp fechaTransD = new Timestamp(System.currentTimeMillis());
-            //Para prueba
-            AutorizacionModel autorizacionTransaccion = new AutorizacionModel();
-            autorizacionTransaccion.setAutorizacionNumber("AUXXXX");
-            final String transaccionNumber= "T0003000000004";
-            //
-
-            log.info("Inicio proceso Cuenta origen");
-            //Origen
-            transaccionOrigen.setAccountNumber(pagoPrestamoRequest.getAccountNumberOrigen());
-            transaccionOrigen.setTransaccionMonto((-1)* pagoPrestamoRequest.getMonto());
-            transaccionOrigen.setTransaccionDetalle("Pago de prestamo");
-            transaccionOrigen.setTransaccionGlossa(pagoPrestamoRequest.getGlossa());
-            transaccionOrigen.setTransaccionDate(fechaTransO);
-            //Automatizar
-            transaccionOrigen.setAutorizacionNumber(autorizacionTransaccion.getAutorizacionNumber());
-            //transaccionOrigen.setTransaccionId(3000000004L);
-            transaccionOrigen.setTransaccionNumber(transaccionNumber);
-
-            log.info("Actualizacion de balance en la cuenta de origen");
-            Double balanceO = accountOrigen.getAccountBalance() - pagoPrestamoRequest.getMonto();
-            accountOrigen.setAccountBalance(balanceO);
-            this.accountRepository.save(accountOrigen);
-
-            log.info("Fin proceso cuenta origen");
-            //FOrigen
-
-            log.info("Inicio proceso Cuenta destino");
-            //Destino
-            transaccionDestino.setAccountNumber(pagoPrestamoRequest.getAccountNumberDestino());
-            transaccionDestino.setTransaccionMonto(pagoPrestamoRequest.getMonto());
-            transaccionDestino.setTransaccionDetalle("Pago de prestamo");
-            transaccionDestino.setTransaccionGlossa(pagoPrestamoRequest.getGlossa());
-            transaccionDestino.setTransaccionDate(fechaTransD);
-            //Automatizar
-            transaccionDestino.setAutorizacionNumber(autorizacionTransaccion.getAutorizacionNumber());
-            //transaccionDestino.setTransaccionId(3000000005L);
-            transaccionDestino.setTransaccionNumber(transaccionNumber);
-
-            log.info("Actualizacion de balance en la cuenta de destino");
-            Double balanceD = accountDestino.getAccountBalance() + pagoPrestamoRequest.getMonto();
-            accountDestino.setAccountBalance(balanceD);
-            this.accountRepository.save(accountDestino);
-
-            log.info("Fin proceso cuenta destino");
-            //FDestino
-
-            log.info("Guardando registro de transacciones");
-            this.transaccionRepository.save(transaccionOrigen);
-            this.transaccionRepository.save(transaccionDestino);
-            log.info("Finalizando transaccion");
-
-            PagoResponse pagoResponse = new PagoResponse();
-            pagoResponse.setFecha(fechaTransO);
-            pagoResponse.setEstado("successful");
-            pagoResponse.setDetalle(transaccionOrigen);
-
-            return pagoResponse;
-
-        }else{
-
-            String errorMsg = "La cuenta de origen no tiene saldo suficiente para este monto: "+ pagoPrestamoRequest.getMonto() ;
-            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(accountOrigen.getAccountId(), "002", "El saldo es insuficiente para procesar la transferencia", "Hemos encontrado un error intentelo nuevamente"));
-        }
-
-    }
-
-    @Override
-    public PagoResponse createPagoPrestamo(PagoPrestamoRequest pagoPrestamoRequest) {
-        log.info("Buscando Cuentas");
-        List<String> numeroProductos= Arrays.asList("B0007", "B0008");
-
-        AccountModel accountOrigen = this.accountService.getByAccountNumber(pagoPrestamoRequest.getAccountNumberOrigen());
-        AccountModel accountDestino = this.accountService.getByAccountNumberAndProductosBancarios(pagoPrestamoRequest.getAccountNumberDestino(), numeroProductos);
-
-        log.info("Comprobando si el saldo es suficiente");
-        if (pagoPrestamoRequest.getMonto() < accountOrigen.getAccountBalance()) {
-
-            log.info("Iniciando la Transaccion");
-            TransaccionModel transaccionOrigen = new TransaccionModel();
-            TransaccionModel transaccionDestino = new TransaccionModel();
-            Timestamp fechaTransO = new Timestamp(System.currentTimeMillis());
-            Timestamp fechaTransD = new Timestamp(System.currentTimeMillis());
-            //Para prueba
-            AutorizacionModel autorizacionTransaccion = new AutorizacionModel();
-            autorizacionTransaccion.setAutorizacionNumber("AUXXXX");
-            final String transaccionNumber= "T0003000000004";
-            //
-
-            log.info("Inicio proceso Cuenta origen");
-            //Origen
-            transaccionOrigen.setAccountNumber(pagoPrestamoRequest.getAccountNumberOrigen());
-            transaccionOrigen.setTransaccionMonto((-1)* pagoPrestamoRequest.getMonto());
-            transaccionOrigen.setTransaccionDetalle("Pago de prestamo");
-            transaccionOrigen.setTransaccionGlossa(pagoPrestamoRequest.getGlossa());
-            transaccionOrigen.setTransaccionDate(fechaTransO);
-            //Automatizar
-            transaccionOrigen.setAutorizacionNumber(autorizacionTransaccion.getAutorizacionNumber());
-            //transaccionOrigen.setTransaccionId(3000000004L);
-            transaccionOrigen.setTransaccionNumber(transaccionNumber);
-
-            log.info("Actualizacion de balance en la cuenta de origen");
-            Double balanceO = accountOrigen.getAccountBalance() - pagoPrestamoRequest.getMonto();
-            accountOrigen.setAccountBalance(balanceO);
-            this.accountRepository.save(accountOrigen);
-
-            log.info("Fin proceso cuenta origen");
-            //FOrigen
-
-            log.info("Inicio proceso Cuenta destino");
-            //Destino
-            transaccionDestino.setAccountNumber(pagoPrestamoRequest.getAccountNumberDestino());
-            transaccionDestino.setTransaccionMonto(pagoPrestamoRequest.getMonto());
-            transaccionDestino.setTransaccionDetalle("Pago de prestamo");
-            transaccionDestino.setTransaccionGlossa(pagoPrestamoRequest.getGlossa());
-            transaccionDestino.setTransaccionDate(fechaTransD);
-            //Automatizar
-            transaccionDestino.setAutorizacionNumber(autorizacionTransaccion.getAutorizacionNumber());
-            //transaccionDestino.setTransaccionId(3000000005L);
-            transaccionDestino.setTransaccionNumber(transaccionNumber);
-
-            log.info("Actualizacion de balance en la cuenta de destino");
-            Double balanceD = accountDestino.getAccountBalance() + pagoPrestamoRequest.getMonto();
-            accountDestino.setAccountBalance(balanceD);
-            this.accountRepository.save(accountDestino);
-
-            log.info("Fin proceso cuenta destino");
-            //FDestino
-
-            log.info("Guardando registro de transacciones");
-            this.transaccionRepository.save(transaccionOrigen);
-            this.transaccionRepository.save(transaccionDestino);
-            log.info("Finalizando transaccion");
-
-            PagoResponse pagoResponse = new PagoResponse();
-            pagoResponse.setFecha(fechaTransO);
-            pagoResponse.setEstado("successful");
-            pagoResponse.setDetalle(transaccionOrigen);
-
-            return pagoResponse;
-
-        }else{
-
-            String errorMsg = "La cuenta de origen no tiene saldo suficiente para este monto: "+ pagoPrestamoRequest.getMonto() ;
-            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(accountOrigen.getAccountId(), "002", "El saldo es insuficiente para procesar la transferencia", "Hemos encontrado un error intentelo nuevamente"));
-        }
-
-    }
-
-    @Override
-    public PagoResponse createPagoTarjetaCredito(PagoPrestamoRequest pagoPrestamoRequest) {
-        log.info("Buscando Cuentas");
-        List<String> numeroProductos= Arrays.asList("B0009");
-
-        AccountModel accountOrigen = this.accountService.getByAccountNumber(pagoPrestamoRequest.getAccountNumberOrigen());
-        AccountModel accountDestino = this.accountService.getByAccountNumberAndProductosBancarios(pagoPrestamoRequest.getAccountNumberDestino(), numeroProductos);
-
-        log.info("Comprobando si el saldo es suficiente");
-        if (pagoPrestamoRequest.getMonto() < accountOrigen.getAccountBalance()) {
-
-            log.info("Iniciando la Transaccion");
-            TransaccionModel transaccionOrigen = new TransaccionModel();
-            TransaccionModel transaccionDestino = new TransaccionModel();
-            Timestamp fechaTransO = new Timestamp(System.currentTimeMillis());
-            Timestamp fechaTransD = new Timestamp(System.currentTimeMillis());
-            //Para prueba
-            AutorizacionModel autorizacionTransaccion = new AutorizacionModel();
-            autorizacionTransaccion.setAutorizacionNumber("AUXXXX");
-            final String transaccionNumber= "T0003000000004";
-            //
-
-            log.info("Inicio proceso Cuenta origen");
-            //Origen
-            transaccionOrigen.setAccountNumber(pagoPrestamoRequest.getAccountNumberOrigen());
-            transaccionOrigen.setTransaccionMonto((-1)* pagoPrestamoRequest.getMonto());
-            transaccionOrigen.setTransaccionDetalle("Pago de tarjeta de credito");
-            transaccionOrigen.setTransaccionGlossa(pagoPrestamoRequest.getGlossa());
-            transaccionOrigen.setTransaccionDate(fechaTransO);
-            //Automatizar
-            transaccionOrigen.setAutorizacionNumber(autorizacionTransaccion.getAutorizacionNumber());
-            //transaccionOrigen.setTransaccionId(3000000004L);
-            transaccionOrigen.setTransaccionNumber(transaccionNumber);
-
-            log.info("Actualizacion de balance en la cuenta de origen");
-            Double balanceO = accountOrigen.getAccountBalance() - pagoPrestamoRequest.getMonto();
-            accountOrigen.setAccountBalance(balanceO);
-            this.accountRepository.save(accountOrigen);
-
-            log.info("Fin proceso cuenta origen");
-            //FOrigen
-
-            log.info("Inicio proceso Cuenta destino");
-            //Destino
-            transaccionDestino.setAccountNumber(pagoPrestamoRequest.getAccountNumberDestino());
-            transaccionDestino.setTransaccionMonto(pagoPrestamoRequest.getMonto());
-            transaccionDestino.setTransaccionDetalle("Pago de tarjeta de credito");
-            transaccionDestino.setTransaccionGlossa(pagoPrestamoRequest.getGlossa());
-            transaccionDestino.setTransaccionDate(fechaTransD);
-            //Automatizar
-            transaccionDestino.setAutorizacionNumber(autorizacionTransaccion.getAutorizacionNumber());
-            //transaccionDestino.setTransaccionId(3000000005L);
-            transaccionDestino.setTransaccionNumber(transaccionNumber);
-
-            log.info("Actualizacion de balance en la cuenta de destino");
-            Double balanceD = accountDestino.getAccountBalance() + pagoPrestamoRequest.getMonto();
-            accountDestino.setAccountBalance(balanceD);
-            this.accountRepository.save(accountDestino);
-
-            log.info("Fin proceso cuenta destino");
-            //FDestino
-
-            log.info("Guardando registro de transacciones");
-            this.transaccionRepository.save(transaccionOrigen);
-            this.transaccionRepository.save(transaccionDestino);
-            log.info("Finalizando transaccion");
-
-            PagoResponse pagoResponse = new PagoResponse();
-            pagoResponse.setFecha(fechaTransO);
-            pagoResponse.setEstado("successful");
-            pagoResponse.setDetalle(transaccionOrigen);
-
-            return pagoResponse;
-
-        }else{
-
-            String errorMsg = "La cuenta de origen no tiene saldo suficiente para este monto: "+ pagoPrestamoRequest.getMonto() ;
-            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(accountOrigen.getAccountId(), "002", "El saldo es insuficiente para procesar la transferencia", "Hemos encontrado un error intentelo nuevamente"));
-        }
-    }
-
-    @Override
     public TranferenciasResponse createReversionTransferencia(ReversionRequest reversionRequest) {
 
         List<TransaccionModel> transaccionList = transaccionRepository.findByTransaccionNumber(reversionRequest.getNumeroTransacion());
@@ -711,6 +472,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
             int dias = (int) ((transaccionList.get(0).getTransaccionDate().getTime() - autorizacion.getAutorizacionDateFin().getTime()) / 86400000);
 
             log.info("La diferencia de dias son menor 1");
+            //TODO AGREGAR EXCEPCION POR DIA
             if (dias < 1) {
 
                 log.info("Comprobando el origen y el destino");
@@ -723,7 +485,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
                         transaccionDestino = transaccion;
                     }
                 }
-
+                //TODO REVISAR EL IF DE REVERSION PARA CREAR LA EXCEPCION ADECUADA
                 if (autorizacion.getAutorizacionType().equals("Reversion")) {
                     TransferenciaReversionRequest transferenciaReversionRequest = new TransferenciaReversionRequest();
 
@@ -733,7 +495,16 @@ public class TransferenciaServiceImpl implements TransferenciaService {
                     transferenciaReversionRequest.setGlossa("Reversion de transaccion numero:" + reversionRequest.getNumeroTransacion());
 
                     return  this.createTranferencia(transferenciaReversionRequest);
+                }else {
+
+                    String errorMsg = "La transferencia no pude ser revertida " ;
+                    throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(transaccionList.get(0).getTransaccionId(), "00", "La transferencia no pude ser revertida", "Hemos encontrado un error intentelo nuevamente"));
                 }
+
+            }else {
+
+                String errorMsg = "La transferencia no pude ser revertida tiene mas de un dia de antiguedad " + transaccionList.get(0).getTransaccionDate();
+                throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(transaccionList.get(0).getTransaccionId(), "00", "La transferencia no pude ser revertida tiene mas de un dia de antiguedad " + transaccionList.get(0).getTransaccionDate(), "Hemos encontrado un error intentelo nuevamente"));
             }
 
 
@@ -741,40 +512,6 @@ public class TransferenciaServiceImpl implements TransferenciaService {
         return null;
     }
 
-/*
-    public AutorizacionModel createAutorizacionReversionTransacciones(String accountNumberOrigen, String accountNumberDestino ){
-        AccountModel accountOrigen = this.accountService.getByAccountNumber(accountNumberOrigen);
-        AccountModel accountDestino = this.accountService.getByAccountNumber(accountNumberDestino);
-
-        AccountHolderModel accountHolderDebito = this.accountHolderService.getByAccountHolderNumber(accountOrigen.getAccountHolderNumber());
-        AccountHolderModel accountHolderCredito = this.accountHolderService.getByAccountHolderNumber(accountDestino.getAccountHolderNumber());
-
-        AutorizacionModel autorizacion = new AutorizacionModel();
-        //Buscar en realidad empleado corresondiente a su cargo.
-        Optional<EmpleadoModel> empleadoA = empleadoService.getById(2L);
-        Optional<EmpleadoModel> empleadoB = empleadoService.getById(2L);
-        Optional<EmpleadoModel> empleadoC = empleadoService.getById(2L);
-
-
-        autorizacion.setAutorizacionId(30001L);
-        autorizacion.setAutorizacionNumber("AU00"+autorizacion.getAutorizacionId());
-        autorizacion.setEmpleadoNumber(empleadoA.get().getEmpleadoNumber());
-        autorizacion.setEmpleadoNumberAuth1(empleadoB.get().getEmpleadoNumber());
-        autorizacion.setEmpleadoNumberAuth2(empleadoC.get().getEmpleadoNumber());
-        autorizacion.setDebitoAccountHolderNumber(accountDestino.getAccountHolderNumber());
-        autorizacion.setDebitoAccountNumber(accountOrigen.getAccountNumber());
-        autorizacion.setCreditoAccountHolderNumber(accountOrigen.getAccountHolderNumber());
-        autorizacion.setAutorizacionType("Reversion");
-        autorizacion.setAutorizacionDateInicio(new Timestamp(System.currentTimeMillis()));
-        autorizacion.setAutorizacionDateFin(new Timestamp(System.currentTimeMillis()));
-        autorizacion.setAutorizacionDateAuth1();
-        autorizacion.setAutorizacionDateAuth2();
-        autorizacion.setAutorizacionDetalle();
-        autorizacion.setAutorizacionGlossa();
-
-        return null;
-    }
-*/
 
 
 }

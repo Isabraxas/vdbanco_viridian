@@ -1,11 +1,20 @@
 package com.vdbanco.viridianDummy.funciones.inputModel;
 
+import org.jsondoc.core.annotation.ApiObject;
+import org.jsondoc.core.annotation.ApiObjectField;
+
+@ApiObject
 public class TransferenciaTerceroRequest {
 
+    @ApiObjectField
     private String accountNumberOrigen;
+    @ApiObjectField
     private String accountNumberDestino;
+    @ApiObjectField
     private String nombreDestinatario;
+    @ApiObjectField
     private Double monto;
+    @ApiObjectField
     private String glossa;
 
 

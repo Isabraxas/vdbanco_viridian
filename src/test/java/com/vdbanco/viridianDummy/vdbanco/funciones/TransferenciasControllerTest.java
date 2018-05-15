@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static com.jayway.restassured.RestAssured.authentication;
 import static com.jayway.restassured.RestAssured.given;
 import static org.junit.Assert.assertTrue;
 import static org.hamcrest.Matchers.*;
@@ -175,21 +176,22 @@ public class TransferenciasControllerTest {
     @Test
     public void reversionTransferencia(){
 
-        AutorizacionModel autorizacionReversion = given().pathParam("id", "30001")
-                .when().get("/autorizacions/{id}")
+        AutorizacionModel autorizacionReversion = given().pathParam("number", "AU001465")
+                .when().get("/api/autorizacions/number/{number}")
                 .then().extract().body().as(AutorizacionModel.class);
         autorizacionReversion.setAutorizacionId(2000008L);
         autorizacionReversion.setAutorizacionNumber("AU002000008");
+        autorizacionReversion.setAutorizacionType("Reversion");
         autorizacionReversion.setEmpleadoNumber("E0003000008");
 
         AutorizacionModel autorizacionResponse= given()
                 .contentType("application/json")
                 .body(autorizacionReversion)
-                .when().post("/autorizacions")
+                .when().post("/api/autorizacions")
                 .as(AutorizacionModel.class);
 
         ReversionRequest reversionRequest = new ReversionRequest();
-        reversionRequest.setNumeroAutorizacion(autorizacionReversion.getAutorizacionNumber());
+        reversionRequest.setNumeroAutorizacion(autorizacionResponse.getAutorizacionNumber());
         reversionRequest.setNumeroTransacion("T0003000000007");
 
         TranferenciasResponse tranferenciasResponse =
@@ -201,13 +203,13 @@ public class TransferenciasControllerTest {
 
 
         AutorizacionModel autorizacion = new AutorizacionModel();
-        autorizacion.setAutorizacionId(2000008L);
-        autorizacion.setAutorizacionNumber("E0002000008");
+        autorizacion.setAutorizacionId(autorizacionResponse.getAutorizacionId());
+        autorizacion.setAutorizacionNumber(autorizacionResponse.getAutorizacionNumber());
 
         given().
                 contentType("application/json")
                 .body(autorizacion)
-                .when().delete("/autorizacions")
+                .when().delete("/api/autorizacions")
                 .then().statusCode(200);
 
     }
