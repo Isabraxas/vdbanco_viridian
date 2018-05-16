@@ -7,6 +7,7 @@ import com.vdbanco.viridianDummy.funciones.outputModel.PagoResponse;
 import com.vdbanco.viridianDummy.funciones.outputModel.TranferenciasResponse;
 import com.vdbanco.viridianDummy.funciones.service.TransferenciaService;
 import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiBodyObject;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.pojo.ApiStage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,25 +33,25 @@ public class TransferenciasController {
         this.transferenciaService = transferenciaService;
     }
 
-    @PostMapping(value = "/tranferencias/propias")
+    @RequestMapping(method = RequestMethod.POST, value = "/tranferencias/propias")
     @ApiMethod(description = "Realiza transferencias entre cuentas propias  proporcionando los siguientes datos de entrada (cuenta origen, numero de cuenta/préstamo a pagar, monto, descripción/glosa , autorización).")
-    public TranferenciasResponse createTranferenciaPropias(@Valid @RequestBody TransferenciaPropiaRequest transferenciaPropiaRequest){
+    public TranferenciasResponse createTranferenciaPropias(@Valid @ApiBodyObject @RequestBody TransferenciaPropiaRequest transferenciaPropiaRequest){
         return this.transferenciaService.createTranferenciaByCuentasPropias(transferenciaPropiaRequest);
     }
 
-    @PostMapping(value = "/tranferencias/terceros")
+    @RequestMapping(method = RequestMethod.POST, value = "/tranferencias/terceros")
     @ApiMethod(description = "Realiza transferencias a cuentas de terceros proporcionando los siguientes datos de entrada (cuenta origen, numero de cuenta/préstamo a pagar, nombre del destinatario, monto, descripción/glosa , autorización).")
     public TranferenciasResponse createTranferenciaTerceros(@RequestBody TransferenciaTerceroRequest transferenciaTerceroRequest){
         return this.transferenciaService.createTranferenciaByCuentasTerceros(transferenciaTerceroRequest);
     }
 
-    @PostMapping(value = "/tranferencias/otros")
+    @RequestMapping(method = RequestMethod.POST, value = "/tranferencias/otros")
     @ApiMethod(description = "Realiza transferencias a cuentas de terceros proporcionando los siguientes datos de entrada (cuenta origen, numero de cuenta/préstamo a pagar, nombre del destinatario,nombre del banco de destino, numero del banco de destino, monto, descripción/glosa , autorización).")
     public TranferenciasResponse createTranferenciaOtrosBancos(@RequestBody TransferenciaOtroBancoRequest transferenciaOtroBancoRequest){
         return this.transferenciaService.createTranferenciaByCuentasOtrosBancos(transferenciaOtroBancoRequest);
     }
 
-    @PostMapping(value = "/reversion/transferencia")
+    @RequestMapping(method = RequestMethod.POST, value = "/reversion/transferencia")
     @ApiMethod(description = "Realiza la reversion de una determinada transaccion proporcionado el numero de transaccion el numero de la debida autorizacion prar revertirla.")
     public TranferenciasResponse createReversionTranferencia(@RequestBody ReversionRequest reversionRequest){
         return this.transferenciaService.createReversionTransferencia(reversionRequest);

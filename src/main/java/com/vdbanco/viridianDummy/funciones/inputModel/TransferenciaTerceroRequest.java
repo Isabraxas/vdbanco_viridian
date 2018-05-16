@@ -6,7 +6,7 @@ import org.jsondoc.core.annotation.ApiObjectField;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-@ApiObject
+@ApiObject(name = "TransferenciaTerceroRequest")
 public class TransferenciaTerceroRequest {
 
     @ApiObjectField

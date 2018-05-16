@@ -40,7 +40,7 @@ public class PagosController {
         return this.pagosService.createPagoPrestamo(pagoPrestamoRequest);
     }
 
-    @RequestMapping(method = RequestMethod.POST , value = "/pagos/tarjetaCredito")
+    @RequestMapping(method = RequestMethod.POST, value = "/pagos/tarjetaCredito")
     @ApiMethod(description = "Realiza el pago de tarjeta de credito que requiere como datos de entrada (cuenta origen, numero de cuenta/préstamo a pagar, monto, descripción/glosa , autorización)")
     public PagoResponse createPagoTarjetaCredito(@RequestBody PagoPrestamoRequest pagoPrestamoRequest){
         return this.pagosService.createPagoTarjetaCredito(pagoPrestamoRequest);
