@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.sql.Timestamp;
 
 @RestController
@@ -33,7 +34,7 @@ public class TransferenciasController {
 
     @PostMapping(value = "/tranferencias/propias")
     @ApiMethod(description = "Realiza transferencias entre cuentas propias  proporcionando los siguientes datos de entrada (cuenta origen, numero de cuenta/préstamo a pagar, monto, descripción/glosa , autorización).")
-    public TranferenciasResponse createTranferenciaPropias(@RequestBody TransferenciaPropiaRequest transferenciaPropiaRequest){
+    public TranferenciasResponse createTranferenciaPropias(@Valid @RequestBody TransferenciaPropiaRequest transferenciaPropiaRequest){
         return this.transferenciaService.createTranferenciaByCuentasPropias(transferenciaPropiaRequest);
     }
 

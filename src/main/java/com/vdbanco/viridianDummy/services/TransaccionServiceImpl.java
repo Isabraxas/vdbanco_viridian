@@ -97,9 +97,6 @@ public class TransaccionServiceImpl implements TransaccionService {
     public TransaccionModel update(TransaccionModel transaccion) {
 
         log.info("Revisando si exite el transaccion por number");
-        //TODO tener la lista de transacciones
-        //TODO hacer un foreach y comparar la cuenta para determinar que transacion debe modificarse
-        //TODO tambien de debe cambiar el metodo save
         List<TransaccionModel> currentTransaccions = this.getByTransaccionNumber(transaccion.getTransaccionNumber());
         TransaccionModel currentTransaccion= new TransaccionModel();
         for (TransaccionModel myTransaccion:currentTransaccions) {
@@ -116,7 +113,7 @@ public class TransaccionServiceImpl implements TransaccionService {
                 transaccion.setAutorizacion(autorizacion);
                 log.info("Almacenando cambios");
                 return this.transaccionRepository.save(transaccion);
-                //TODO creo que este metodo deberia devover las 2 transacciones relacionadas al number y en los servicios funcionales 
+                //TODO creo que este metodo deberia devlover las 2 transacciones relacionadas al number y en los servicios funcionales
                 //TODO deberia devolverse solo el currespondiente a x cuenta
             }
         }

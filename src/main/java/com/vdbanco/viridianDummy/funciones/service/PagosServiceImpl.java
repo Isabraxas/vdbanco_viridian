@@ -57,7 +57,7 @@ public class PagosServiceImpl implements PagosService {
 
         AccountModel accountOrigen = this.accountService.getByAccountNumber(pagoPrestamoRequest.getAccountNumberOrigen());
         //TODO buscar a la persona juridica con el nombre dado en el request
-        //TODO buscar el account hollder segun juridicas number y por ultimo encontrar la cuenta asociada
+        //TODO buscar el account holder segun juridicas number y por ultimo encontrar la cuenta asociada
         AccountModel accountDestino = new AccountModel();
 
         log.info("Comprobando si el saldo es suficiente");

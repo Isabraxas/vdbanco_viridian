@@ -3,19 +3,31 @@ package com.vdbanco.viridianDummy.funciones.inputModel;
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
 @ApiObject
 public class TransferenciaTerceroRequest {
 
     @ApiObjectField
+    @NotBlank
     private String accountNumberOrigen;
     @ApiObjectField
+    @NotBlank
     private String accountNumberDestino;
     @ApiObjectField
+    @NotBlank
     private String nombreDestinatario;
     @ApiObjectField
+    @NotBlank
     private Double monto;
     @ApiObjectField
+    @NotBlank
     private String glossa;
+    @ApiObjectField(name ="autorizacionNumber")
+    @NotBlank
+    @Size(min=5)
+    private String autorizacionNumber;
 
 
     public String getAccountNumberOrigen() {
@@ -56,5 +68,13 @@ public class TransferenciaTerceroRequest {
 
     public void setGlossa(String glossa) {
         this.glossa = glossa;
+    }
+
+    public String getAutorizacionNumber() {
+        return autorizacionNumber;
+    }
+
+    public void setAutorizacionNumber(String autorizacionNumber) {
+        this.autorizacionNumber = autorizacionNumber;
     }
 }

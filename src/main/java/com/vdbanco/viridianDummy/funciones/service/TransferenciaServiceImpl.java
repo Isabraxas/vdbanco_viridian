@@ -78,9 +78,9 @@ public class TransferenciaServiceImpl implements TransferenciaService {
             Timestamp fechaTransD = new Timestamp(System.currentTimeMillis());
             //Para prueba
             AutorizacionModel autorizacionTransaccion = new AutorizacionModel();
-            //autorizacionTransaccion = this.autorizacionService.getByAutorizacionNumber(transferenciaPropiaRequest.getAutorizacionNumber);
-            //autorizacionTransaccion.setAutorizacionNumber(autorizacionTransaccion.getAutorizacionNumber());
-            autorizacionTransaccion.setAutorizacionNumber("AUXXXX");
+            autorizacionTransaccion = this.autorizacionService.getByAutorizacionNumber(transferenciaPropiaRequest.getAutorizacionNumber());
+            autorizacionTransaccion.setAutorizacionNumber(autorizacionTransaccion.getAutorizacionNumber());
+            //autorizacionTransaccion.setAutorizacionNumber("AUXXXX");
 
             TransaccionModel lastTransaccion = this.transaccionService.getLastTransaccion();
             final String transaccionNumber = "T000"+(Long.valueOf(lastTransaccion.getTransaccionNumber().substring(4)) + 1 );
@@ -273,9 +273,9 @@ public class TransferenciaServiceImpl implements TransferenciaService {
                 Timestamp fechaTransD = new Timestamp(System.currentTimeMillis());
                 //Para prueba
                 AutorizacionModel autorizacionTransaccion = new AutorizacionModel();
-                //autorizacionTransaccion = this.autorizacionService.getByAutorizacionNumber(transferenciaPropiaRequest.getAutorizacionNumber);
-                //autorizacionTransaccion.setAutorizacionNumber(autorizacionTransaccion.getAutorizacionNumber());
-                autorizacionTransaccion.setAutorizacionNumber("AUXXXX");
+                autorizacionTransaccion = this.autorizacionService.getByAutorizacionNumber(transferenciaTerceroRequest.getAutorizacionNumber());
+                autorizacionTransaccion.setAutorizacionNumber(autorizacionTransaccion.getAutorizacionNumber());
+                //autorizacionTransaccion.setAutorizacionNumber("AUXXXX");
                 final String transaccionNumber = "T0003000000004";
                 //
 
@@ -388,9 +388,9 @@ public class TransferenciaServiceImpl implements TransferenciaService {
             Timestamp fechaTransD = new Timestamp(System.currentTimeMillis());
             //Para prueba
             AutorizacionModel autorizacionTransaccion = new AutorizacionModel();
-            //autorizacionTransaccion = this.autorizacionService.getByAutorizacionNumber(transferenciaPropiaRequest.getAutorizacionNumber);
-            //autorizacionTransaccion.setAutorizacionNumber(autorizacionTransaccion.getAutorizacionNumber());
-            autorizacionTransaccion.setAutorizacionNumber("AUXXXX");
+            autorizacionTransaccion = this.autorizacionService.getByAutorizacionNumber(transferenciaOtroBancoRequest.getAutorizacionNumber());
+            autorizacionTransaccion.setAutorizacionNumber(autorizacionTransaccion.getAutorizacionNumber());
+            //autorizacionTransaccion.setAutorizacionNumber("AUXXXX");
             final String transaccionNumber = "T0003000000004";
             //
 
