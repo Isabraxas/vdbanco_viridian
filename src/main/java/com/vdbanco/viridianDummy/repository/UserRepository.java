@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface UserRepository extends JpaRepository<UserModel, Long> , PagingAndSortingRepository<UserModel, Long>{
 
+    UserModel findByUserName(String username);
+
     UserModel findByUserNumber(String number);
 
     Page<UserModel> findAllByOrderByUserId(Pageable pageable);

@@ -14,26 +14,26 @@ import java.sql.Timestamp;
 @Table(name="USER_")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
-public class UserModel extends ResourceSupport{
+public class UserModel extends ResourceSupport implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "USER_SEQ")
     @SequenceGenerator(sequenceName = "USER_ID_SEQ", allocationSize = 1, name = "USER_SEQ")
     private Long userId;
 
-    @NotNull
+    //@NotNull
     private String userNumber;
 
-    @NotNull
+    //@NotNull
     private String userName;
 
-    @NotNull
+    //@NotNull
     private String userPassword;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Timestamp userCreateTime;
 
-    @NotNull
+    //@NotNull
     private String personaPersonaNumber;
 
     @ManyToOne(fetch = FetchType.EAGER)
