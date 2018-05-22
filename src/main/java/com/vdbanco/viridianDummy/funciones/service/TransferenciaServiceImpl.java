@@ -77,6 +77,7 @@ public class TransferenciaServiceImpl implements TransferenciaService {
             Timestamp fechaTransO = new Timestamp(System.currentTimeMillis());
             Timestamp fechaTransD = new Timestamp(System.currentTimeMillis());
             //Para prueba
+            //TODO comprobar por lo menos que el debito account number concuerde con la cuenta de origen
             AutorizacionModel autorizacionTransaccion = new AutorizacionModel();
             autorizacionTransaccion = this.autorizacionService.getByAutorizacionNumber(transferenciaPropiaRequest.getAutorizacionNumber());
             autorizacionTransaccion.setAutorizacionNumber(autorizacionTransaccion.getAutorizacionNumber());

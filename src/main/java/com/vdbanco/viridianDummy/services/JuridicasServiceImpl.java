@@ -99,6 +99,19 @@ public class JuridicasServiceImpl implements JuridicasService {
         return null;
     }
 
+    @Override
+    public JuridicasModel getByRazonSocial(String razonSocial) {
+
+        JuridicasModel juridica= this.juridicasRepository.findByJuridicasRazonSocial(razonSocial);
+
+        if (juridica == null){
+            String errorMsg = "La persona juridica con razon social: "+ razonSocial +" no fue encontrada";
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(000L, "001", "La persona juridica con razon social: "+ razonSocial +" no fue encontrada", "Hemos encontrado un error intentelo mas tarde"));
+
+        }
+        return juridica;
+    }
+
 
     @Override
     public void delete(JuridicasModel juridicas) {

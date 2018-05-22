@@ -13,6 +13,7 @@ public interface AccountHolderService {
 
     AccountHolderModel getAccountHolderByPersonaNumber(String number);
 
+    AccountHolderModel getAccountHolderByJuridicasNumber(String number);
 
     AccountHolderModel getAccountHolderByPersonaNumberOrTitularOrApoderado(String number);
 

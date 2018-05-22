@@ -1,9 +1,6 @@
 package com.vdbanco.viridianDummy.funciones.service;
 
-import com.vdbanco.viridianDummy.domain.AccountHolderModel;
-import com.vdbanco.viridianDummy.domain.AccountModel;
-import com.vdbanco.viridianDummy.domain.AutorizacionModel;
-import com.vdbanco.viridianDummy.domain.TransaccionModel;
+import com.vdbanco.viridianDummy.domain.*;
 import com.vdbanco.viridianDummy.error.ErrorDetalle;
 import com.vdbanco.viridianDummy.error.NoEncontradoRestException;
 import com.vdbanco.viridianDummy.funciones.inputModel.*;
@@ -38,9 +35,10 @@ public class PagosServiceImpl implements PagosService {
     AutorizacionService autorizacionService;
     EmpleadoService empleadoService;
     TransaccionService transaccionService;
+    JuridicasService juridicasService;
 
     @Autowired
-    public PagosServiceImpl(AccountRepository accountRepository, TransaccionRepository transaccionRepository, AutorizacionRepository autorizacionRepository, AccountService accountService, AccountHolderService accountHolderService, PersonaService personaService, AutorizacionService autorizacionService, EmpleadoService empleadoService, TransaccionService transaccionService) {
+    public PagosServiceImpl(AccountRepository accountRepository, TransaccionRepository transaccionRepository, AutorizacionRepository autorizacionRepository, AccountService accountService, AccountHolderService accountHolderService, PersonaService personaService, AutorizacionService autorizacionService, EmpleadoService empleadoService, TransaccionService transaccionService, JuridicasService juridicasService) {
         this.accountRepository = accountRepository;
         this.transaccionRepository = transaccionRepository;
         this.autorizacionRepository = autorizacionRepository;
@@ -50,18 +48,23 @@ public class PagosServiceImpl implements PagosService {
         this.autorizacionService = autorizacionService;
         this.empleadoService = empleadoService;
         this.transaccionService = transaccionService;
+        this.juridicasService = juridicasService;
     }
 
     @Override
-    public PagoResponse createPagoServicio(PagoPrestamoRequest pagoPrestamoRequest){
+    public PagoResponse createPagoServicio(PagoServicioRequest pagoServicioRequest){
 
-        AccountModel accountOrigen = this.accountService.getByAccountNumber(pagoPrestamoRequest.getAccountNumberOrigen());
+        AccountModel accountOrigen = this.accountService.getByAccountNumber(pagoServicioRequest.getAccountNumberOrigen());
         //TODO buscar a la persona juridica con el nombre dado en el request
+        JuridicasModel juridica= this.juridicasService.getByRazonSocial(pagoServicioRequest.getRazonSocial());
         //TODO buscar el account holder segun juridicas number y por ultimo encontrar la cuenta asociada
-        AccountModel accountDestino = new AccountModel();
+        AccountHolderModel accountHolder = this.accountHolderService.getAccountHolderByJuridicasNumber(juridica.getJuridicasNumber());
+
+        List<AccountModel> accountsDestino = this.accountService.getAccountByAccountHolder(accountHolder.getAccountHolderNumber());
+        AccountModel accountDestino = accountsDestino.get(0);
 
         log.info("Comprobando si el saldo es suficiente");
-        if (pagoPrestamoRequest.getMonto() < accountOrigen.getAccountBalance()) {
+        if (pagoServicioRequest.getMonto() < accountOrigen.getAccountBalance()) {
 
             log.info("Iniciando la Transaccion");
             TransaccionModel transaccionOrigen = new TransaccionModel();
@@ -76,10 +79,10 @@ public class PagosServiceImpl implements PagosService {
 
             log.info("Inicio proceso Cuenta origen");
             //Origen
-            transaccionOrigen.setAccountNumber(pagoPrestamoRequest.getAccountNumberOrigen());
-            transaccionOrigen.setTransaccionMonto((-1)* pagoPrestamoRequest.getMonto());
-            transaccionOrigen.setTransaccionDetalle("Pago de prestamo");
-            transaccionOrigen.setTransaccionGlossa(pagoPrestamoRequest.getGlossa());
+            transaccionOrigen.setAccountNumber(pagoServicioRequest.getAccountNumberOrigen());
+            transaccionOrigen.setTransaccionMonto((-1)* pagoServicioRequest.getMonto());
+            transaccionOrigen.setTransaccionDetalle("Pago de servicio");
+            transaccionOrigen.setTransaccionGlossa(pagoServicioRequest.getGlossa());
             transaccionOrigen.setTransaccionDate(fechaTransO);
             //Automatizar
             transaccionOrigen.setAutorizacionNumber(autorizacionTransaccion.getAutorizacionNumber());
@@ -87,7 +90,7 @@ public class PagosServiceImpl implements PagosService {
             transaccionOrigen.setTransaccionNumber(transaccionNumber);
 
             log.info("Actualizacion de balance en la cuenta de origen");
-            Double balanceO = accountOrigen.getAccountBalance() - pagoPrestamoRequest.getMonto();
+            Double balanceO = accountOrigen.getAccountBalance() - pagoServicioRequest.getMonto();
             accountOrigen.setAccountBalance(balanceO);
             this.accountRepository.save(accountOrigen);
 
@@ -96,10 +99,10 @@ public class PagosServiceImpl implements PagosService {
 
             log.info("Inicio proceso Cuenta destino");
             //Destino
-            transaccionDestino.setAccountNumber(pagoPrestamoRequest.getAccountNumberDestino());
-            transaccionDestino.setTransaccionMonto(pagoPrestamoRequest.getMonto());
-            transaccionDestino.setTransaccionDetalle("Pago de prestamo");
-            transaccionDestino.setTransaccionGlossa(pagoPrestamoRequest.getGlossa());
+            transaccionDestino.setAccountNumber(accountDestino.getAccountNumber());
+            transaccionDestino.setTransaccionMonto(pagoServicioRequest.getMonto());
+            transaccionDestino.setTransaccionDetalle("Pago de servicio");
+            transaccionDestino.setTransaccionGlossa(pagoServicioRequest.getGlossa());
             transaccionDestino.setTransaccionDate(fechaTransD);
             //Automatizar
             transaccionDestino.setAutorizacionNumber(autorizacionTransaccion.getAutorizacionNumber());
@@ -107,7 +110,7 @@ public class PagosServiceImpl implements PagosService {
             transaccionDestino.setTransaccionNumber(transaccionNumber);
 
             log.info("Actualizacion de balance en la cuenta de destino");
-            Double balanceD = accountDestino.getAccountBalance() + pagoPrestamoRequest.getMonto();
+            Double balanceD = accountDestino.getAccountBalance() + pagoServicioRequest.getMonto();
             accountDestino.setAccountBalance(balanceD);
             this.accountRepository.save(accountDestino);
 
@@ -128,7 +131,7 @@ public class PagosServiceImpl implements PagosService {
 
         }else{
 
-            String errorMsg = "La cuenta de origen no tiene saldo suficiente para este monto: "+ pagoPrestamoRequest.getMonto() ;
+            String errorMsg = "La cuenta de origen no tiene saldo suficiente para este monto: "+ pagoServicioRequest.getMonto() ;
             throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(accountOrigen.getAccountId(), "002", "El saldo es insuficiente para procesar la transferencia", "Hemos encontrado un error intentelo nuevamente"));
         }
 

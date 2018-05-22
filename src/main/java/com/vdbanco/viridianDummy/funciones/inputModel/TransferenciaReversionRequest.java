@@ -5,6 +5,7 @@ import org.jsondoc.core.annotation.ApiObjectField;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @ApiObject(name = "TransferenciaReversionRequest")
@@ -17,7 +18,7 @@ public class TransferenciaReversionRequest {
     @NotBlank
     private String accountNumberDestino;
     @ApiObjectField
-    @NotBlank
+    @NotNull
     @Min(value = 1)
     private Double monto;
     @ApiObjectField

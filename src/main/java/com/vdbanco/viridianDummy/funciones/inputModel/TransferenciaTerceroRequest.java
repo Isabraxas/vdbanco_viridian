@@ -3,7 +3,9 @@ package com.vdbanco.viridianDummy.funciones.inputModel;
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @ApiObject(name = "TransferenciaTerceroRequest")
@@ -19,7 +21,8 @@ public class TransferenciaTerceroRequest {
     @NotBlank
     private String nombreDestinatario;
     @ApiObjectField
-    @NotBlank
+    @NotNull
+    @Min(value = 1)
     private Double monto;
     @ApiObjectField
     @NotBlank

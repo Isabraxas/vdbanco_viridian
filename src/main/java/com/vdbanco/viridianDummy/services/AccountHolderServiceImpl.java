@@ -59,6 +59,16 @@ public class AccountHolderServiceImpl implements AccountHolderService {
     }
 
     @Override
+    public AccountHolderModel getAccountHolderByJuridicasNumber(String number) {
+        AccountHolderModel accountHolder = this.accountHolderRepository.findByJuridicasJuridicasNumber(number);
+        if (accountHolder == null){
+            String errorMsg = "El accountHolder con JuridicasNumber: "+ number +" no fue encontrado";
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(0000L, "001", "El accountHolder con JuridicasNumber: "+ number +" no fue encontrado", "Hemos encontrado un error intentelo mas tarde"));
+        }
+        return accountHolder;
+    }
+
+    @Override
     public AccountHolderModel getAccountHolderByPersonaNumberOrTitularOrApoderado(String number) {
         return this.accountHolderRepository.findAllByPersonaPersonaNumberOrAccountHolderTitularNumberOrAccountHolderApoderado(number, number, number);
     }

@@ -18,7 +18,7 @@ import javax.validation.Valid;
 import java.sql.Timestamp;
 
 @RestController
-@RequestMapping(value = "/users")
+@RequestMapping(value = "/api/users")
 @Api(
         name = "Tranferencias",
         description ="Permite realizar transferencias entre cuentas por medio de una lista de metodos.",
@@ -41,19 +41,19 @@ public class TransferenciasController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/tranferencias/terceros")
     @ApiMethod(description = "Realiza transferencias a cuentas de terceros proporcionando los siguientes datos de entrada (cuenta origen, numero de cuenta/préstamo a pagar, nombre del destinatario, monto, descripción/glosa , autorización).")
-    public TranferenciasResponse createTranferenciaTerceros(@RequestBody TransferenciaTerceroRequest transferenciaTerceroRequest){
+    public TranferenciasResponse createTranferenciaTerceros(@Valid @RequestBody TransferenciaTerceroRequest transferenciaTerceroRequest){
         return this.transferenciaService.createTranferenciaByCuentasTerceros(transferenciaTerceroRequest);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/tranferencias/otros")
     @ApiMethod(description = "Realiza transferencias a cuentas de terceros proporcionando los siguientes datos de entrada (cuenta origen, numero de cuenta/préstamo a pagar, nombre del destinatario,nombre del banco de destino, numero del banco de destino, monto, descripción/glosa , autorización).")
-    public TranferenciasResponse createTranferenciaOtrosBancos(@RequestBody TransferenciaOtroBancoRequest transferenciaOtroBancoRequest){
+    public TranferenciasResponse createTranferenciaOtrosBancos(@Valid @RequestBody TransferenciaOtroBancoRequest transferenciaOtroBancoRequest){
         return this.transferenciaService.createTranferenciaByCuentasOtrosBancos(transferenciaOtroBancoRequest);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/reversion/transferencia")
     @ApiMethod(description = "Realiza la reversion de una determinada transaccion proporcionado el numero de transaccion el numero de la debida autorizacion prar revertirla.")
-    public TranferenciasResponse createReversionTranferencia(@RequestBody ReversionRequest reversionRequest){
+    public TranferenciasResponse createReversionTranferencia(@Valid @RequestBody ReversionRequest reversionRequest){
         return this.transferenciaService.createReversionTransferencia(reversionRequest);
     }
 

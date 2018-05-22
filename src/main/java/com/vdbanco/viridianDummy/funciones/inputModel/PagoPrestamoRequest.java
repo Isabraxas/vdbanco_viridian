@@ -3,18 +3,24 @@ package com.vdbanco.viridianDummy.funciones.inputModel;
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @ApiObject(name = "PagoPrestamoRequest")
 public class PagoPrestamoRequest implements Serializable{
 
     @ApiObjectField(name = "accountNumberOrigen", required = true)
+    @NotBlank
     private String accountNumberOrigen;
     @ApiObjectField(name = "accountNumberDestino", required = true)
+    @NotBlank
     private String accountNumberDestino;
     @ApiObjectField(name = "monto", required = true)
+    @NotNull
     private Double monto;
     @ApiObjectField(name = "glossa", required = true)
+    @NotBlank
     private String glossa;
 
 

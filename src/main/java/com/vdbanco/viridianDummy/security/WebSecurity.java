@@ -43,15 +43,26 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 		 * 4. Se indica que el login no requiere autenticación
 		 * 5. Se indica que el resto de URLs esten securizadas
 		 */
-		httpSecurity
+		/*httpSecurity
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 			.cors().and()
 			.csrf().disable()
 			.authorizeRequests().antMatchers(HttpMethod.POST, LOGIN_URL).permitAll()
-			.and().authorizeRequests().antMatchers(HttpMethod.GET,"/jsondoc-ui.html").permitAll()
+                .antMatchers(HttpMethod.GET,"/jsondoc-ui.html").permitAll()
+                .antMatchers(HttpMethod.GET,"/jsondoc").permitAll()
+
 			.anyRequest().authenticated().and()
 				.addFilter(new JWTAuthenticationFilter(authenticationManager()))
+				.addFilter(new JWTAuthorizationFilter(authenticationManager()));*/
+
+			httpSecurity.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+					.cors().and()
+					.csrf().disable()
+					.authorizeRequests().antMatchers(LOGIN_URL).permitAll()
+					.antMatchers("/api/**").authenticated().and()
+				.addFilter(new JWTAuthenticationFilter(authenticationManager()))
 				.addFilter(new JWTAuthorizationFilter(authenticationManager()));
+
 	}
 
 	@Override

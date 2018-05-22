@@ -42,8 +42,8 @@ public class AutorizacionServiceImpl implements AutorizacionService{
         AutorizacionModel autorizacion = this.autorizacionRepository.findByAutorizacionNumber(number);
         Long id= Long.valueOf(number.substring(4));
         if(autorizacion == null) {
-            String errorMsg = "El autorizacion con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            String errorMsg = "La autorizacion con Id: "+ id +" no fue encontrada";
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001",  "La autorizacion con number: "+ number +" no fue encontrada", "Hemos encontrado un error intentelo mas tarde"));
         }
         return autorizacion;
     }

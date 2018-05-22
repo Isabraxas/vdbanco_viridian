@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/users")
+@RequestMapping(value = "/api/users")
 @Api(
         name = "Movimientos",
         description = "Permite consultar por medio de una lista de metodos los movimientos realizados por una determinada cuenta en el banco.",

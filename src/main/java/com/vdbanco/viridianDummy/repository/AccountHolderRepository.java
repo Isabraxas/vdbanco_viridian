@@ -11,6 +11,8 @@ import java.util.List;
 public interface AccountHolderRepository extends JpaRepository<AccountHolderModel,Long> {
     AccountHolderModel findByAccountHolderNumber(String number);
 
+    AccountHolderModel findByJuridicasJuridicasNumber(String number);
+
     Page<AccountHolderModel> findAllByOrderByAccountHolderId(Pageable pageable);
 
     AccountHolderModel findAllByPersonaPersonaNumber(String number);

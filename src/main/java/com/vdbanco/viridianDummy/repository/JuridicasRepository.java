@@ -13,6 +13,8 @@ public interface JuridicasRepository extends JpaRepository<JuridicasModel, Long>
 
     Page<JuridicasModel> findAllByOrderByJuridicasId(Pageable pageable);
 
+    JuridicasModel findByJuridicasRazonSocial(String razonSocial);
+
     @Transactional
     void deleteByJuridicasNumber(String juridicasNumber);
     @Transactional

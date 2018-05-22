@@ -17,5 +17,7 @@ public interface JuridicasService {
 
     JuridicasModel update(JuridicasModel juridicas);
 
+    JuridicasModel getByRazonSocial(String razonSocial);
+
     void delete(JuridicasModel juridicas);
 }

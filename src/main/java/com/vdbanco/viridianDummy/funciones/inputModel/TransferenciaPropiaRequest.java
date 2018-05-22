@@ -18,7 +18,7 @@ public class TransferenciaPropiaRequest {
     @NotBlank
     private String accountNumberDestino;
     @ApiObjectField
-    @NotBlank
+    @NotNull
     @Min(value = 1L)
     private Double monto;
     @ApiObjectField

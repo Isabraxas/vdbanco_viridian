@@ -6,7 +6,7 @@ import com.vdbanco.viridianDummy.funciones.outputModel.TranferenciasResponse;
 
 public interface PagosService {
 
-    PagoResponse createPagoServicio(PagoPrestamoRequest pagoPrestamoRequest);
+    PagoResponse createPagoServicio(PagoServicioRequest pagoServicioRequest);
 
     PagoResponse createPagoPrestamo(PagoPrestamoRequest pagoPrestamoRequest);
 
