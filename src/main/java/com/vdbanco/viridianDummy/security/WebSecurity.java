@@ -59,7 +59,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 					.cors().and()
 					.csrf().disable()
 					.authorizeRequests().antMatchers(LOGIN_URL).permitAll()
-					.antMatchers("/api/**").authenticated().and()
+					.antMatchers(HttpMethod.GET,"/api/**").authenticated()
+					.antMatchers(HttpMethod.PUT,"/api/**").hasAuthority("ROLE_ADMIN")
+					.and()
 				.addFilter(new JWTAuthenticationFilter(authenticationManager()))
 				.addFilter(new JWTAuthorizationFilter(authenticationManager()));
 

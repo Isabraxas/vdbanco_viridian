@@ -1,8 +1,11 @@
 package com.vdbanco.viridianDummy.security;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
@@ -12,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import static com.vdbanco.viridianDummy.security.Constants.*;
 
@@ -38,14 +42,31 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
 		String token = request.getHeader(HEADER_AUTHORIZACION_KEY);
 		if (token != null) {
 			// Se procesa el token y se recupera el usuario.
-			String user = Jwts.parser()
+			Claims claims = Jwts.parser()
 						.setSigningKey(SUPER_SECRET_KEY)
 						.parseClaimsJws(token.replace(TOKEN_BEARER_PREFIX, ""))
-						.getBody()
-						.getSubject();
+						.getBody();
+
+			String user = claims.getSubject();
+
+			// Extract the Roles
+			ArrayList<String> roles = (ArrayList<String>)claims.get("roles");
+			// Then convert Roles to GrantedAuthority Object for injecting
+            //ArrayList<LinkedHashMap> roles= (ArrayList<LinkedHashMap>) claims.get("roles");
+			ArrayList<GrantedAuthority> listAuthorities = new ArrayList<GrantedAuthority>();
+			if ( roles != null ) {
+				for (String role : roles) {
+					listAuthorities.add(new SimpleGrantedAuthority(role));
+				}
+			}
+			// Attached the groups to the request attributes for a later use
+			//  (custom need may be not needed for you)
+			//request.setAttribute("groups", (ArrayList<String>)claims.get("groups"));
+
+			// Return an Authenticated user with the list of Roles attached
 
 			if (user != null) {
-				return new UsernamePasswordAuthenticationToken(user, null, new ArrayList<>());
+				return new UsernamePasswordAuthenticationToken(user, null, listAuthorities);
 			}
 			return null;
 		}
