@@ -62,7 +62,7 @@ public class AutorizacionControllerTest {
         .when()
                 .get("/api/autorizacions/{id}").then().statusCode(404).and()
                 .body("estado",equalTo("error"))
-                .body("error.codigo",equalTo("001"));
+                .body("error.codigo",equalTo("404"));
     }
 
     @Test
@@ -127,7 +127,7 @@ public class AutorizacionControllerTest {
                 contentType("application/json")
                 .body(autorizacion)
                 .when().delete("/api/autorizacions")
-                .then().statusCode(200);
+                .then().statusCode(204);
     }
 
 

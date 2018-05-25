@@ -47,7 +47,7 @@ public class PagosControllerTest {
         PagoResponse pagoResponse =
                 given().contentType("application/json")
                         .body(pagoPrestamoRequest)
-                .when().post("/users/pagos/prestamo")
+                .when().post("/api/users/pagos/prestamo")
                         .as(PagoResponse.class);
 
         Assert.assertTrue(pagoResponse.getEstado().equals("successful"));
@@ -65,7 +65,7 @@ public class PagosControllerTest {
         ErrorTransferencia pagoResponse =
                 given().contentType("application/json")
                         .body(pagoPrestamoRequest)
-                        .when().post("/users/pagos/prestamo")
+                        .when().post("/api/users/pagos/prestamo")
                         .as(ErrorTransferencia.class);
 
         Assert.assertTrue(pagoResponse.getEstado().equals("error"));
@@ -86,7 +86,7 @@ public class PagosControllerTest {
         PagoResponse pagoResponse =
                 given().contentType("application/json")
                         .body(pagoPrestamoRequest)
-                        .when().post("/users/pagos/tarjetaCredito")
+                        .when().post("/api/users/pagos/tarjetaCredito")
                         .as(PagoResponse.class);
 
         Assert.assertTrue(pagoResponse.getEstado().equals("successful"));
@@ -105,7 +105,7 @@ public class PagosControllerTest {
         ErrorTransferencia pagoResponse =
                 given().contentType("application/json")
                         .body(pagoPrestamoRequest)
-                        .when().post("/users/pagos/tarjetaCredito")
+                        .when().post("/api/users/pagos/tarjetaCredito")
                         .as(ErrorTransferencia.class);
 
         Assert.assertTrue(pagoResponse.getEstado().equals("error"));

@@ -100,6 +100,7 @@ public class AutorizacionController {
         return this.autorizacionService.update(autorizacion);
     }
 
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping
     @ApiMethod(description = "Elimina la autorizacion que corresponda con el mismo numero/codigo")
     public void deleteAutorizacion(@RequestBody AutorizacionModel autorizacion){

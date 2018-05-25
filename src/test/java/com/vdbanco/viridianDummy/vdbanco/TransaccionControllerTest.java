@@ -66,7 +66,7 @@ public class TransaccionControllerTest {
         .when()
                 .get("/api/transaccions/{id}").then().statusCode(404).and()
                 .body("estado",equalTo("error"))
-                .body("error.codigo",equalTo("001"));
+                .body("error.codigo",equalTo("404"));
     }
 
     @Test
@@ -85,9 +85,9 @@ public class TransaccionControllerTest {
         transaccion.setTransaccionId(8000003L);
         transaccion.setTransaccionNumber("T0008000003");
         transaccion.setTransaccionDate(new Timestamp(System.currentTimeMillis()));
-        transaccion.setTransaccionMonto(0.0);
+        transaccion.setTransaccionMonto(1.0);
         transaccion.setAccountNumber("1230000019");
-        transaccion.setAutorizacionNumber("AU0048");
+        transaccion.setAutorizacionNumber("AU001448");
 
         TransaccionModel transaccionResponse= given()
                 .contentType("application/json")
@@ -98,7 +98,7 @@ public class TransaccionControllerTest {
         log.info("Response: "+ transaccionResponse.toString());
 
         assertTrue(transaccionResponse.getTransaccionNumber().equals("T0008000003"));
-        assertTrue(transaccionResponse.getTransaccionMonto().equals(0.0));
+        assertTrue(transaccionResponse.getTransaccionMonto().equals(1.0));
         assertNotNull(transaccionResponse.getAccountNumber());
 
     }
@@ -136,7 +136,7 @@ public class TransaccionControllerTest {
                 contentType("application/json")
                 .body(transaccion[0])
                 .when().delete("/api/transaccions")
-                .then().statusCode(200);
+                .then().statusCode(204);
     }
 
 

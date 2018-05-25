@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.hateoas.ResourceSupport;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -22,6 +24,7 @@ public class TransaccionModel extends ResourceSupport implements Serializable {
     private String transaccionNumber;
     //@JsonFormat(pattern = "yyyy-MM-dd")
     private Timestamp transaccionDate;
+    @Min(value = 1L)
     private Double transaccionMonto;
     private String accountNumber;
     private String transaccionDetalle;
@@ -33,6 +36,7 @@ public class TransaccionModel extends ResourceSupport implements Serializable {
     private AutorizacionModel autorizacion;
 
     @NotNull
+    @NotBlank
     private String autorizacionNumber;
 
 

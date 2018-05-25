@@ -57,7 +57,7 @@ public class AccountHolderControllerTest {
         .when()
                 .get("/api/accountHolders/{id}").then().statusCode(404).and()
                 .body("estado",equalTo("error"))
-                .body("error.codigo",equalTo("001"));
+                .body("error.codigo",equalTo("404"));
     }
 
     @Test
@@ -128,7 +128,7 @@ public class AccountHolderControllerTest {
                 contentType("application/json")
                 .body(accountHolder)
                 .when().delete("/api/accountHolders")
-                .then().statusCode(200);
+                .then().statusCode(204);
     }
 
 

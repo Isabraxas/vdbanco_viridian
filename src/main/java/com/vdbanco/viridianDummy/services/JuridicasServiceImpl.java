@@ -34,7 +34,7 @@ public class JuridicasServiceImpl implements JuridicasService {
         Optional<JuridicasModel> juridicas = this.juridicasRepository.findById(id);
         if(!juridicas.isPresent()) {
             String errorMsg = "El juridicas con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "404", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return this.juridicasRepository.findById(id);
     }
@@ -45,7 +45,7 @@ public class JuridicasServiceImpl implements JuridicasService {
         Long id= Long.valueOf(number.substring(4));
         if(juridicas == null) {
             String errorMsg = "El juridicas con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "404", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return juridicas;
     }
@@ -106,7 +106,7 @@ public class JuridicasServiceImpl implements JuridicasService {
 
         if (juridica == null){
             String errorMsg = "La persona juridica con razon social: "+ razonSocial +" no fue encontrada";
-            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(000L, "001", "La persona juridica con razon social: "+ razonSocial +" no fue encontrada", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(000L, "404", "La persona juridica con razon social: "+ razonSocial +" no fue encontrada", "Hemos encontrado un error intentelo mas tarde"));
 
         }
         return juridica;

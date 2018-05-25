@@ -62,7 +62,7 @@ public class EmpleadoControllerTest {
         .when()
                 .get("/api/empleados/{id}").then().statusCode(404).and()
                 .body("estado",equalTo("error"))
-                .body("error.codigo",equalTo("001"));
+                .body("error.codigo",equalTo("404"));
     }
 
     @Test
@@ -132,7 +132,7 @@ public class EmpleadoControllerTest {
                 contentType("application/json")
                 .body(empleado)
                 .when().delete("/api/empleados")
-                .then().statusCode(200);
+                .then().statusCode(204);
     }
 
 

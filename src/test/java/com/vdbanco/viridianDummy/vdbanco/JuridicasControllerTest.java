@@ -62,7 +62,7 @@ public class JuridicasControllerTest {
         .when()
                 .get("/api/juridicas/{id}").then().statusCode(404).and()
                 .body("estado",equalTo("error"))
-                .body("error.codigo",equalTo("001"));
+                .body("error.codigo",equalTo("404"));
     }
 
     @Test
@@ -126,7 +126,7 @@ public class JuridicasControllerTest {
                 contentType("application/json")
                 .body(juridica)
                 .when().delete("/api/juridicas")
-                .then().statusCode(200);
+                .then().statusCode(204);
     }
 
 

@@ -38,7 +38,7 @@ public class AccountServiceImpl implements AccountService {
         Optional<AccountModel> account = this.accountRepository.findById(id);
         if(!account.isPresent()) {
             String errorMsg = "El account con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "404", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return this.accountRepository.findById(id);
     }
@@ -49,7 +49,7 @@ public class AccountServiceImpl implements AccountService {
         Long id= Long.valueOf(number.substring(4));
         if(account == null) {
             String errorMsg = "El account con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "404", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return account;
     }
@@ -61,7 +61,7 @@ public class AccountServiceImpl implements AccountService {
         Long id= Long.valueOf(number.substring(4));
         if(account == null) {
             String errorMsg = "La cuenta con Id: "+ id +" no fue encontrada asociada a este tipo de producto bancario";
-            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD esta cuenta asociada a este tipo de producto bancario", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "404", "no se encontro en la BD esta cuenta asociada a este tipo de producto bancario", "Hemos encontrado un error intentelo mas tarde"));
         }
         return account;
     }

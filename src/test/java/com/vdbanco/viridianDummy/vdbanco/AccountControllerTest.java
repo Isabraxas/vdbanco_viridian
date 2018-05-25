@@ -57,7 +57,7 @@ public class AccountControllerTest {
         .when()
                 .get("/api/accounts/{id}").then().statusCode(404).and()
                 .body("estado",equalTo("error"))
-                .body("error.codigo",equalTo("001"));
+                .body("error.codigo",equalTo("404"));
     }
 
     @Test
@@ -129,7 +129,7 @@ public class AccountControllerTest {
                 contentType("application/json")
                 .body(account)
                 .when().delete("/api/accounts")
-                .then().statusCode(200);
+                .then().statusCode(204);
     }
 
 

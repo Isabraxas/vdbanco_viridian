@@ -31,7 +31,7 @@ public class ProductosBancariosServiceImpl implements ProductosBancariosService 
         Optional<ProductosBancariosModel> productosBancarios = this.productosBancariosRepository.findById(id);
         if(!productosBancarios.isPresent()) {
             String errorMsg = "El producto Bancario con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "404", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return this.productosBancariosRepository.findById(id);
     }
@@ -41,8 +41,8 @@ public class ProductosBancariosServiceImpl implements ProductosBancariosService 
         ProductosBancariosModel productosBancarios = this.productosBancariosRepository.findByProductosBancariosNumber(number);
         Long id= Long.valueOf(number.substring(4));
         if(productosBancarios == null) {
-            String errorMsg = "El producto Bancario con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            String errorMsg = "El producto Bancario con Number: "+ number +" no fue encontrado";
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "404", "El producto Bancario con Number: "+ number +" no fue encontrado", "Hemos encontrado un error intentelo mas tarde"));
         }
         return productosBancarios;
     }

@@ -62,7 +62,7 @@ public class UserControllerTest {
         .when()
                 .get("/api/users/{id}").then().statusCode(404).and()
                 .body("estado",equalTo("error"))
-                .body("error.codigo",equalTo("001"));
+                .body("error.codigo",equalTo("404"));
     }
 
     @Test
@@ -130,7 +130,7 @@ public class UserControllerTest {
                 contentType("application/json")
                 .body(user)
                 .when().delete("/api/users")
-                .then().statusCode(200);
+                .then().statusCode(204);
     }
 
 

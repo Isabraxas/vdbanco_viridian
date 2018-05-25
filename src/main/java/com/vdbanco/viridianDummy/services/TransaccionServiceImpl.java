@@ -34,7 +34,7 @@ public class TransaccionServiceImpl implements TransaccionService {
         Optional<TransaccionModel> transaccion = this.transaccionRepository.findById(id);
         if(!transaccion.isPresent()) {
             String errorMsg = "El transaccion con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "404", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return this.transaccionRepository.findById(id);
     }
@@ -44,8 +44,8 @@ public class TransaccionServiceImpl implements TransaccionService {
         List<TransaccionModel> transaccion = this.transaccionRepository.findByTransaccionNumber(number);
         Long id= Long.valueOf(number.substring(4));
         if(transaccion.size()==0) {
-            String errorMsg = "El transaccion con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            String errorMsg = "El transaccion con number: "+ number +" no fue encontrado";
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "404", errorMsg, "Hemos encontrado un error intentelo mas tarde"));
         }
         return transaccion;
     }
@@ -56,7 +56,7 @@ public class TransaccionServiceImpl implements TransaccionService {
 
         if(transaccions.size()==0) {
             String errorMsg = "Las transacciones con accountNumber: "+ accountNumber +" no fueron encontradas";
-            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(000L, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(000L, "404", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return transaccions;
     }
@@ -72,10 +72,7 @@ public class TransaccionServiceImpl implements TransaccionService {
         log.info("Revisando si exite el transaccion por number");
         List<TransaccionModel> transaccions = this.transaccionRepository.findByTransaccionNumber(transaccion.getTransaccionNumber());
         
-        
-        for (TransaccionModel transaccionModel : transaccions) {
-            
-            if(transaccionModel == null) {
+       if(transaccions.size() == 0 ) {
                 log.info("Creando transaccion");
                 AutorizacionModel autorizacion = this.autorizacionService.getByAutorizacionNumber(transaccion.getAutorizacionNumber());
                 if(autorizacion != null) {
@@ -88,7 +85,7 @@ public class TransaccionServiceImpl implements TransaccionService {
                 String errorMsg = "El transaccion con number: "+ transaccion.getTransaccionNumber() +" ya existe";
                 throw new ConflictsException(errorMsg, new ErrorDetalle(transaccion.getTransaccionId(),"409","El transaccion con number: "+ transaccion.getTransaccionNumber() +" ya existe","Hemos encontrado un error intentelo nuevamente"));
             }
-        }
+
         
         return null;
     }

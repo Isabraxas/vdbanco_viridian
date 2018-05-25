@@ -55,7 +55,7 @@ public class PersonaControllerTest  {
         .when()
                 .get("/api/personas/{id}").then().statusCode(404).and()
                 .body("estado",equalTo("error"))
-                .body("error.codigo",equalTo("001"));
+                .body("error.codigo",equalTo("404"));
     }
 
     @Test
@@ -118,7 +118,7 @@ public class PersonaControllerTest  {
                 contentType("application/json")
                 .body(persona)
                 .when().delete("/api/personas")
-                .then().statusCode(200);
+                .then().statusCode(204);
     }
 
 

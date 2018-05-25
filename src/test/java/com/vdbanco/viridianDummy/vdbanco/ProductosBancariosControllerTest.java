@@ -57,7 +57,7 @@ public class ProductosBancariosControllerTest {
         .when()
                 .get("/api/productosBancarios/{id}").then().statusCode(404).and()
                 .body("estado",equalTo("error"))
-                .body("error.codigo",equalTo("001"));
+                .body("error.codigo",equalTo("404"));
     }
 
     @Test
@@ -120,7 +120,7 @@ public class ProductosBancariosControllerTest {
                 contentType("application/json")
                 .body(productosBancarios)
                 .when().delete("/api/productosBancarios")
-                .then().statusCode(200);
+                .then().statusCode(204);
     }
 
 

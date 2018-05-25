@@ -34,7 +34,7 @@ public class EmpleadoServiceImpl implements EmpleadoService {
         Optional<EmpleadoModel> empleado = this.empleadoRepository.findById(id);
         if(!empleado.isPresent()) {
             String errorMsg = "El empleado con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "404", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return this.empleadoRepository.findById(id);
     }
@@ -45,7 +45,7 @@ public class EmpleadoServiceImpl implements EmpleadoService {
         Long id= Long.valueOf(number.substring(4));
         if(empleado == null) {
             String errorMsg = "El empleado con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "404", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return empleado;
     }

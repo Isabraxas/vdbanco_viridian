@@ -35,7 +35,7 @@ public class PersonaServiceImpl implements PersonaService {
         Optional<PersonaModel> persona = this.personaRepository.findById(id);
         if(!persona.isPresent()) {
             String errorMsg = "La persona con Id: "+ id +" no fue encontrada";
-            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "404", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return persona;
     }
@@ -45,7 +45,7 @@ public class PersonaServiceImpl implements PersonaService {
         PersonaModel persona = this.personaRepository.findByPersonaNumber(number);
         if(persona == null){
             String errorMsg = "La persona con el number: "+ number +" no fue encontrada";
-            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(Long.valueOf(number.substring(4)), "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(Long.valueOf(number.substring(4)), "404", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return persona;
     }

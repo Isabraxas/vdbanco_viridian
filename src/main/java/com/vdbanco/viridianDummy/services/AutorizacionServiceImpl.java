@@ -32,7 +32,7 @@ public class AutorizacionServiceImpl implements AutorizacionService{
         Optional<AutorizacionModel> autorizacion = this.autorizacionRepository.findById(id);
         if(!autorizacion.isPresent()) {
             String errorMsg = "El autorizacion con Id: "+ id +" no fue encontrado";
-            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "404", "no se encontro en la BD", "Hemos encontrado un error intentelo mas tarde"));
         }
         return this.autorizacionRepository.findById(id);
     }
@@ -43,7 +43,7 @@ public class AutorizacionServiceImpl implements AutorizacionService{
         Long id= Long.valueOf(number.substring(4));
         if(autorizacion == null) {
             String errorMsg = "La autorizacion con Id: "+ id +" no fue encontrada";
-            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "001",  "La autorizacion con number: "+ number +" no fue encontrada", "Hemos encontrado un error intentelo mas tarde"));
+            throw new NoEncontradoRestException(errorMsg, new ErrorDetalle(id, "404",  "La autorizacion con number: "+ number +" no fue encontrada", "Hemos encontrado un error intentelo mas tarde"));
         }
         return autorizacion;
     }

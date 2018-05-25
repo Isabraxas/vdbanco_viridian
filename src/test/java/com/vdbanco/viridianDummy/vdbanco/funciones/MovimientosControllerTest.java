@@ -39,7 +39,7 @@ public class MovimientosControllerTest {
 
         TransaccionModel[] transaccions=
                 given().pathParam("accountNumber", "1230000018")
-                .when().get("/users/{accountNumber}/movimientos")
+                .when().get("/api/users/{accountNumber}/movimientos")
                 .then().statusCode(200)
                 .extract().as(TransaccionModel[].class);
 
@@ -50,7 +50,7 @@ public class MovimientosControllerTest {
     public void getLastMovimientosByAccountTest(){
         TransaccionModel[] transaccions=
                 given().pathParam("accountNumber", "1230000001")
-                .when().get("/users/{accountNumber}/movimientos/top")
+                .when().get("/api/users/{accountNumber}/movimientos/top")
                 .then().statusCode(200)
                 .extract().as(TransaccionModel[].class);
 
@@ -64,11 +64,11 @@ public class MovimientosControllerTest {
         TransaccionModel[] transaccions=
                 given().pathParam("accountNumber", "1230000001")
                         .pathParam("numberMonth","0")
-                        .when().get("/users/{accountNumber}/movimientos/month/{numberMonth}")
+                        .when().get("/api/users/{accountNumber}/movimientos/month/{numberMonth}")
                         .then().statusCode(200)
                         .extract().as(TransaccionModel[].class);
 
-        assertTrue(transaccions.length == 7);
+        assertTrue(transaccions.length == 19);
 
     }
 
@@ -78,11 +78,11 @@ public class MovimientosControllerTest {
                 given().pathParam("accountNumber", "1230000001")
                         .pathParam("fechaDesde","2018-04-19 01:55:23")
                         .pathParam("fechaHasta","2018-05-19 23:55:23")
-                        .when().get("/users/{accountNumber}/movimientos/desde/{fechaDesde}/hasta/{fechaHasta}")
+                        .when().get("/api/users/{accountNumber}/movimientos/desde/{fechaDesde}/hasta/{fechaHasta}")
                         .then().statusCode(200)
                         .extract().as(TransaccionModel[].class);
 
-        assertTrue(transaccions.length == 17);
+        assertTrue(transaccions.length == 19);
 
     }
 
@@ -92,11 +92,11 @@ public class MovimientosControllerTest {
                 given().pathParam("accountNumber", "1230000001")
                         .queryParam("fechaDesde","2018-04-19")
                         .queryParam("fechaHasta","2018-05-19")
-                        .when().get("/users/{accountNumber}/movimientosP")
+                        .when().get("/api/users/{accountNumber}/movimientosP")
                         .then().statusCode(200)
                         .extract().as(TransaccionModel[].class);
 
-        assertTrue(transaccions.length == 17);
+        assertTrue(transaccions.length == 19);
 
     }
 }
