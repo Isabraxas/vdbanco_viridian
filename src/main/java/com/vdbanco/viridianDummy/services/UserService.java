@@ -11,6 +11,8 @@ public interface UserService {
 
     Optional<UserModel> getById(Long id);
 
+    UserModel getByUserName(String username);
+
     UserModel getByUserNumber(String number);
 
     UserModel save(UserModel user);

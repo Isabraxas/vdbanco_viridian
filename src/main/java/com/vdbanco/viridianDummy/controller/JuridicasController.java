@@ -97,6 +97,7 @@ public class JuridicasController {
         return this.juridicasService.update(juridicas);
     }
 
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping
     @ApiMethod(description = "Elimina la persona juridica que corresponda con el mismo numero/codigo")
     public void deleteJuridicas(@RequestBody JuridicasModel juridicas){

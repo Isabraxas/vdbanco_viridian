@@ -98,6 +98,7 @@ public class PersonaController {
         return this.personaService.update(persona);
     }
 
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping
     @ApiMethod(description = "Elimina la persona que corresponda con el mismo numero/codigo")
     public void deletePersona(@RequestBody PersonaModel persona){

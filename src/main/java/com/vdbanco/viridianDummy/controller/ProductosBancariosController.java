@@ -98,6 +98,7 @@ public class ProductosBancariosController {
         return this.productosBancariosService.update(productosBancarios);
     }
 
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping
     @ApiMethod(description = "Elimina el producto bancario que corresponda con el mismo numero/codigo")
     public void deleteProductosBancarios(@RequestBody ProductosBancariosModel productosBancarios){

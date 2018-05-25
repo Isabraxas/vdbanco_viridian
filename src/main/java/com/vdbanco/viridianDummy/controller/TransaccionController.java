@@ -104,6 +104,7 @@ public class TransaccionController {
         return this.transaccionService.update(transaccion);
     }
 
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping
     @ApiMethod(description = "elimina la transaccion que corresponda con el mismo numero/codigo")
     public void deleteTransaccion(@RequestBody TransaccionModel transaccion){

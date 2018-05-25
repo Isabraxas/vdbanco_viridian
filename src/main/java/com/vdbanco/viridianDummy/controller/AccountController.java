@@ -83,7 +83,7 @@ public class AccountController {
         account.add(linkTo(methodOn(ProductosBancariosController.class).getProductosBancariosByNumber(account.getProductosBancariosNumber())).withRel("producto bancario"));
         account.add(linkTo(methodOn(MovimientosController.class).getMovimientosByAccountNumber(account.getAccountNumber())).withRel("account movimientos"));
         account.add(linkTo(methodOn(MovimientosController.class).getMovimientosByAccountNumberAndLastMonths(account.getAccountNumber(),1)).withRel("account movimientos mes pasado"));
-        account.add(linkTo(methodOn(AccountController.class).getAllPageable(0, Integer.parseInt(env.getProperty("spring.data.rest.max-page-size")))).withRel("Lista de productos bancarios"));
+        account.add(linkTo(methodOn(AccountController.class).getAllPageable(0, Integer.parseInt(env.getProperty("spring.data.rest.max-page-size")))).withRel("Lista de cuentas"));
         return account;
     }
 
@@ -100,6 +100,7 @@ public class AccountController {
         return this.accountService.update(account);
     }
 
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @RequestMapping(method = RequestMethod.DELETE)
     @ApiMethod(description = "Elimina la cuenta que corresponda con el mismo numero/codigo")
     public void deleteAccount(@RequestBody AccountModel account){

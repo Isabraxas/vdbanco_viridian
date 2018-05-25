@@ -100,6 +100,7 @@ public class AccountHolderController {
         return this.accountHolderService.update(accountHolder);
     }
 
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping
     @ApiMethod(description = "Elimina al propietario de cuenta que corresponda con el mismo numero/codigo")
     public void deleteAccountHolder(@RequestBody AccountHolderModel accountHolder){

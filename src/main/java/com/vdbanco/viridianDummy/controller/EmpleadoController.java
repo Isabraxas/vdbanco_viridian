@@ -98,6 +98,7 @@ public class EmpleadoController {
         return this.empleadoService.update(empleado);
     }
 
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping
     @ApiMethod(description = "Elimina al empleado que corresponda con el mismo numero/codigo")
     public void deleteEmpleado(@RequestBody EmpleadoModel empleado){

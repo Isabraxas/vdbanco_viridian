@@ -33,18 +33,18 @@ public class ProductosClienteServiceImpl implements ProductosClienteService{
 
 
     @Override
-    public ProductosClienteModel getProductosByUser(Long id) {
+    public ProductosClienteModel getProductosByUser(String username) {
         ProductosClienteModel productosClienteModel = new ProductosClienteModel();
 
-        Optional<UserModel> userModel = userService.getById(id);
+        UserModel userModel = userService.getByUserName(username);
         //PersonaModel personaModel = personaService.getByPersonaNumber(userModel.get().getPersonaPersonaNumber());
-        PersonaModel personaModel = userModel.get().getPersona();
+        PersonaModel personaModel = userModel.getPersona();
         AccountHolderModel accountHolderModel = accountHolderService.getAccountHolderByPersonaNumber(personaModel.getPersonaNumber());
         List<AccountModel> accountModel = accountService.getAccountByAccountHolder(accountHolderModel.getAccountHolderNumber());
 
 
-        productosClienteModel.setUserId(userModel.get().getUserId());
-        productosClienteModel.setPersonaPersonaNumber(userModel.get().getPersona().getPersonaNumber());
+        productosClienteModel.setUserId(userModel.getUserId());
+        productosClienteModel.setPersonaPersonaNumber(userModel.getPersona().getPersonaNumber());
         productosClienteModel.setPersona(personaModel);
         productosClienteModel.setCuentas(accountModel);
 

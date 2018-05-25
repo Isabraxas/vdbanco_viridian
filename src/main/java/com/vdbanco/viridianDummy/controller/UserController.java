@@ -19,6 +19,7 @@ import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -45,6 +46,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @GetMapping
     @ApiMethod(description = "Retorna una lista de usuarios paginados de 20 en 20")
@@ -96,6 +99,7 @@ public class UserController {
     @RequestMapping(method = RequestMethod.POST)
     @ApiMethod(description = "Almacena un nuevo usuario con los datos ingresados.", responsestatuscode = "201" )
     public  UserModel saveUser(@ApiBodyObject @RequestBody @Valid UserModel user){
+        user.setUserPassword(bCryptPasswordEncoder.encode(user.getUserPassword()));
         return this.userService.save(user);
     }
 
@@ -105,6 +109,7 @@ public class UserController {
         return this.userService.update(user);
     }
 
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping
     @ApiMethod(description = "Elimina al usuario que corresponda con el mismo numero/codigo")
     public void deleteUser(@RequestBody UserModel user){
